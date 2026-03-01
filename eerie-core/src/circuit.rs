@@ -1,35 +1,33 @@
 use facet::Facet;
-use serde::{Deserialize, Serialize};
 
 use crate::component::ComponentInstance;
 use crate::net::Net;
 
 /// Top-level circuit document. Serializes to a `.eerie` YAML file.
 ///
-/// IDs are strings — they can be anything unique within the file.
-/// The UI uses UUID v4 strings; manually authored files may use
-/// human-readable names like "R1", "GND_net", etc.
-/// If `id` is omitted in YAML it is auto-generated on load.
-#[derive(Facet, Serialize, Deserialize, Debug, Clone)]
+/// IDs are strings — anything unique within the file.
+/// The UI uses UUID v4 strings; hand-authored files may use human-readable
+/// names like "R1", "GND_net", etc.
+/// Omit `id` in YAML and Eerie auto-generates one on load.
+#[derive(Facet, Debug, Clone)]
 pub struct Circuit {
-    #[serde(default = "new_id")]
+    #[facet(default = new_id())]
     pub id: String,
     pub name: String,
-    #[serde(default, skip_serializing_if = "Option::is_none")]
     pub description: Option<String>,
+    #[facet(default = default_version())]
     pub version: String,
-    #[serde(default)]
+    #[facet(default)]
     pub components: Vec<ComponentInstance>,
-    #[serde(default)]
+    #[facet(default)]
     pub nets: Vec<Net>,
     pub metadata: CircuitMetadata,
 }
 
-#[derive(Facet, Serialize, Deserialize, Debug, Clone)]
+#[derive(Facet, Debug, Clone)]
 pub struct CircuitMetadata {
     pub created_at: String,
     pub modified_at: String,
-    #[serde(default, skip_serializing_if = "Option::is_none")]
     pub author: Option<String>,
 }
 
@@ -40,7 +38,7 @@ impl Circuit {
             id: new_id(),
             name: name.into(),
             description: None,
-            version: "0.1".into(),
+            version: default_version(),
             components: Vec::new(),
             nets: Vec::new(),
             metadata: CircuitMetadata {
@@ -68,8 +66,12 @@ pub fn new_id() -> String {
     uuid::Uuid::new_v4().to_string()
 }
 
-/// ISO-8601 timestamp. In WASM context there's no system clock;
-/// the daemon sets this properly when saving files.
+fn default_version() -> String {
+    "0.1".into()
+}
+
+/// ISO-8601 timestamp placeholder. The daemon fills in the real time when
+/// saving files; WASM has no system clock.
 pub fn iso_now() -> String {
     "1970-01-01T00:00:00Z".into()
 }

@@ -1,23 +1,20 @@
 pub mod mna;
 
 use facet::Facet;
-use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use thiserror::Error;
 
 pub use mna::dc_analysis;
 
-#[derive(Facet, Serialize, Deserialize, Debug, Clone)]
+#[derive(Facet, Debug, Clone)]
 pub struct SimulationResult {
-    /// Node voltage by net name.
     pub node_voltages: HashMap<String, f64>,
-    /// Branch current by component label.
     pub branch_currents: HashMap<String, f64>,
     pub converged: bool,
     pub analysis_type: AnalysisType,
 }
 
-#[derive(Facet, Serialize, Deserialize, Debug, Clone)]
+#[derive(Facet, Debug, Clone)]
 pub enum AnalysisType {
     Dc,
     Ac { frequency_hz: f64 },

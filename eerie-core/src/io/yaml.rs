@@ -1,33 +1,29 @@
-use crate::circuit::Circuit;
 use thiserror::Error;
+
+use crate::circuit::Circuit;
 
 #[derive(Debug, Error)]
 pub enum IoError {
-    #[error("YAML parse error: {0}")]
-    Parse(#[from] serde_yaml::Error),
+    #[error("YAML error: {0}")]
+    Yaml(String),
     #[error("JSON error: {0}")]
-    Json(#[from] serde_json::Error),
+    Json(String),
 }
 
-/// Deserialize a circuit from a `.eerie` YAML file's contents.
 pub fn circuit_from_yaml(src: &str) -> Result<Circuit, IoError> {
-    let circuit: Circuit = serde_yaml::from_str(src)?;
-    Ok(circuit)
+    facet_yaml::from_str::<Circuit>(src).map_err(|e| IoError::Yaml(e.to_string()))
 }
 
-/// Serialize a circuit to YAML for saving as a `.eerie` file.
 pub fn circuit_to_yaml(circuit: &Circuit) -> Result<String, IoError> {
-    let yaml = serde_yaml::to_string(circuit)?;
-    Ok(yaml)
+    facet_yaml::to_string(circuit).map_err(|e| IoError::Yaml(e.to_string()))
 }
 
-/// Round-trip through JSON (for IPC between Electron and WASM/daemon).
 pub fn circuit_to_json(circuit: &Circuit) -> Result<String, IoError> {
-    Ok(serde_json::to_string_pretty(circuit)?)
+    facet_json::to_string_pretty(circuit).map_err(|e| IoError::Json(e.to_string()))
 }
 
 pub fn circuit_from_json(src: &str) -> Result<Circuit, IoError> {
-    Ok(serde_json::from_str(src)?)
+    facet_json::from_str::<Circuit>(src).map_err(|e| IoError::Json(e.to_string()))
 }
 
 #[cfg(test)]
