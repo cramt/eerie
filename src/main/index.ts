@@ -1,63 +1,59 @@
 import { app, BrowserWindow, ipcMain, shell, dialog } from 'electron'
 import { join } from 'path'
-import { readFileSync, writeFileSync } from 'fs'
 import { spawn, ChildProcess } from 'child_process'
+import { createInterface } from 'readline'
+import type { EerieDaemonClient } from '../renderer/src/types/generated-rpc'
+
+// Dynamically imported after codegen runs
+let connectEerieDaemon: ((addr: string) => Promise<EerieDaemonClient>) | null = null
 
 let mainWindow: BrowserWindow | null = null
 let daemonProcess: ChildProcess | null = null
-let daemonRequestId = 0
-const daemonCallbacks = new Map<number, (result: unknown, error?: string) => void>()
+let daemonClient: EerieDaemonClient | null = null
 
 // ── Daemon management ──────────────────────────────────────────────────────
 
-function startDaemon() {
+async function startDaemon() {
   const daemonBin = app.isPackaged
     ? join(process.resourcesPath, 'eerie-daemon')
     : join(__dirname, '../../target/debug/eerie-daemon')
 
   try {
     daemonProcess = spawn(daemonBin, [], {
-      stdio: ['pipe', 'pipe', 'inherit'],
+      stdio: ['ignore', 'pipe', 'inherit'],
     })
 
-    daemonProcess.stdout?.on('data', (chunk: Buffer) => {
-      const lines = chunk.toString().split('\n').filter(Boolean)
-      for (const line of lines) {
-        try {
-          const msg = JSON.parse(line) as { id: number; result?: unknown; error?: string }
-          const cb = daemonCallbacks.get(msg.id)
-          if (cb) {
-            daemonCallbacks.delete(msg.id)
-            cb(msg.result, msg.error)
-          }
-        } catch {
-          // ignore non-JSON output (e.g. log lines)
-        }
-      }
-    })
+    // The daemon prints "PORT <n>" on the first stdout line.
+    const port = await readDaemonPort(daemonProcess)
+
+    // Dynamically import the generated client (avoids bundler issues when file
+    // doesn't exist yet during initial build).
+    const mod = await import('../renderer/src/types/generated-rpc.js')
+    connectEerieDaemon = mod.connectEerieDaemon
+
+    daemonClient = await connectEerieDaemon!(`127.0.0.1:${port}`)
+    console.log(`Connected to eerie-daemon on port ${port}`)
 
     daemonProcess.on('exit', (code) => {
       console.log(`eerie-daemon exited with code ${code}`)
       daemonProcess = null
+      daemonClient = null
     })
   } catch (err) {
     console.warn('Could not start eerie-daemon:', err)
   }
 }
 
-function callDaemon(method: string, params: unknown): Promise<unknown> {
+function readDaemonPort(child: ChildProcess): Promise<number> {
   return new Promise((resolve, reject) => {
-    if (!daemonProcess?.stdin) {
-      reject(new Error('daemon not running'))
-      return
-    }
-    const id = ++daemonRequestId
-    daemonCallbacks.set(id, (result, error) => {
-      if (error) reject(new Error(error))
-      else resolve(result)
+    const rl = createInterface({ input: child.stdout! })
+    rl.once('line', (line) => {
+      rl.close()
+      const m = line.match(/^PORT (\d+)$/)
+      if (m) resolve(Number(m[1]))
+      else reject(new Error(`unexpected daemon output: ${line}`))
     })
-    const msg = JSON.stringify({ id, method, params }) + '\n'
-    daemonProcess.stdin.write(msg)
+    child.on('exit', () => reject(new Error('daemon exited before announcing port')))
   })
 }
 
@@ -95,17 +91,48 @@ function createWindow() {
 
 // ── IPC handlers ───────────────────────────────────────────────────────────
 
-ipcMain.handle('daemon:call', async (_e, method: string, params: unknown) => {
-  return callDaemon(method, params)
+function requireClient(): EerieDaemonClient {
+  if (!daemonClient) throw new Error('daemon not connected')
+  return daemonClient
+}
+
+ipcMain.handle('daemon:ping', async () => {
+  return requireClient().ping().send()
 })
 
-ipcMain.handle('file:read', async (_e, path: string) => {
-  return readFileSync(path, 'utf-8')
+ipcMain.handle('daemon:fileRead', async (_e, path: string) => {
+  const result = await requireClient().fileRead(path).send()
+  if (!result.ok) throw new Error(result.error)
+  return result.value
 })
 
-ipcMain.handle('file:write', async (_e, path: string, content: string) => {
-  writeFileSync(path, content, 'utf-8')
-  return true
+ipcMain.handle('daemon:fileWrite', async (_e, path: string, content: string) => {
+  const result = await requireClient().fileWrite(path, content).send()
+  if (!result.ok) throw new Error(result.error)
+})
+
+ipcMain.handle('daemon:circuitParseYaml', async (_e, yaml: string) => {
+  const result = await requireClient().circuitParseYaml(yaml).send()
+  if (!result.ok) throw new Error(result.error)
+  return result.value
+})
+
+ipcMain.handle('daemon:circuitToYaml', async (_e, circuit: unknown) => {
+  const result = await requireClient().circuitToYaml(circuit as never).send()
+  if (!result.ok) throw new Error(result.error)
+  return result.value
+})
+
+ipcMain.handle('daemon:circuitNew', async (_e, name: string) => {
+  const result = await requireClient().circuitNew(name).send()
+  if (!result.ok) throw new Error(result.error)
+  return result.value
+})
+
+ipcMain.handle('daemon:simDc', async (_e, circuit: unknown) => {
+  const result = await requireClient().simDc(circuit as never).send()
+  if (!result.ok) throw new Error(result.error)
+  return result.value
 })
 
 ipcMain.handle('dialog:open', async () => {
@@ -128,8 +155,8 @@ ipcMain.handle('dialog:save', async (_e, defaultPath?: string) => {
 
 // ── App lifecycle ──────────────────────────────────────────────────────────
 
-app.whenReady().then(() => {
-  startDaemon()
+app.whenReady().then(async () => {
+  await startDaemon()
   createWindow()
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow()

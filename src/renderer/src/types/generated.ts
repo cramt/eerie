@@ -1,6 +1,6 @@
 // ⚠️  AUTO-GENERATED — do not edit by hand.
 // Source of truth: eerie-core/src/  (Rust types with #[derive(Facet)])
-// Regenerate with: npm run codegen
+// Regenerate with: pnpm codegen
 //
 // All types here have an exact Rust counterpart. When you change a Rust
 // type, re-run codegen and commit the updated generated.ts alongside it.
