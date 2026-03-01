@@ -34,6 +34,7 @@ pub struct PinDef {
 }
 
 #[derive(Facet, Debug, Clone, Default)]
+#[repr(u8)]
 #[facet(rename_all = "snake_case")]
 pub enum PinDirection {
     #[default]
@@ -44,6 +45,7 @@ pub enum PinDirection {
 }
 
 #[derive(Facet, Debug, Clone, Default)]
+#[repr(u8)]
 #[facet(rename_all = "snake_case")]
 pub enum PinType {
     #[default]
@@ -105,6 +107,7 @@ pub struct GraphicsElement {
 }
 
 #[derive(Facet, Debug, Clone, Copy)]
+#[repr(u8)]
 #[facet(rename_all = "snake_case")]
 pub enum GraphicsElementKind {
     Line,
@@ -116,6 +119,7 @@ pub enum GraphicsElementKind {
 }
 
 #[derive(Facet, Debug, Clone, Copy, Default)]
+#[repr(u8)]
 #[facet(rename_all = "snake_case")]
 pub enum TextAnchor {
     #[default]
@@ -142,6 +146,7 @@ pub struct PropertyDef {
 /// Default value for a property definition.
 /// Uses PascalCase tagging: `{ Float: 1000.0 }`, `{ String: "hello" }`.
 #[derive(Facet, Debug, Clone)]
+#[repr(C)]
 pub enum DefaultValue {
     Float(f64),
     Int(i64),
@@ -150,6 +155,7 @@ pub enum DefaultValue {
 }
 
 #[derive(Facet, Debug, Clone)]
+#[repr(u8)]
 #[facet(rename_all = "snake_case")]
 pub enum PropertyType {
     Float,
@@ -167,6 +173,7 @@ pub struct SimModel {
 }
 
 #[derive(Facet, Debug, Clone)]
+#[repr(u8)]
 #[facet(rename_all = "snake_case")]
 pub enum SimModelType {
     SpicePrimitive,
@@ -188,6 +195,7 @@ pub struct EmbeddedDef {
 }
 
 #[derive(Facet, Debug, Clone)]
+#[repr(u8)]
 #[facet(rename_all = "snake_case")]
 pub enum EmbeddedPlatform {
     Avr,

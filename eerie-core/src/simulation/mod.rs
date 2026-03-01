@@ -15,6 +15,7 @@ pub struct SimulationResult {
 }
 
 #[derive(Facet, Debug, Clone)]
+#[repr(C)]
 pub enum AnalysisType {
     Dc,
     Ac { frequency_hz: f64 },

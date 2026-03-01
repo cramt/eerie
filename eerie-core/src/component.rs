@@ -57,6 +57,7 @@ pub struct Position {
 /// In YAML: `resistance: { Float: 1000.0 }` or `name: { String: "R1" }`.
 /// In TypeScript (generated): `PropertyValue = { Float: number } | { Int: number } | ...`
 #[derive(Facet, Debug, Clone)]
+#[repr(C)]
 pub enum PropertyValue {
     Float(f64),
     Int(i64),
