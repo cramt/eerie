@@ -8,34 +8,72 @@ use codegen::{model_to_component, subckt_to_component};
 use std::collections::HashSet;
 use std::path::{Path, PathBuf};
 
+const SPICE_EXTENSIONS: &[&str] = &["lib", "LIB", "sub", "SUB", "mod", "MOD", "sp", "SP"];
+
 #[derive(ClapParser, Debug)]
 #[command(
     name = "eerie-spice-import",
-    about = "Import SPICE .lib/.sub/.mod files → component YAML definitions"
+    about = "Import SPICE .lib/.sub/.mod files (or directories) → component YAML definitions"
 )]
 struct Args {
     /// Output directory for generated YAML files (e.g. components/)
     #[arg(short, long, default_value = "components")]
     output: PathBuf,
 
-    /// SPICE library files to import
+    /// SPICE library files or directories to import (directories are scanned recursively)
     #[arg(required = true)]
-    files: Vec<PathBuf>,
+    paths: Vec<PathBuf>,
 
     /// Only print what would be written, don't write files
     #[arg(long)]
     dry_run: bool,
 }
 
+fn collect_files(path: &Path, out: &mut Vec<PathBuf>) {
+    if path.is_file() {
+        if let Some(ext) = path.extension().and_then(|e| e.to_str()) {
+            if SPICE_EXTENSIONS.contains(&ext) {
+                out.push(path.to_path_buf());
+            }
+        }
+    } else if path.is_dir() {
+        let entries = match std::fs::read_dir(path) {
+            Ok(e) => e,
+            Err(err) => {
+                eprintln!("warning: cannot read dir {}: {}", path.display(), err);
+                return;
+            }
+        };
+        let mut children: Vec<PathBuf> = entries
+            .filter_map(|e| e.ok().map(|e| e.path()))
+            .collect();
+        children.sort();
+        for child in children {
+            collect_files(&child, out);
+        }
+    }
+}
+
 fn main() -> Result<()> {
     env_logger::init();
     let args = Args::parse();
+
+    // Expand directories → sorted list of SPICE files
+    let mut files: Vec<PathBuf> = Vec::new();
+    for path in &args.paths {
+        collect_files(path, &mut files);
+    }
+
+    if files.is_empty() {
+        eprintln!("No SPICE files found in the given paths.");
+        return Ok(());
+    }
 
     let mut written = 0usize;
     let mut skipped = 0usize;
     let mut seen_ids: HashSet<String> = HashSet::new();
 
-    for path in &args.files {
+    for path in &files {
         let bytes = std::fs::read(path)
             .with_context(|| format!("reading {}", path.display()))?;
         let source = String::from_utf8_lossy(&bytes).into_owned();
