@@ -108,7 +108,7 @@ fn continuation_folds_into_previous_line() {
 #[test]
 fn inline_dollar_comment_stripped() {
     let n = parse("T\nR1 a b 4.7k $ bypass\n.end");
-    if let ElementKind::R { value, .. } = &n.elements().next().unwrap().kind {
+    if let ElementKind::Resistor { value, .. } = &n.elements().next().unwrap().kind {
         assert_num(value, 4700.0);
     }
 }
@@ -116,7 +116,7 @@ fn inline_dollar_comment_stripped() {
 #[test]
 fn inline_semicolon_comment_stripped() {
     let n = parse("T\nC1 a b 100n ; decoupling\n.end");
-    if let ElementKind::C { value, .. } = &n.elements().next().unwrap().kind {
+    if let ElementKind::Capacitor { value, .. } = &n.elements().next().unwrap().kind {
         assert_num(value, 100e-9);
     }
 }
@@ -125,7 +125,7 @@ fn inline_semicolon_comment_stripped() {
 fn dollar_inside_pulse_parens_not_stripped() {
     // Ensure inline comment detection doesn't fire inside parentheses
     let n = parse("T\nV1 a 0 PULSE(0 1 1n 1n 1n 5n 10n)\n.end");
-    if let ElementKind::V { source, .. } = &n.elements().next().unwrap().kind {
+    if let ElementKind::VoltageSource { source, .. } = &n.elements().next().unwrap().kind {
         assert!(matches!(source.waveform, Some(Waveform::Pulse { .. })));
     }
 }
@@ -154,17 +154,17 @@ fn r_c_l_parsed() {
     let elems: Vec<_> = n.elements().collect();
     assert_eq!(elems.len(), 3);
 
-    if let ElementKind::R { pos, neg, value, params } = &elems[0].kind {
+    if let ElementKind::Resistor { pos, neg, value, params } = &elems[0].kind {
         assert_eq!(pos, "a"); assert_eq!(neg, "b");
         assert_num(value, 1e3);
         assert!(params.is_empty());
     } else { panic!() }
 
-    if let ElementKind::C { value, .. } = &elems[1].kind {
+    if let ElementKind::Capacitor { value, .. } = &elems[1].kind {
         assert_num(value, 100e-9);
     } else { panic!() }
 
-    if let ElementKind::L { value, .. } = &elems[2].kind {
+    if let ElementKind::Inductor { value, .. } = &elems[2].kind {
         assert_num(value, 1e-6);
     } else { panic!() }
 }
@@ -172,7 +172,7 @@ fn r_c_l_parsed() {
 #[test]
 fn r_with_params() {
     let n = parse("T\nR1 a b 1k TC1=0.001 TC2=5e-6\n.end");
-    if let ElementKind::R { params, .. } = &n.elements().next().unwrap().kind {
+    if let ElementKind::Resistor { params, .. } = &n.elements().next().unwrap().kind {
         assert_eq!(params.len(), 2);
         assert_eq!(params[0].name, "TC1");
         assert_eq!(params[1].name, "TC2");
@@ -182,7 +182,7 @@ fn r_with_params() {
 #[test]
 fn c_with_ic() {
     let n = parse("T\nC1 a b 1u IC=2.5\n.end");
-    if let ElementKind::C { params, .. } = &n.elements().next().unwrap().kind {
+    if let ElementKind::Capacitor { params, .. } = &n.elements().next().unwrap().kind {
         assert_eq!(params.len(), 1);
         assert_eq!(params[0].name, "IC");
         assert_num(&params[0].value, 2.5);
@@ -197,7 +197,7 @@ fn c_with_ic() {
 fn v_dc_bare_value() {
     // No "DC" keyword — bare numeric is DC
     let n = parse("T\nV1 vcc 0 5\n.end");
-    if let ElementKind::V { source, .. } = &n.elements().next().unwrap().kind {
+    if let ElementKind::VoltageSource { source, .. } = &n.elements().next().unwrap().kind {
         assert_num(source.dc.as_ref().unwrap(), 5.0);
         assert!(source.ac.is_none());
         assert!(source.waveform.is_none());
@@ -207,7 +207,7 @@ fn v_dc_bare_value() {
 #[test]
 fn v_dc_keyword() {
     let n = parse("T\nV1 vcc 0 DC 3.3\n.end");
-    if let ElementKind::V { source, .. } = &n.elements().next().unwrap().kind {
+    if let ElementKind::VoltageSource { source, .. } = &n.elements().next().unwrap().kind {
         assert_num(source.dc.as_ref().unwrap(), 3.3);
     }
 }
@@ -215,7 +215,7 @@ fn v_dc_keyword() {
 #[test]
 fn v_ac_only() {
     let n = parse("T\nV1 a 0 AC 1\n.end");
-    if let ElementKind::V { source, .. } = &n.elements().next().unwrap().kind {
+    if let ElementKind::VoltageSource { source, .. } = &n.elements().next().unwrap().kind {
         assert!(source.dc.is_none());
         let ac = source.ac.as_ref().unwrap();
         assert_num(&ac.mag, 1.0);
@@ -226,7 +226,7 @@ fn v_ac_only() {
 #[test]
 fn v_ac_with_phase() {
     let n = parse("T\nV1 a 0 AC 1 90\n.end");
-    if let ElementKind::V { source, .. } = &n.elements().next().unwrap().kind {
+    if let ElementKind::VoltageSource { source, .. } = &n.elements().next().unwrap().kind {
         let ac = source.ac.as_ref().unwrap();
         assert_num(&ac.mag, 1.0);
         assert_num(ac.phase.as_ref().unwrap(), 90.0);
@@ -236,7 +236,7 @@ fn v_ac_with_phase() {
 #[test]
 fn v_dc_and_ac() {
     let n = parse("T\nV1 a 0 DC 0 AC 1 0\n.end");
-    if let ElementKind::V { source, .. } = &n.elements().next().unwrap().kind {
+    if let ElementKind::VoltageSource { source, .. } = &n.elements().next().unwrap().kind {
         assert!(source.dc.is_some());
         assert!(source.ac.is_some());
         assert!(source.waveform.is_none());
@@ -246,7 +246,7 @@ fn v_dc_and_ac() {
 #[test]
 fn i_source() {
     let n = parse("T\nI1 a b DC 2m\n.end");
-    if let ElementKind::I { source, .. } = &n.elements().next().unwrap().kind {
+    if let ElementKind::CurrentSource { source, .. } = &n.elements().next().unwrap().kind {
         assert_num(source.dc.as_ref().unwrap(), 2e-3);
     }
 }
@@ -258,7 +258,7 @@ fn i_source() {
 #[test]
 fn waveform_pulse_all_args() {
     let n = parse("T\nV1 a 0 PULSE(0 5 1n 2n 3n 10n 20n)\n.end");
-    if let ElementKind::V { source, .. } = &n.elements().next().unwrap().kind {
+    if let ElementKind::VoltageSource { source, .. } = &n.elements().next().unwrap().kind {
         if let Some(Waveform::Pulse { v1, v2, td, tr, tf, pw, per }) = &source.waveform {
             assert_num(v1, 0.0);
             assert_num(v2, 5.0);
@@ -274,7 +274,7 @@ fn waveform_pulse_all_args() {
 #[test]
 fn waveform_pulse_minimal() {
     let n = parse("T\nV1 a 0 PULSE(0 1)\n.end");
-    if let ElementKind::V { source, .. } = &n.elements().next().unwrap().kind {
+    if let ElementKind::VoltageSource { source, .. } = &n.elements().next().unwrap().kind {
         if let Some(Waveform::Pulse { v1, v2, td, .. }) = &source.waveform {
             assert_num(v1, 0.0);
             assert_num(v2, 1.0);
@@ -286,7 +286,7 @@ fn waveform_pulse_minimal() {
 #[test]
 fn waveform_sin() {
     let n = parse("T\nV1 a 0 SIN(0 5 1k 0 0 0)\n.end");
-    if let ElementKind::V { source, .. } = &n.elements().next().unwrap().kind {
+    if let ElementKind::VoltageSource { source, .. } = &n.elements().next().unwrap().kind {
         if let Some(Waveform::Sin { v0, va, freq, .. }) = &source.waveform {
             assert_num(v0, 0.0);
             assert_num(va, 5.0);
@@ -298,7 +298,7 @@ fn waveform_sin() {
 #[test]
 fn waveform_exp() {
     let n = parse("T\nV1 a 0 EXP(0 5 1n 10n 50n 100n)\n.end");
-    if let ElementKind::V { source, .. } = &n.elements().next().unwrap().kind {
+    if let ElementKind::VoltageSource { source, .. } = &n.elements().next().unwrap().kind {
         assert!(matches!(source.waveform, Some(Waveform::Exp { .. })));
     }
 }
@@ -306,7 +306,7 @@ fn waveform_exp() {
 #[test]
 fn waveform_pwl() {
     let n = parse("T\nV1 a 0 PWL(0 0 1n 5 2n 5 3n 0)\n.end");
-    if let ElementKind::V { source, .. } = &n.elements().next().unwrap().kind {
+    if let ElementKind::VoltageSource { source, .. } = &n.elements().next().unwrap().kind {
         if let Some(Waveform::Pwl(pts)) = &source.waveform {
             assert_eq!(pts.len(), 4);
             assert_num(&pts[0].time, 0.0);
@@ -320,7 +320,7 @@ fn waveform_pwl() {
 #[test]
 fn waveform_sffm() {
     let n = parse("T\nV1 a 0 SFFM(0 1 1k 100)\n.end");
-    if let ElementKind::V { source, .. } = &n.elements().next().unwrap().kind {
+    if let ElementKind::VoltageSource { source, .. } = &n.elements().next().unwrap().kind {
         if let Some(Waveform::Sffm { v0, va, fc, fs, md }) = &source.waveform {
             assert_num(v0, 0.0);
             assert_num(va, 1.0);
@@ -334,7 +334,7 @@ fn waveform_sffm() {
 #[test]
 fn waveform_am() {
     let n = parse("T\nV1 a 0 AM(1 0 10k 1k)\n.end");
-    if let ElementKind::V { source, .. } = &n.elements().next().unwrap().kind {
+    if let ElementKind::VoltageSource { source, .. } = &n.elements().next().unwrap().kind {
         if let Some(Waveform::Am { va, vo, fc, fs, td }) = &source.waveform {
             assert_num(va, 1.0);
             assert_num(vo, 0.0);
@@ -352,7 +352,7 @@ fn waveform_am() {
 #[test]
 fn diode() {
     let n = parse("T\nD1 anode cathode 1N4148\n.end");
-    if let ElementKind::D { anode, cathode, model, params } = &n.elements().next().unwrap().kind {
+    if let ElementKind::Diode { anode, cathode, model, params } = &n.elements().next().unwrap().kind {
         assert_eq!(anode, "anode");
         assert_eq!(cathode, "cathode");
         assert_eq!(model, "1N4148");
@@ -363,7 +363,7 @@ fn diode() {
 #[test]
 fn bjt_npn_no_substrate() {
     let n = parse("T\nQ1 c b e BC547\n.end");
-    if let ElementKind::Q { c, b, e, substrate, model, .. } = &n.elements().next().unwrap().kind {
+    if let ElementKind::Bjt { c, b, e, substrate, model, .. } = &n.elements().next().unwrap().kind {
         assert_eq!(c, "c"); assert_eq!(b, "b"); assert_eq!(e, "e");
         assert!(substrate.is_none());
         assert_eq!(model, "BC547");
@@ -373,7 +373,7 @@ fn bjt_npn_no_substrate() {
 #[test]
 fn bjt_with_substrate() {
     let n = parse("T\nQ1 c b e sub BC547\n.end");
-    if let ElementKind::Q { substrate, model, .. } = &n.elements().next().unwrap().kind {
+    if let ElementKind::Bjt { substrate, model, .. } = &n.elements().next().unwrap().kind {
         assert_eq!(substrate.as_deref(), Some("sub"));
         assert_eq!(model, "BC547");
     } else { panic!() }
@@ -382,7 +382,7 @@ fn bjt_with_substrate() {
 #[test]
 fn mosfet_with_params() {
     let n = parse("T\nM1 drain gate source bulk NMOD W=10u L=180n\n.end");
-    if let ElementKind::M { d, g, s, bulk, model, params } = &n.elements().next().unwrap().kind {
+    if let ElementKind::Mosfet { d, g, s, bulk, model, params } = &n.elements().next().unwrap().kind {
         assert_eq!(d, "drain"); assert_eq!(g, "gate"); assert_eq!(s, "source");
         assert_eq!(bulk, "bulk"); assert_eq!(model, "NMOD");
         assert_eq!(params.len(), 2);
@@ -396,7 +396,7 @@ fn mosfet_with_params() {
 #[test]
 fn jfet() {
     let n = parse("T\nJ1 d g s J2N3819\n.end");
-    if let ElementKind::J { d, g, s, model, params } = &n.elements().next().unwrap().kind {
+    if let ElementKind::Jfet { d, g, s, model, params } = &n.elements().next().unwrap().kind {
         assert_eq!(d, "d"); assert_eq!(g, "g"); assert_eq!(s, "s");
         assert_eq!(model, "J2N3819");
         assert!(params.is_empty());
@@ -410,7 +410,7 @@ fn jfet() {
 #[test]
 fn vcvs_e() {
     let n = parse("T\nE1 out+ out- in+ in- 100\n.end");
-    if let ElementKind::E { out_pos, out_neg, in_pos, in_neg, gain } = &n.elements().next().unwrap().kind {
+    if let ElementKind::Vcvs { out_pos, out_neg, in_pos, in_neg, gain } = &n.elements().next().unwrap().kind {
         assert_eq!(out_pos, "out+"); assert_eq!(out_neg, "out-");
         assert_eq!(in_pos, "in+"); assert_eq!(in_neg, "in-");
         assert_num(gain, 100.0);
@@ -420,7 +420,7 @@ fn vcvs_e() {
 #[test]
 fn cccs_f() {
     let n = parse("T\nF1 out+ out- Vsense 10\n.end");
-    if let ElementKind::F { vsrc, gain, .. } = &n.elements().next().unwrap().kind {
+    if let ElementKind::Cccs { vsrc, gain, .. } = &n.elements().next().unwrap().kind {
         assert_eq!(vsrc, "Vsense");
         assert_num(gain, 10.0);
     } else { panic!() }
@@ -429,7 +429,7 @@ fn cccs_f() {
 #[test]
 fn vccs_g() {
     let n = parse("T\nG1 o+ o- i+ i- 0.02\n.end");
-    if let ElementKind::G { gm, .. } = &n.elements().next().unwrap().kind {
+    if let ElementKind::Vccs { gm, .. } = &n.elements().next().unwrap().kind {
         assert_num(gm, 0.02);
     } else { panic!() }
 }
@@ -437,7 +437,7 @@ fn vccs_g() {
 #[test]
 fn ccvs_h() {
     let n = parse("T\nH1 o+ o- Vcs 1k\n.end");
-    if let ElementKind::H { vsrc, rm, .. } = &n.elements().next().unwrap().kind {
+    if let ElementKind::Ccvs { vsrc, rm, .. } = &n.elements().next().unwrap().kind {
         assert_eq!(vsrc, "Vcs");
         assert_num(rm, 1e3);
     } else { panic!() }
@@ -446,7 +446,7 @@ fn ccvs_h() {
 #[test]
 fn mutual_inductance_k() {
     let n = parse("T\nK1 L1 L2 0.99\n.end");
-    if let ElementKind::K { l1, l2, coupling } = &n.elements().next().unwrap().kind {
+    if let ElementKind::MutualCoupling { l1, l2, coupling } = &n.elements().next().unwrap().kind {
         assert_eq!(l1, "L1"); assert_eq!(l2, "L2");
         assert_num(coupling, 0.99);
     } else { panic!() }
@@ -455,7 +455,7 @@ fn mutual_inductance_k() {
 #[test]
 fn behavioural_source_b() {
     let n = parse("T\nB1 out 0 V={sin(2*pi*1k*time)}\n.end");
-    if let ElementKind::B { pos, neg, spec } = &n.elements().next().unwrap().kind {
+    if let ElementKind::BehavioralSource { pos, neg, spec } = &n.elements().next().unwrap().kind {
         assert_eq!(pos, "out"); assert_eq!(neg, "0");
         assert!(spec.starts_with("V="));
     } else { panic!() }
@@ -468,7 +468,7 @@ fn behavioural_source_b() {
 #[test]
 fn x_basic() {
     let n = parse("T\nX1 in out gnd OPAMP\n.end");
-    if let ElementKind::X { ports, subckt, params } = &n.elements().next().unwrap().kind {
+    if let ElementKind::SubcktCall { ports, subckt, params } = &n.elements().next().unwrap().kind {
         assert_eq!(subckt, "OPAMP");
         assert_eq!(ports, &["in", "out", "gnd"]);
         assert!(params.is_empty());
@@ -478,7 +478,7 @@ fn x_basic() {
 #[test]
 fn x_with_params_keyword() {
     let n = parse("T\nX1 a b FILTER PARAMS: fc=1k Q=0.707\n.end");
-    if let ElementKind::X { subckt, params, .. } = &n.elements().next().unwrap().kind {
+    if let ElementKind::SubcktCall { subckt, params, .. } = &n.elements().next().unwrap().kind {
         assert_eq!(subckt, "FILTER");
         assert_eq!(params.len(), 2);
         assert_eq!(params[0].name, "fc");
@@ -491,7 +491,7 @@ fn x_with_params_keyword() {
 fn x_with_inline_params() {
     // No PARAMS: keyword — key=val tokens recognised directly
     let n = parse("T\nX1 in out MYMOD gain=10 offset=0.5\n.end");
-    if let ElementKind::X { subckt, params, .. } = &n.elements().next().unwrap().kind {
+    if let ElementKind::SubcktCall { subckt, params, .. } = &n.elements().next().unwrap().kind {
         assert_eq!(subckt, "MYMOD");
         assert_eq!(params.len(), 2);
     } else { panic!() }
@@ -749,7 +749,7 @@ fn dot_save() {
 #[test]
 fn param_expr_in_element() {
     let n = parse("T\nR1 a b Rval\n.end");
-    if let ElementKind::R { value, .. } = &n.elements().next().unwrap().kind {
+    if let ElementKind::Resistor { value, .. } = &n.elements().next().unwrap().kind {
         assert!(matches!(value, Expr::Param(s) if s == "Rval"));
     }
 }
@@ -757,7 +757,7 @@ fn param_expr_in_element() {
 #[test]
 fn brace_expr_in_element() {
     let n = parse("T\nR1 a b {2*Rval}\n.end");
-    if let ElementKind::R { value, .. } = &n.elements().next().unwrap().kind {
+    if let ElementKind::Resistor { value, .. } = &n.elements().next().unwrap().kind {
         assert!(matches!(value, Expr::Brace(s) if s == "2*Rval"));
     }
 }
@@ -779,7 +779,7 @@ fn roundtrip_rc_transient() {
     let src = "RC step\nV1 in 0 PULSE(0 5 0 1n 1n 5n 10n)\nR1 in out 1k\nC1 out 0 100n\n.tran 0.1n 50n\n.end";
     let (_n1, n2) = roundtrip(src);
     // Pulse waveform survives round-trip
-    if let ElementKind::V { source, .. } = &n2.elements().next().unwrap().kind {
+    if let ElementKind::VoltageSource { source, .. } = &n2.elements().next().unwrap().kind {
         assert!(matches!(source.waveform, Some(Waveform::Pulse { .. })));
     }
 }
@@ -802,7 +802,7 @@ fn roundtrip_subckt_definition() {
 fn roundtrip_pwl_source() {
     let src = "PWL test\nV1 a 0 PWL(0 0 1n 5 2n 5 3n 0)\n.tran 0.1n 4n\n.end";
     let (_n1, n2) = roundtrip(src);
-    if let ElementKind::V { source, .. } = &n2.elements().next().unwrap().kind {
+    if let ElementKind::VoltageSource { source, .. } = &n2.elements().next().unwrap().kind {
         if let Some(Waveform::Pwl(pts)) = &source.waveform {
             assert_eq!(pts.len(), 4);
         } else { panic!() }

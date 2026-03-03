@@ -446,29 +446,29 @@ fn parse_element(lineno: usize, line: &str) -> Result<Element, ParseError> {
                 .filter_map(|t| parse_kv(t))
                 .collect();
             match letter {
-                'R' => ElementKind::R { pos, neg, value, params },
-                'C' => ElementKind::C { pos, neg, value, params },
-                _   => ElementKind::L { pos, neg, value, params },
+                'R' => ElementKind::Resistor { pos, neg, value, params },
+                'C' => ElementKind::Capacitor { pos, neg, value, params },
+                _   => ElementKind::Inductor { pos, neg, value, params },
             }
         }
         'V' => {
             let pos = need!(0, "n+").to_string();
             let neg = need!(1, "n-").to_string();
             let source = parse_source(&rest[2..].to_vec());
-            ElementKind::V { pos, neg, source }
+            ElementKind::VoltageSource { pos, neg, source }
         }
         'I' => {
             let pos = need!(0, "n+").to_string();
             let neg = need!(1, "n-").to_string();
             let source = parse_source(&rest[2..].to_vec());
-            ElementKind::I { pos, neg, source }
+            ElementKind::CurrentSource { pos, neg, source }
         }
         'D' => {
             let anode = need!(0, "anode").to_string();
             let cathode = need!(1, "cathode").to_string();
             let model = need!(2, "model").to_string();
             let params: Vec<_> = rest[3..].iter().filter_map(|t| parse_kv(t)).collect();
-            ElementKind::D { anode, cathode, model, params }
+            ElementKind::Diode { anode, cathode, model, params }
         }
         'Q' => {
             // Q c b e [substrate] model [params]
@@ -490,7 +490,7 @@ fn parse_element(lineno: usize, line: &str) -> Result<Element, ParseError> {
                 (None, positional.first().map(|s| s.to_string())
                     .ok_or_else(|| syntax(lineno, "Q: missing model"))?)
             };
-            ElementKind::Q { c, b: b_node, e, substrate, model, params }
+            ElementKind::Bjt { c, b: b_node, e, substrate, model, params }
         }
         'M' => {
             let d = need!(0, "drain").to_string();
@@ -499,7 +499,7 @@ fn parse_element(lineno: usize, line: &str) -> Result<Element, ParseError> {
             let bulk = need!(3, "bulk").to_string();
             let model = need!(4, "model").to_string();
             let params: Vec<_> = rest[5..].iter().filter_map(|t| parse_kv(t)).collect();
-            ElementKind::M { d, g, s, bulk, model, params }
+            ElementKind::Mosfet { d, g, s, bulk, model, params }
         }
         'J' => {
             let d = need!(0, "drain").to_string();
@@ -507,13 +507,13 @@ fn parse_element(lineno: usize, line: &str) -> Result<Element, ParseError> {
             let s = need!(2, "source").to_string();
             let model = need!(3, "model").to_string();
             let params: Vec<_> = rest[4..].iter().filter_map(|t| parse_kv(t)).collect();
-            ElementKind::J { d, g, s, model, params }
+            ElementKind::Jfet { d, g, s, model, params }
         }
         'K' => {
             let l1 = need!(0, "L1").to_string();
             let l2 = need!(1, "L2").to_string();
             let coupling = parse_expr(need!(2, "coupling"));
-            ElementKind::K { l1, l2, coupling }
+            ElementKind::MutualCoupling { l1, l2, coupling }
         }
         'E' => {
             let out_pos = need!(0, "out+").to_string();
@@ -521,14 +521,14 @@ fn parse_element(lineno: usize, line: &str) -> Result<Element, ParseError> {
             let in_pos  = need!(2, "in+").to_string();
             let in_neg  = need!(3, "in-").to_string();
             let gain    = parse_expr(need!(4, "gain"));
-            ElementKind::E { out_pos, out_neg, in_pos, in_neg, gain }
+            ElementKind::Vcvs { out_pos, out_neg, in_pos, in_neg, gain }
         }
         'F' => {
             let out_pos = need!(0, "out+").to_string();
             let out_neg = need!(1, "out-").to_string();
             let vsrc    = need!(2, "vsrc").to_string();
             let gain    = parse_expr(need!(3, "gain"));
-            ElementKind::F { out_pos, out_neg, vsrc, gain }
+            ElementKind::Cccs { out_pos, out_neg, vsrc, gain }
         }
         'G' => {
             let out_pos = need!(0, "out+").to_string();
@@ -536,21 +536,21 @@ fn parse_element(lineno: usize, line: &str) -> Result<Element, ParseError> {
             let in_pos  = need!(2, "in+").to_string();
             let in_neg  = need!(3, "in-").to_string();
             let gm      = parse_expr(need!(4, "gm"));
-            ElementKind::G { out_pos, out_neg, in_pos, in_neg, gm }
+            ElementKind::Vccs { out_pos, out_neg, in_pos, in_neg, gm }
         }
         'H' => {
             let out_pos = need!(0, "out+").to_string();
             let out_neg = need!(1, "out-").to_string();
             let vsrc    = need!(2, "vsrc").to_string();
             let rm      = parse_expr(need!(3, "transresistance"));
-            ElementKind::H { out_pos, out_neg, vsrc, rm }
+            ElementKind::Ccvs { out_pos, out_neg, vsrc, rm }
         }
         'B' => {
             let pos = need!(0, "n+").to_string();
             let neg = need!(1, "n-").to_string();
             // Rest is the V= or I= expression, preserve verbatim
             let spec = rest[2..].join(" ");
-            ElementKind::B { pos, neg, spec }
+            ElementKind::BehavioralSource { pos, neg, spec }
         }
         'X' => {
             // Xname port... subckt_name [PARAMS: key=val ...]
@@ -569,7 +569,7 @@ fn parse_element(lineno: usize, line: &str) -> Result<Element, ParseError> {
             let subckt = positional.last().unwrap().clone();
             let ports = positional[..positional.len() - 1].to_vec();
             let params = collect_params(rest);
-            ElementKind::X { ports, subckt, params }
+            ElementKind::SubcktCall { ports, subckt, params }
         }
         _ => {
             // Unknown element — store everything after the name verbatim
@@ -854,7 +854,7 @@ mod tests {
     fn inline_comment_stripped() {
         let n = parse_ok("Title\nR1 a b 1k $ this is a comment\n.end");
         let e = n.elements().next().unwrap();
-        if let ElementKind::R { value, .. } = &e.kind {
+        if let ElementKind::Resistor { value, .. } = &e.kind {
             assert_abs_diff_eq!(match value { crate::Expr::Num(v) => *v, _ => panic!() }, 1e3);
         }
     }
@@ -864,7 +864,7 @@ mod tests {
         // The $ inside PULSE(...) must NOT be treated as a comment delimiter
         let n = parse_ok("Title\nV1 a 0 PULSE(0 1 1n 1n 1n 5n 10n)\n.end");
         let e = n.elements().next().unwrap();
-        assert!(matches!(&e.kind, ElementKind::V { source: crate::Source { waveform: Some(_), .. }, .. }));
+        assert!(matches!(&e.kind, ElementKind::VoltageSource { source: crate::Source { waveform: Some(_), .. }, .. }));
     }
 
     #[test]
@@ -908,15 +908,15 @@ mod tests {
         let n = parse_ok("T\nR1 a b 1k\nC2 c d 100n\nL3 e f 1u\n.end");
         let elems: Vec<_> = n.elements().collect();
         assert_eq!(elems.len(), 3);
-        assert!(matches!(&elems[0].kind, ElementKind::R { .. }));
-        assert!(matches!(&elems[1].kind, ElementKind::C { .. }));
-        assert!(matches!(&elems[2].kind, ElementKind::L { .. }));
+        assert!(matches!(&elems[0].kind, ElementKind::Resistor { .. }));
+        assert!(matches!(&elems[1].kind, ElementKind::Capacitor { .. }));
+        assert!(matches!(&elems[2].kind, ElementKind::Inductor { .. }));
     }
 
     #[test]
     fn voltage_source_dc() {
         let n = parse_ok("T\nV1 vcc 0 DC 5\n.end");
-        if let ElementKind::V { source, .. } = &n.elements().next().unwrap().kind {
+        if let ElementKind::VoltageSource { source, .. } = &n.elements().next().unwrap().kind {
             assert!(matches!(source.dc, Some(Expr::Num(_))));
         }
     }
@@ -924,7 +924,7 @@ mod tests {
     #[test]
     fn voltage_source_pulse() {
         let n = parse_ok("T\nV1 a 0 PULSE(0 5 0 1n 1n 5n 10n)\n.end");
-        if let ElementKind::V { source, .. } = &n.elements().next().unwrap().kind {
+        if let ElementKind::VoltageSource { source, .. } = &n.elements().next().unwrap().kind {
             assert!(matches!(source.waveform, Some(Waveform::Pulse { .. })));
         }
     }
@@ -932,7 +932,7 @@ mod tests {
     #[test]
     fn voltage_source_dc_and_ac() {
         let n = parse_ok("T\nV1 a 0 DC 0 AC 1 0\n.end");
-        if let ElementKind::V { source, .. } = &n.elements().next().unwrap().kind {
+        if let ElementKind::VoltageSource { source, .. } = &n.elements().next().unwrap().kind {
             assert!(source.dc.is_some());
             assert!(source.ac.is_some());
         }
@@ -941,7 +941,7 @@ mod tests {
     #[test]
     fn mosfet_with_params() {
         let n = parse_ok("T\nM1 d g s b NMOD W=10u L=1u\n.end");
-        if let ElementKind::M { model, params, .. } = &n.elements().next().unwrap().kind {
+        if let ElementKind::Mosfet { model, params, .. } = &n.elements().next().unwrap().kind {
             assert_eq!(model, "NMOD");
             assert_eq!(params.len(), 2);
             assert_eq!(params[0].name, "W");
@@ -954,7 +954,7 @@ mod tests {
     #[test]
     fn subcircuit_call_x() {
         let n = parse_ok("T\nX1 in out gnd OPAMP gain=100\n.end");
-        if let ElementKind::X { ports, subckt, params } = &n.elements().next().unwrap().kind {
+        if let ElementKind::SubcktCall { ports, subckt, params } = &n.elements().next().unwrap().kind {
             assert_eq!(subckt, "OPAMP");
             assert_eq!(ports, &["in", "out", "gnd"]);
             assert_eq!(params.len(), 1);
@@ -967,7 +967,7 @@ mod tests {
     #[test]
     fn bjt_with_substrate() {
         let n = parse_ok("T\nQ1 c b e sub BC547\n.end");
-        if let ElementKind::Q { substrate, model, .. } = &n.elements().next().unwrap().kind {
+        if let ElementKind::Bjt { substrate, model, .. } = &n.elements().next().unwrap().kind {
             assert_eq!(substrate.as_deref(), Some("sub"));
             assert_eq!(model, "BC547");
         } else {
@@ -1087,7 +1087,7 @@ C1 out 0 100n
         let n = parse_ok(src);
         let out = n.to_string();
         let n2 = Netlist::parse(&out).unwrap();
-        if let ElementKind::V { source, .. } = &n2.elements().next().unwrap().kind {
+        if let ElementKind::VoltageSource { source, .. } = &n2.elements().next().unwrap().kind {
             assert!(matches!(source.waveform, Some(Waveform::Pulse { .. })));
         }
     }

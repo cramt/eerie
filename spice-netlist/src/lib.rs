@@ -331,19 +331,19 @@ pub struct Element {
 #[repr(C)]
 pub enum ElementKind {
     /// `Rname n+ n- value [params]`
-    R { pos: String, neg: String, value: Expr, params: Vec<Param> },
+    Resistor { pos: String, neg: String, value: Expr, params: Vec<Param> },
     /// `Cname n+ n- value [IC=val]`
-    C { pos: String, neg: String, value: Expr, params: Vec<Param> },
+    Capacitor { pos: String, neg: String, value: Expr, params: Vec<Param> },
     /// `Lname n+ n- value [IC=val]`
-    L { pos: String, neg: String, value: Expr, params: Vec<Param> },
+    Inductor { pos: String, neg: String, value: Expr, params: Vec<Param> },
     /// `Vname n+ n- source`
-    V { pos: String, neg: String, source: Source },
+    VoltageSource { pos: String, neg: String, source: Source },
     /// `Iname n+ n- source`
-    I { pos: String, neg: String, source: Source },
+    CurrentSource { pos: String, neg: String, source: Source },
     /// `Dname anode cathode model [params]`
-    D { anode: String, cathode: String, model: String, params: Vec<Param> },
+    Diode { anode: String, cathode: String, model: String, params: Vec<Param> },
     /// `Qname c b e [substrate] model [params]`
-    Q {
+    Bjt {
         c: String,
         b: String,
         e: String,
@@ -352,28 +352,28 @@ pub enum ElementKind {
         params: Vec<Param>,
     },
     /// `Mname d g s bulk model [params]`
-    M { d: String, g: String, s: String, bulk: String, model: String, params: Vec<Param> },
+    Mosfet { d: String, g: String, s: String, bulk: String, model: String, params: Vec<Param> },
     /// `Jname d g s model [params]`
-    J { d: String, g: String, s: String, model: String, params: Vec<Param> },
-    /// `Kname L1 L2 coupling`
-    K { l1: String, l2: String, coupling: Expr },
-    /// `Ename out+ out- in+ in- gain`  (VCVS)
-    E { out_pos: String, out_neg: String, in_pos: String, in_neg: String, gain: Expr },
-    /// `Fname out+ out- vsource gain`  (CCCS)
-    F { out_pos: String, out_neg: String, vsrc: String, gain: Expr },
-    /// `Gname out+ out- in+ in- gm`  (VCCS)
-    G { out_pos: String, out_neg: String, in_pos: String, in_neg: String, gm: Expr },
-    /// `Hname out+ out- vsource rm`  (CCVS)
-    H { out_pos: String, out_neg: String, vsrc: String, rm: Expr },
+    Jfet { d: String, g: String, s: String, model: String, params: Vec<Param> },
+    /// `Kname L1 L2 coupling`  (mutual inductance)
+    MutualCoupling { l1: String, l2: String, coupling: Expr },
+    /// `Ename out+ out- in+ in- gain`  (voltage-controlled voltage source)
+    Vcvs { out_pos: String, out_neg: String, in_pos: String, in_neg: String, gain: Expr },
+    /// `Fname out+ out- vsource gain`  (current-controlled current source)
+    Cccs { out_pos: String, out_neg: String, vsrc: String, gain: Expr },
+    /// `Gname out+ out- in+ in- gm`  (voltage-controlled current source)
+    Vccs { out_pos: String, out_neg: String, in_pos: String, in_neg: String, gm: Expr },
+    /// `Hname out+ out- vsource rm`  (current-controlled voltage source)
+    Ccvs { out_pos: String, out_neg: String, vsrc: String, rm: Expr },
     /// `Bname n+ n- V={expr}` or `I={expr}`  (behavioural source)
-    B {
+    BehavioralSource {
         pos: String,
         neg: String,
         /// `"V={expr}"` or `"I={expr}"`
         spec: String,
     },
     /// `Xname port... subckt [PARAMS: key=val...]`
-    X { ports: Vec<String>, subckt: String, params: Vec<Param> },
+    SubcktCall { ports: Vec<String>, subckt: String, params: Vec<Param> },
     /// Any element type not explicitly handled — stored verbatim after name.
     Raw(String),
 }
@@ -388,29 +388,29 @@ fn write_params(f: &mut fmt::Formatter<'_>, params: &[Param]) -> fmt::Result {
 impl fmt::Display for Element {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match &self.kind {
-            ElementKind::R { pos, neg, value, params } => {
+            ElementKind::Resistor { pos, neg, value, params } => {
                 write!(f, "{} {pos} {neg} {value}", self.name)?;
                 write_params(f, params)
             }
-            ElementKind::C { pos, neg, value, params } => {
+            ElementKind::Capacitor { pos, neg, value, params } => {
                 write!(f, "{} {pos} {neg} {value}", self.name)?;
                 write_params(f, params)
             }
-            ElementKind::L { pos, neg, value, params } => {
+            ElementKind::Inductor { pos, neg, value, params } => {
                 write!(f, "{} {pos} {neg} {value}", self.name)?;
                 write_params(f, params)
             }
-            ElementKind::V { pos, neg, source } => {
+            ElementKind::VoltageSource { pos, neg, source } => {
                 write!(f, "{} {pos} {neg} {source}", self.name)
             }
-            ElementKind::I { pos, neg, source } => {
+            ElementKind::CurrentSource { pos, neg, source } => {
                 write!(f, "{} {pos} {neg} {source}", self.name)
             }
-            ElementKind::D { anode, cathode, model, params } => {
+            ElementKind::Diode { anode, cathode, model, params } => {
                 write!(f, "{} {anode} {cathode} {model}", self.name)?;
                 write_params(f, params)
             }
-            ElementKind::Q { c, b, e, substrate, model, params } => {
+            ElementKind::Bjt { c, b, e, substrate, model, params } => {
                 write!(f, "{} {c} {b} {e}", self.name)?;
                 if let Some(sub) = substrate {
                     write!(f, " {sub}")?;
@@ -418,33 +418,33 @@ impl fmt::Display for Element {
                 write!(f, " {model}")?;
                 write_params(f, params)
             }
-            ElementKind::M { d, g, s, bulk, model, params } => {
+            ElementKind::Mosfet { d, g, s, bulk, model, params } => {
                 write!(f, "{} {d} {g} {s} {bulk} {model}", self.name)?;
                 write_params(f, params)
             }
-            ElementKind::J { d, g, s, model, params } => {
+            ElementKind::Jfet { d, g, s, model, params } => {
                 write!(f, "{} {d} {g} {s} {model}", self.name)?;
                 write_params(f, params)
             }
-            ElementKind::K { l1, l2, coupling } => {
+            ElementKind::MutualCoupling { l1, l2, coupling } => {
                 write!(f, "{} {l1} {l2} {coupling}", self.name)
             }
-            ElementKind::E { out_pos, out_neg, in_pos, in_neg, gain } => {
+            ElementKind::Vcvs { out_pos, out_neg, in_pos, in_neg, gain } => {
                 write!(f, "{} {out_pos} {out_neg} {in_pos} {in_neg} {gain}", self.name)
             }
-            ElementKind::F { out_pos, out_neg, vsrc, gain } => {
+            ElementKind::Cccs { out_pos, out_neg, vsrc, gain } => {
                 write!(f, "{} {out_pos} {out_neg} {vsrc} {gain}", self.name)
             }
-            ElementKind::G { out_pos, out_neg, in_pos, in_neg, gm } => {
+            ElementKind::Vccs { out_pos, out_neg, in_pos, in_neg, gm } => {
                 write!(f, "{} {out_pos} {out_neg} {in_pos} {in_neg} {gm}", self.name)
             }
-            ElementKind::H { out_pos, out_neg, vsrc, rm } => {
+            ElementKind::Ccvs { out_pos, out_neg, vsrc, rm } => {
                 write!(f, "{} {out_pos} {out_neg} {vsrc} {rm}", self.name)
             }
-            ElementKind::B { pos, neg, spec } => {
+            ElementKind::BehavioralSource { pos, neg, spec } => {
                 write!(f, "{} {pos} {neg} {spec}", self.name)
             }
-            ElementKind::X { ports, subckt, params } => {
+            ElementKind::SubcktCall { ports, subckt, params } => {
                 write!(f, "{}", self.name)?;
                 for p in ports {
                     write!(f, " {p}")?;
@@ -819,7 +819,7 @@ mod tests {
     fn element_display_r() {
         let e = Element {
             name: "R1".into(),
-            kind: ElementKind::R {
+            kind: ElementKind::Resistor {
                 pos: "a".into(),
                 neg: "b".into(),
                 value: Expr::Num(1000.0),
@@ -833,7 +833,7 @@ mod tests {
     fn element_display_x() {
         let e = Element {
             name: "X1".into(),
-            kind: ElementKind::X {
+            kind: ElementKind::SubcktCall {
                 ports: vec!["in".into(), "out".into(), "gnd".into()],
                 subckt: "OPAMP".into(),
                 params: vec![Param { name: "gain".into(), value: Expr::Num(100.0) }],
@@ -849,7 +849,7 @@ mod tests {
             items: vec![
                 Item::Element(Element {
                     name: "V1".into(),
-                    kind: ElementKind::V {
+                    kind: ElementKind::VoltageSource {
                         pos: "vcc".into(),
                         neg: "0".into(),
                         source: Source { dc: Some(Expr::Num(5.0)), ..Default::default() },
