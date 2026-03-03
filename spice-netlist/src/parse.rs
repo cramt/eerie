@@ -22,8 +22,8 @@
 //! | `MIL`                     | 25.4 × 10⁻⁶ |
 
 use crate::{
-    AcVariation, Analysis, Element, ElementKind, Expr, Item, ModelDef, Netlist, Source, SubcktDef,
-    Waveform,
+    AcSpec, AcVariation, Analysis, DcSweep, Element, ElementKind, Expr, Item, ModelDef, Netlist,
+    Param, PwlPoint, Source, SubcktDef, Waveform,
 };
 
 // ---------------------------------------------------------------------------
@@ -235,17 +235,15 @@ fn parse_expr(tok: &str) -> Expr {
     Expr::Param(tok.to_string())
 }
 
-/// Split a `"key=value"` token into `(key, Expr)`.
-/// Also normalises the common `key = value` case if the tokens were already
-/// merged by the caller.
-fn parse_kv(tok: &str) -> Option<(String, Expr)> {
+/// Split a `"key=value"` token into a [`Param`].
+fn parse_kv(tok: &str) -> Option<Param> {
     let (k, v) = tok.split_once('=')?;
-    Some((k.trim().to_string(), parse_expr(v.trim())))
+    Some(Param { name: k.trim().to_string(), value: parse_expr(v.trim()) })
 }
 
 /// Collect parameters from tokens: any token containing `=` (or following a
 /// bare `PARAMS:` / `PARAM:` keyword) is treated as a key=value pair.
-fn collect_params(tokens: &[String]) -> Vec<(String, Expr)> {
+fn collect_params(tokens: &[String]) -> Vec<Param> {
     let mut params = Vec::new();
     let mut in_params = false;
     let mut i = 0;
@@ -272,7 +270,7 @@ fn collect_params(tokens: &[String]) -> Vec<(String, Expr)> {
                 i += 1;
                 &tokens[i][1..]
             };
-            params.push((key, parse_expr(val_tok)));
+            params.push(Param { name: key, value: parse_expr(val_tok) });
         }
         i += 1;
     }
@@ -333,10 +331,14 @@ fn parse_waveform(tok: &str) -> Option<Waveform> {
         })
     } else if let Some(inner) = find_inner("PWL(") {
         let nums: Vec<Expr> = inner.split_whitespace().map(parse_expr).collect();
-        let pairs = nums.chunks(2).filter_map(|c| {
-            if c.len() == 2 { Some((c[0].clone(), c[1].clone())) } else { None }
+        let points = nums.chunks(2).filter_map(|c| {
+            if c.len() == 2 {
+                Some(PwlPoint { time: c[0].clone(), value: c[1].clone() })
+            } else {
+                None
+            }
         }).collect();
-        Some(Waveform::Pwl(pairs))
+        Some(Waveform::Pwl(points))
     } else if let Some(args) = args_of("SFFM(") {
         let g = |i| args.get(i).cloned();
         Some(Waveform::Sffm {
@@ -390,7 +392,7 @@ fn parse_source(tokens: &[String]) -> Source {
                 } else {
                     None
                 };
-                src.ac = Some((mag, phase));
+                src.ac = Some(AcSpec { mag, phase });
             }
             _ => {
                 // Try as a waveform
@@ -438,7 +440,7 @@ fn parse_element(lineno: usize, line: &str) -> Result<Element, ParseError> {
             let pos = need!(0, "n+").to_string();
             let neg = need!(1, "n-").to_string();
             let value = parse_expr(need!(2, "value"));
-            let params: Vec<(String, Expr)> = rest[3..]
+            let params: Vec<Param> = rest[3..]
                 .iter()
                 .filter(|t| t.contains('='))
                 .filter_map(|t| parse_kv(t))
@@ -601,12 +603,12 @@ fn parse_dot(
             let stop  = parse_expr(tokens.get(3).map(|s| s.as_str()).unwrap_or("0"));
             let step  = parse_expr(tokens.get(4).map(|s| s.as_str()).unwrap_or("0"));
             let src2 = if tokens.len() > 8 {
-                Some((
-                    tokens[5].clone(),
-                    parse_expr(&tokens[6]),
-                    parse_expr(&tokens[7]),
-                    parse_expr(&tokens[8]),
-                ))
+                Some(DcSweep {
+                    src: tokens[5].clone(),
+                    start: parse_expr(&tokens[6]),
+                    stop: parse_expr(&tokens[7]),
+                    step: parse_expr(&tokens[8]),
+                })
             } else {
                 None
             };
@@ -942,8 +944,8 @@ mod tests {
         if let ElementKind::M { model, params, .. } = &n.elements().next().unwrap().kind {
             assert_eq!(model, "NMOD");
             assert_eq!(params.len(), 2);
-            assert_eq!(params[0].0, "W");
-            assert_eq!(params[1].0, "L");
+            assert_eq!(params[0].name, "W");
+            assert_eq!(params[1].name, "L");
         } else {
             panic!();
         }
@@ -956,7 +958,7 @@ mod tests {
             assert_eq!(subckt, "OPAMP");
             assert_eq!(ports, &["in", "out", "gnd"]);
             assert_eq!(params.len(), 1);
-            assert_eq!(params[0].0, "gain");
+            assert_eq!(params[0].name, "gain");
         } else {
             panic!();
         }
@@ -1048,7 +1050,7 @@ mod tests {
         let n = parse_ok("T\n.param Rval=1k Cval=100n\n.end");
         if let Item::Param(ps) = &n.items[0] {
             assert_eq!(ps.len(), 2);
-            assert_eq!(ps[0].0, "Rval");
+            assert_eq!(ps[0].name, "Rval");
         } else {
             panic!();
         }

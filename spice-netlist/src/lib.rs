@@ -22,6 +22,8 @@ pub mod parse;
 
 use std::fmt;
 
+use facet::Facet;
+
 pub use parse::ParseError;
 
 // ---------------------------------------------------------------------------
@@ -34,7 +36,8 @@ pub use parse::ParseError;
 /// - Numeric literals with optional SI suffix: `1k`, `2.5n`, `100Meg`
 /// - Parameter names: `Rval`, `myParam`
 /// - Brace expressions (ngspice): `{2*Rval + 100}`
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Facet)]
+#[repr(C)]
 pub enum Expr {
     /// Floating-point literal (SPICE SI suffixes already applied).
     Num(f64),
@@ -91,6 +94,67 @@ pub fn format_si(val: f64) -> String {
 }
 
 // ---------------------------------------------------------------------------
+// Named types replacing anonymous tuples
+// ---------------------------------------------------------------------------
+
+/// A `name=value` parameter assignment used throughout netlists.
+///
+/// Used in element parameter lists, `.model`, `.subckt PARAMS:`, `.param`,
+/// and `.options`.
+#[derive(Debug, Clone, Facet)]
+pub struct Param {
+    pub name: String,
+    pub value: Expr,
+}
+
+impl fmt::Display for Param {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{}={}", self.name, self.value)
+    }
+}
+
+/// AC specification for a voltage or current source: magnitude and optional
+/// phase in degrees.
+#[derive(Debug, Clone, Facet)]
+pub struct AcSpec {
+    pub mag: Expr,
+    /// Phase in degrees.  Defaults to 0 when absent.
+    pub phase: Option<Expr>,
+}
+
+impl fmt::Display for AcSpec {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "AC {}", self.mag)?;
+        if let Some(p) = &self.phase {
+            write!(f, " {p}")?;
+        }
+        Ok(())
+    }
+}
+
+/// A single time-value pair in a `PWL` waveform.
+#[derive(Debug, Clone, Facet)]
+pub struct PwlPoint {
+    pub time: Expr,
+    pub value: Expr,
+}
+
+/// The nested source for a double DC sweep (`src2` in `.dc`).
+#[derive(Debug, Clone, Facet)]
+pub struct DcSweep {
+    pub src: String,
+    pub start: Expr,
+    pub stop: Expr,
+    pub step: Expr,
+}
+
+impl fmt::Display for DcSweep {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{} {} {} {}", self.src, self.start, self.stop, self.step)
+    }
+}
+
+// ---------------------------------------------------------------------------
 // Source waveforms (V/I sources)
 // ---------------------------------------------------------------------------
 
@@ -98,16 +162,16 @@ pub fn format_si(val: f64) -> String {
 ///
 /// A source can have a DC component, an AC component for small-signal
 /// analysis, and a transient waveform — all independently optional.
-#[derive(Debug, Clone, Default)]
+#[derive(Debug, Clone, Default, Facet)]
 pub struct Source {
     pub dc: Option<Expr>,
-    /// `(magnitude, phase_degrees)` — phase defaults to 0.
-    pub ac: Option<(Expr, Option<Expr>)>,
+    pub ac: Option<AcSpec>,
     pub waveform: Option<Waveform>,
 }
 
 /// Transient waveform for V/I sources.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Facet)]
+#[repr(C)]
 pub enum Waveform {
     /// `PULSE(v1 v2 [td [tr [tf [pw [per]]]]])`
     Pulse {
@@ -137,8 +201,8 @@ pub enum Waveform {
         td2: Option<Expr>,
         tau2: Option<Expr>,
     },
-    /// `PWL(t1 v1 t2 v2 ...)`
-    Pwl(Vec<(Expr, Expr)>),
+    /// `PWL(t1 v1 t2 v2 ...)` — at least one point required.
+    Pwl(Vec<PwlPoint>),
     /// `SFFM(v0 va [fc [fs [md]]])`
     Sffm {
         v0: Expr,
@@ -163,12 +227,8 @@ impl fmt::Display for Source {
         if let Some(dc) = &self.dc {
             parts.push(format!("DC {dc}"));
         }
-        if let Some((mag, phase)) = &self.ac {
-            if let Some(ph) = phase {
-                parts.push(format!("AC {mag} {ph}"));
-            } else {
-                parts.push(format!("AC {mag}"));
-            }
+        if let Some(ac) = &self.ac {
+            parts.push(ac.to_string());
         }
         if let Some(w) = &self.waveform {
             parts.push(w.to_string());
@@ -217,12 +277,7 @@ impl fmt::Display for Waveform {
                 write!(f, "SIN({v0} {va}")?;
                 write_optional_args(
                     f,
-                    &[
-                        freq.as_ref(),
-                        td.as_ref(),
-                        theta.as_ref(),
-                        phi.as_ref(),
-                    ],
+                    &[freq.as_ref(), td.as_ref(), theta.as_ref(), phi.as_ref()],
                 )?;
                 write!(f, ")")
             }
@@ -230,22 +285,17 @@ impl fmt::Display for Waveform {
                 write!(f, "EXP({v1} {v2}")?;
                 write_optional_args(
                     f,
-                    &[
-                        td1.as_ref(),
-                        tau1.as_ref(),
-                        td2.as_ref(),
-                        tau2.as_ref(),
-                    ],
+                    &[td1.as_ref(), tau1.as_ref(), td2.as_ref(), tau2.as_ref()],
                 )?;
                 write!(f, ")")
             }
-            Waveform::Pwl(pairs) => {
+            Waveform::Pwl(points) => {
                 write!(f, "PWL(")?;
-                for (i, (t, v)) in pairs.iter().enumerate() {
+                for (i, pt) in points.iter().enumerate() {
                     if i > 0 {
                         write!(f, " ")?;
                     }
-                    write!(f, "{t} {v}")?;
+                    write!(f, "{} {}", pt.time, pt.value)?;
                 }
                 write!(f, ")")
             }
@@ -268,7 +318,7 @@ impl fmt::Display for Waveform {
 // ---------------------------------------------------------------------------
 
 /// A circuit element (single line starting with a letter).
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Facet)]
 pub struct Element {
     /// Full element name including type letter, e.g. `"R1"`, `"Mfet"`.
     pub name: String,
@@ -277,48 +327,21 @@ pub struct Element {
 
 /// The body of a circuit element, keyed by the type letter.
 #[allow(clippy::upper_case_acronyms)]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Facet)]
+#[repr(C)]
 pub enum ElementKind {
     /// `Rname n+ n- value [params]`
-    R {
-        pos: String,
-        neg: String,
-        value: Expr,
-        params: Vec<(String, Expr)>,
-    },
+    R { pos: String, neg: String, value: Expr, params: Vec<Param> },
     /// `Cname n+ n- value [IC=val]`
-    C {
-        pos: String,
-        neg: String,
-        value: Expr,
-        params: Vec<(String, Expr)>,
-    },
+    C { pos: String, neg: String, value: Expr, params: Vec<Param> },
     /// `Lname n+ n- value [IC=val]`
-    L {
-        pos: String,
-        neg: String,
-        value: Expr,
-        params: Vec<(String, Expr)>,
-    },
+    L { pos: String, neg: String, value: Expr, params: Vec<Param> },
     /// `Vname n+ n- source`
-    V {
-        pos: String,
-        neg: String,
-        source: Source,
-    },
+    V { pos: String, neg: String, source: Source },
     /// `Iname n+ n- source`
-    I {
-        pos: String,
-        neg: String,
-        source: Source,
-    },
+    I { pos: String, neg: String, source: Source },
     /// `Dname anode cathode model [params]`
-    D {
-        anode: String,
-        cathode: String,
-        model: String,
-        params: Vec<(String, Expr)>,
-    },
+    D { anode: String, cathode: String, model: String, params: Vec<Param> },
     /// `Qname c b e [substrate] model [params]`
     Q {
         c: String,
@@ -326,61 +349,22 @@ pub enum ElementKind {
         e: String,
         substrate: Option<String>,
         model: String,
-        params: Vec<(String, Expr)>,
+        params: Vec<Param>,
     },
     /// `Mname d g s bulk model [params]`
-    M {
-        d: String,
-        g: String,
-        s: String,
-        bulk: String,
-        model: String,
-        params: Vec<(String, Expr)>,
-    },
+    M { d: String, g: String, s: String, bulk: String, model: String, params: Vec<Param> },
     /// `Jname d g s model [params]`
-    J {
-        d: String,
-        g: String,
-        s: String,
-        model: String,
-        params: Vec<(String, Expr)>,
-    },
+    J { d: String, g: String, s: String, model: String, params: Vec<Param> },
     /// `Kname L1 L2 coupling`
-    K {
-        l1: String,
-        l2: String,
-        coupling: Expr,
-    },
+    K { l1: String, l2: String, coupling: Expr },
     /// `Ename out+ out- in+ in- gain`  (VCVS)
-    E {
-        out_pos: String,
-        out_neg: String,
-        in_pos: String,
-        in_neg: String,
-        gain: Expr,
-    },
+    E { out_pos: String, out_neg: String, in_pos: String, in_neg: String, gain: Expr },
     /// `Fname out+ out- vsource gain`  (CCCS)
-    F {
-        out_pos: String,
-        out_neg: String,
-        vsrc: String,
-        gain: Expr,
-    },
+    F { out_pos: String, out_neg: String, vsrc: String, gain: Expr },
     /// `Gname out+ out- in+ in- gm`  (VCCS)
-    G {
-        out_pos: String,
-        out_neg: String,
-        in_pos: String,
-        in_neg: String,
-        gm: Expr,
-    },
+    G { out_pos: String, out_neg: String, in_pos: String, in_neg: String, gm: Expr },
     /// `Hname out+ out- vsource rm`  (CCVS)
-    H {
-        out_pos: String,
-        out_neg: String,
-        vsrc: String,
-        rm: Expr,
-    },
+    H { out_pos: String, out_neg: String, vsrc: String, rm: Expr },
     /// `Bname n+ n- V={expr}` or `I={expr}`  (behavioural source)
     B {
         pos: String,
@@ -389,18 +373,14 @@ pub enum ElementKind {
         spec: String,
     },
     /// `Xname port... subckt [PARAMS: key=val...]`
-    X {
-        ports: Vec<String>,
-        subckt: String,
-        params: Vec<(String, Expr)>,
-    },
+    X { ports: Vec<String>, subckt: String, params: Vec<Param> },
     /// Any element type not explicitly handled — stored verbatim after name.
     Raw(String),
 }
 
-fn write_params(f: &mut fmt::Formatter<'_>, params: &[(String, Expr)]) -> fmt::Result {
-    for (k, v) in params {
-        write!(f, " {k}={v}")?;
+fn write_params(f: &mut fmt::Formatter<'_>, params: &[Param]) -> fmt::Result {
+    for p in params {
+        write!(f, " {p}")?;
     }
     Ok(())
 }
@@ -484,7 +464,8 @@ impl fmt::Display for Element {
 // ---------------------------------------------------------------------------
 
 /// Sweep variation for `.ac` and `.noise`.
-#[derive(Debug, Clone, Copy, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq, Facet)]
+#[repr(u8)]
 pub enum AcVariation {
     /// Decades: `DEC`
     Dec,
@@ -505,18 +486,19 @@ impl fmt::Display for AcVariation {
 }
 
 /// A simulation analysis command.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Facet)]
+#[repr(C)]
 pub enum Analysis {
     /// `.op`
     Op,
-    /// `.dc src start stop step [src2 start2 stop2 step2]`
+    /// `.dc src start stop step [src2]`
     Dc {
         src: String,
         start: Expr,
         stop: Expr,
         step: Expr,
         /// Optional second source sweep.
-        src2: Option<(String, Expr, Expr, Expr)>,
+        src2: Option<DcSweep>,
     },
     /// `.tran tstep tstop [tstart [tmax]]`
     Tran {
@@ -543,14 +525,9 @@ pub enum Analysis {
         fstop: Expr,
     },
     /// `.tf output input`
-    Tf {
-        output: String,
-        input: String,
-    },
+    Tf { output: String, input: String },
     /// `.sens output [AC DEC n fstart fstop]`
-    Sens {
-        output: Vec<String>,
-    },
+    Sens { output: Vec<String> },
 }
 
 impl fmt::Display for Analysis {
@@ -559,8 +536,8 @@ impl fmt::Display for Analysis {
             Analysis::Op => write!(f, ".op"),
             Analysis::Dc { src, start, stop, step, src2 } => {
                 write!(f, ".dc {src} {start} {stop} {step}")?;
-                if let Some((s2, a, b, c)) = src2 {
-                    write!(f, " {s2} {a} {b} {c}")?;
+                if let Some(s2) = src2 {
+                    write!(f, " {s2}")?;
                 }
                 Ok(())
             }
@@ -601,12 +578,12 @@ impl fmt::Display for Analysis {
 // ---------------------------------------------------------------------------
 
 /// `.model name type [params]`
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Facet)]
 pub struct ModelDef {
     pub name: String,
     /// Model type, e.g. `"NPN"`, `"NMOS"`, `"D"`.
     pub kind: String,
-    pub params: Vec<(String, Expr)>,
+    pub params: Vec<Param>,
 }
 
 impl fmt::Display for ModelDef {
@@ -617,11 +594,11 @@ impl fmt::Display for ModelDef {
 }
 
 /// `.subckt name ports [PARAMS: key=val...] ... .ends`
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Facet)]
 pub struct SubcktDef {
     pub name: String,
     pub ports: Vec<String>,
-    pub params: Vec<(String, Expr)>,
+    pub params: Vec<Param>,
     pub items: Vec<Item>,
 }
 
@@ -648,7 +625,8 @@ impl fmt::Display for SubcktDef {
 // ---------------------------------------------------------------------------
 
 /// A single logical line (or block) in a SPICE netlist.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Facet)]
+#[repr(C)]
 pub enum Item {
     /// A circuit element.
     Element(Element),
@@ -659,7 +637,7 @@ pub enum Item {
     /// An analysis command (`.op`, `.tran`, etc.).
     Analysis(Analysis),
     /// `.param key=val [key=val ...]`
-    Param(Vec<(String, Expr)>),
+    Param(Vec<Param>),
     /// `.include "filename"`
     Include(String),
     /// `.lib "filename" [entry]`
@@ -667,7 +645,7 @@ pub enum Item {
     /// `.global node ...`
     Global(Vec<String>),
     /// `.options key=val ...`
-    Options(Vec<(String, Expr)>),
+    Options(Vec<Param>),
     /// `.save vec ...`
     Save(Vec<String>),
     /// A full-line comment (`* ...`).
@@ -724,7 +702,7 @@ impl fmt::Display for Item {
 // ---------------------------------------------------------------------------
 
 /// A complete SPICE netlist.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Facet)]
 pub struct Netlist {
     /// The title line (always the first line of a SPICE file).
     pub title: String,
@@ -799,6 +777,21 @@ mod tests {
     }
 
     #[test]
+    fn param_display() {
+        let p = Param { name: "W".into(), value: Expr::Num(10e-6) };
+        assert_eq!(p.to_string(), "W=10u");
+    }
+
+    #[test]
+    fn ac_spec_display() {
+        let a = AcSpec { mag: Expr::Num(1.0), phase: None };
+        assert_eq!(a.to_string(), "AC 1");
+
+        let a2 = AcSpec { mag: Expr::Num(1.0), phase: Some(Expr::Num(90.0)) };
+        assert_eq!(a2.to_string(), "AC 1 90");
+    }
+
+    #[test]
     fn waveform_display_pulse() {
         let w = Waveform::Pulse {
             v1: Expr::Num(0.0),
@@ -809,15 +802,15 @@ mod tests {
             pw: Some(Expr::Num(5e-9)),
             per: None,
         };
-        // td is present, tr and tf get "0" placeholders, pw is last
+        // td is present, tr and tf get "0" placeholders, pw is last non-None
         assert_eq!(w.to_string(), "PULSE(0 5 1n 0 0 5n)");
     }
 
     #[test]
     fn waveform_display_pwl() {
         let w = Waveform::Pwl(vec![
-            (Expr::Num(0.0), Expr::Num(0.0)),
-            (Expr::Num(1e-9), Expr::Num(5.0)),
+            PwlPoint { time: Expr::Num(0.0), value: Expr::Num(0.0) },
+            PwlPoint { time: Expr::Num(1e-9), value: Expr::Num(5.0) },
         ]);
         assert_eq!(w.to_string(), "PWL(0 0 1n 5)");
     }
@@ -843,7 +836,7 @@ mod tests {
             kind: ElementKind::X {
                 ports: vec!["in".into(), "out".into(), "gnd".into()],
                 subckt: "OPAMP".into(),
-                params: vec![("gain".into(), Expr::Num(100.0))],
+                params: vec![Param { name: "gain".into(), value: Expr::Num(100.0) }],
             },
         };
         assert_eq!(e.to_string(), "X1 in out gnd OPAMP gain=100");
