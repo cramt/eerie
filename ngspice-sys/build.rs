@@ -54,10 +54,17 @@ fn create_merged_archive(build_dir: &Path, install_dir: &Path) {
 
     let merged_archive = lib_dir.join("libngspice.a");
 
-    // Collect all component .a files from the build tree
+    // Collect all component .a files from the build tree.
+    // Exclude xspice/icm/ — those are code model shared libraries (.cm) that
+    // define wrapper versions of MIF* functions via dlmain.c. Including them
+    // in the static archive would override the real implementations.
     let mut archives = Vec::new();
     let build_src_dir = build_dir.join("src");
     find_archives(&build_src_dir, &mut archives);
+    archives.retain(|p| {
+        let s = p.to_str().unwrap_or("");
+        !s.contains("/xspice/icm/")
+    });
 
     // Collect the top-level .o files (sharedspice, conf, ngspice entry)
     let mut top_objects = Vec::new();
@@ -136,10 +143,16 @@ fn main() {
     let target = env::var("TARGET").unwrap_or_default();
 
     // Copy vendored source into OUT_DIR (using cp -a to preserve timestamps,
-    // which prevents make from trying to re-run automake/autoconf)
+    // which prevents make from trying to re-run automake/autoconf).
+    // Also clear the autotools build directory to prevent stale objects
+    // when configure flags change (e.g. enabling/disabling XSPICE).
     let build_src = out_dir.join("ngspice-src");
+    let build_dir = out_dir.join("build");
     if build_src.exists() {
         fs::remove_dir_all(&build_src).unwrap();
+    }
+    if build_dir.exists() {
+        fs::remove_dir_all(&build_dir).unwrap();
     }
     let manifest_dir = PathBuf::from(env::var("CARGO_MANIFEST_DIR").unwrap());
     let vendored_src = manifest_dir.join("ngspice-src");
@@ -165,7 +178,6 @@ fn main() {
         .without("readline", None)
         .disable("maintainer-mode", None)
         .disable("openmp", None)
-        .disable("xspice", None)
         .disable("osdi", None)
         .disable("debug", None)
         .disable("cider", None)
@@ -174,7 +186,6 @@ fn main() {
 
     // ngspice's --with-ngshared only produces a .so — create a merged .a
     // from the component archives so we can link statically.
-    let build_dir = out_dir.join("build");
     create_merged_archive(&build_dir, &install_dir);
 
     // Remove the .so files so cargo doesn't accidentally link them
@@ -203,8 +214,22 @@ fn main() {
         println!("cargo:rustc-link-lib=pthread");
         if target.contains("linux") {
             println!("cargo:rustc-link-lib=dl");
+            // Export symbols so XSPICE code model .cm files loaded via
+            // dlopen can resolve ngspice symbols from the host binary.
+            println!("cargo:rustc-link-arg=-rdynamic");
         }
     }
+
+    // Tell downstream crates where the code model .cm files are installed
+    println!(
+        "cargo:cm_dir={}",
+        install_dir.join("lib/ngspice").display()
+    );
+    // And where spinit/scripts live
+    println!(
+        "cargo:scripts_dir={}",
+        install_dir.join("share/ngspice/scripts").display()
+    );
 
     // Generate Rust bindings with bindgen
     let include_dir = install_dir.join("include");
