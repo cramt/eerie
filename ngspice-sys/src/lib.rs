@@ -1,19 +1,17 @@
-//! Raw FFI bindings to the ngspice shared library.
+//! Raw FFI bindings to ngspice, compiled from vendored source.
 //!
 //! This crate exposes the C API defined in `ngspice/sharedspice.h` as unsafe
-//! Rust FFI. For a safe, ergonomic wrapper see (future) `ngspice` crate.
+//! Rust FFI. ngspice is compiled from source and statically linked — no system
+//! `libngspice.so` is needed at build time or runtime.
 //!
 //! # Usage
 //!
 //! Call [`ngSpice_Init`] once with your callback functions, then use
 //! [`ngSpice_Command`] or [`ngSpice_Circ`] to interact with the simulator.
 //!
-//! # Environment
+//! # Targets
 //!
-//! The crate is built against `libngspice.so`. In the Nix dev shell the path
-//! is wired up automatically via `NGSPICE_LIB_DIR` / `NGSPICE_INCLUDE_DIR`.
-//! At runtime `libngspice.so` must be on the dynamic linker search path
-//! (`LD_LIBRARY_PATH` or rpath).
+//! Supports native targets and `wasm32-unknown-emscripten`.
 
 #![allow(non_upper_case_globals)]
 #![allow(non_camel_case_types)]

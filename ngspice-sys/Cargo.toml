@@ -6,4 +6,5 @@ description = "Raw FFI bindings to the ngspice shared library (libngspice)"
 links = "ngspice"
 
 [build-dependencies]
+autotools = "0.2"
 bindgen = "0.70"

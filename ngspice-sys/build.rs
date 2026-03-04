@@ -1,31 +1,218 @@
 use std::env;
-use std::path::PathBuf;
+use std::fs;
+use std::path::{Path, PathBuf};
+use std::process::Command;
+
+/// Apply patches needed for Emscripten/WASM builds.
+fn apply_wasm_patches(src_dir: &Path) {
+    // Guard getrusage in misc_time.c — not available under Emscripten
+    let misc_time = src_dir.join("src/misc/misc_time.c");
+    if misc_time.exists() {
+        let content = fs::read_to_string(&misc_time).unwrap();
+        let patched = content.replace(
+            "#ifdef HAVE_GETRUSAGE",
+            "#if defined(HAVE_GETRUSAGE) && !defined(__EMSCRIPTEN__)",
+        );
+        fs::write(&misc_time, patched).unwrap();
+    }
+}
+
+/// Recursively find all `.a` files under a directory.
+fn find_archives(dir: &Path, archives: &mut Vec<PathBuf>) {
+    if let Ok(entries) = fs::read_dir(dir) {
+        for entry in entries.flatten() {
+            let path = entry.path();
+            if path.is_dir() {
+                find_archives(&path, &mut *archives);
+            } else if path.extension().map(|e| e == "a").unwrap_or(false) {
+                archives.push(path);
+            }
+        }
+    }
+}
+
+/// Recursively find all `.o` files under a directory.
+fn find_objects(dir: &Path, objects: &mut Vec<PathBuf>) {
+    if let Ok(entries) = fs::read_dir(dir) {
+        for entry in entries.flatten() {
+            let path = entry.path();
+            if path.is_dir() {
+                find_objects(&path, &mut *objects);
+            } else if path.extension().map(|e| e == "o").unwrap_or(false) {
+                objects.push(path);
+            }
+        }
+    }
+}
+
+/// Create a merged static archive from all component libraries and objects
+/// produced by the autotools build. ngspice's --with-ngshared only produces
+/// a .so, but we need a .a for static linking.
+fn create_merged_archive(build_dir: &Path, install_dir: &Path) {
+    let lib_dir = install_dir.join("lib");
+    fs::create_dir_all(&lib_dir).unwrap();
+
+    let merged_archive = lib_dir.join("libngspice.a");
+
+    // Collect all component .a files from the build tree
+    let mut archives = Vec::new();
+    let build_src_dir = build_dir.join("src");
+    find_archives(&build_src_dir, &mut archives);
+
+    // Collect the top-level .o files (sharedspice, conf, ngspice entry)
+    let mut top_objects = Vec::new();
+    let libs_dir = build_src_dir.join(".libs");
+    if libs_dir.exists() {
+        find_objects(&libs_dir, &mut top_objects);
+    }
+
+    // Create a temporary directory for extraction
+    let tmp_dir = install_dir.join("_merge_tmp");
+    if tmp_dir.exists() {
+        fs::remove_dir_all(&tmp_dir).unwrap();
+    }
+    fs::create_dir_all(&tmp_dir).unwrap();
+
+    // Extract all .a files into the temp dir (with unique prefixes to avoid name collisions)
+    for (i, archive) in archives.iter().enumerate() {
+        let sub_dir = tmp_dir.join(format!("lib_{i}"));
+        fs::create_dir_all(&sub_dir).unwrap();
+        let status = Command::new("ar")
+            .args(["x", archive.to_str().unwrap()])
+            .current_dir(&sub_dir)
+            .status()
+            .expect("failed to run ar x");
+        if !status.success() {
+            eprintln!("warning: ar x failed for {}", archive.display());
+            continue;
+        }
+        // Rename extracted .o files with prefix to avoid collisions
+        if let Ok(entries) = fs::read_dir(&sub_dir) {
+            for entry in entries.flatten() {
+                let old_name = entry.file_name();
+                let new_name = format!("{}_{}", i, old_name.to_str().unwrap());
+                fs::rename(entry.path(), sub_dir.join(&new_name)).unwrap();
+            }
+        }
+    }
+
+    // Collect all extracted .o files
+    let mut all_objects = Vec::new();
+    find_objects(&tmp_dir, &mut all_objects);
+
+    // Add top-level objects
+    for obj in &top_objects {
+        all_objects.push(obj.clone());
+    }
+
+    // Create the merged archive
+    let ar = env::var("AR").unwrap_or_else(|_| "ar".to_string());
+    let mut cmd = Command::new(&ar);
+    cmd.arg("crs").arg(&merged_archive);
+    for obj in &all_objects {
+        cmd.arg(obj);
+    }
+    let status = cmd.status().expect("failed to run ar crs");
+    assert!(status.success(), "failed to create merged archive");
+
+    // Clean up temp dir
+    let _ = fs::remove_dir_all(&tmp_dir);
+
+    eprintln!(
+        "Created merged static archive: {} ({} objects from {} component archives + {} top-level objects)",
+        merged_archive.display(),
+        all_objects.len(),
+        archives.len(),
+        top_objects.len()
+    );
+}
 
 fn main() {
-    println!("cargo:rerun-if-env-changed=NGSPICE_LIB_DIR");
-    println!("cargo:rerun-if-env-changed=NGSPICE_INCLUDE_DIR");
+    println!("cargo:rerun-if-changed=build.rs");
+    println!("cargo:rerun-if-changed=wrapper.h");
+    println!("cargo:rerun-if-changed=ngspice-src/configure");
 
-    let lib_dir = env::var("NGSPICE_LIB_DIR").expect(
-        "NGSPICE_LIB_DIR must be set to the directory containing libngspice.so.\n\
-         In the Nix dev shell this is set automatically via shellHook.\n\
-         Outside Nix: export NGSPICE_LIB_DIR=/usr/lib",
+    let out_dir = PathBuf::from(env::var("OUT_DIR").unwrap());
+    let target = env::var("TARGET").unwrap_or_default();
+
+    // Copy vendored source into OUT_DIR (using cp -a to preserve timestamps,
+    // which prevents make from trying to re-run automake/autoconf)
+    let build_src = out_dir.join("ngspice-src");
+    if build_src.exists() {
+        fs::remove_dir_all(&build_src).unwrap();
+    }
+    let manifest_dir = PathBuf::from(env::var("CARGO_MANIFEST_DIR").unwrap());
+    let vendored_src = manifest_dir.join("ngspice-src");
+    let status = Command::new("cp")
+        .args(["-a", vendored_src.to_str().unwrap(), build_src.to_str().unwrap()])
+        .status()
+        .expect("failed to run cp");
+    assert!(status.success(), "cp -a failed");
+
+    // Apply WASM patches if targeting Emscripten
+    if target.contains("emscripten") {
+        apply_wasm_patches(&build_src);
+    }
+
+    // Build ngspice using autotools.
+    // --with-ngshared enables the shared library API (sharedspice.h functions).
+    // We must enable_shared() because ngspice's Makefile.am hardcodes -shared
+    // flags for libngspice when SHARED_MODULE is set.
+    let install_dir = autotools::Config::new(&build_src)
+        .enable_shared()
+        .enable_static()
+        .with("ngshared", None)
+        .without("readline", None)
+        .disable("maintainer-mode", None)
+        .disable("openmp", None)
+        .disable("xspice", None)
+        .disable("osdi", None)
+        .disable("debug", None)
+        .disable("cider", None)
+        .disable("pss", None)
+        .build();
+
+    // ngspice's --with-ngshared only produces a .so — create a merged .a
+    // from the component archives so we can link statically.
+    let build_dir = out_dir.join("build");
+    create_merged_archive(&build_dir, &install_dir);
+
+    // Remove the .so files so cargo doesn't accidentally link them
+    let lib_dir = install_dir.join("lib");
+    if let Ok(entries) = fs::read_dir(&lib_dir) {
+        for entry in entries.flatten() {
+            let name = entry.file_name();
+            let name = name.to_str().unwrap_or("");
+            if name.starts_with("libngspice.so") || name == "libngspice.la" {
+                let _ = fs::remove_file(entry.path());
+            }
+        }
+    }
+
+    // Emit linker search paths
+    println!(
+        "cargo:rustc-link-search=native={}",
+        lib_dir.display()
     );
-    let include_dir = env::var("NGSPICE_INCLUDE_DIR").expect(
-        "NGSPICE_INCLUDE_DIR must be set to the directory containing ngspice/sharedspice.h.\n\
-         In the Nix dev shell this is set automatically via shellHook.\n\
-         Outside Nix: export NGSPICE_INCLUDE_DIR=/usr/include",
-    );
+    println!("cargo:rustc-link-lib=static=ngspice");
 
-    println!("cargo:rustc-link-search=native={lib_dir}");
-    println!("cargo:rustc-link-lib=dylib=ngspice");
+    // System libraries needed by ngspice
+    if !target.contains("emscripten") {
+        println!("cargo:rustc-link-lib=m");
+        println!("cargo:rustc-link-lib=stdc++");
+        println!("cargo:rustc-link-lib=pthread");
+        if target.contains("linux") {
+            println!("cargo:rustc-link-lib=dl");
+        }
+    }
 
+    // Generate Rust bindings with bindgen
+    let include_dir = install_dir.join("include");
     let bindings = bindgen::Builder::default()
         .header("wrapper.h")
-        .clang_arg(format!("-I{include_dir}"))
-        // Only pull in ngspice API surface
+        .clang_arg(format!("-I{}", include_dir.display()))
         .allowlist_function("ngSpice_.*")
         .allowlist_function("ngGet_Vec_Info")
-        // Core data types
         .allowlist_type("ngcomplex_t")
         .allowlist_type("vector_info")
         .allowlist_type("pvector_info")
@@ -37,7 +224,6 @@ fn main() {
         .allowlist_type("pvecvalues")
         .allowlist_type("vecvaluesall")
         .allowlist_type("pvecvaluesall")
-        // Callback function pointer types
         .allowlist_type("SendChar")
         .allowlist_type("SendStat")
         .allowlist_type("ControlledExit")
@@ -51,8 +237,7 @@ fn main() {
         .generate()
         .expect("Failed to generate ngspice FFI bindings");
 
-    let out_path = PathBuf::from(env::var("OUT_DIR").unwrap());
     bindings
-        .write_to_file(out_path.join("bindings.rs"))
+        .write_to_file(out_dir.join("bindings.rs"))
         .expect("Failed to write ngspice bindings to OUT_DIR");
 }
