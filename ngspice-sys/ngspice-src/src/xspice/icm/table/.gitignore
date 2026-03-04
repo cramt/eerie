@@ -9,3 +9,6 @@
 /udninfo2.h
 
 /*/*.c
+# Un-ignore actual source files in support/ and mada/
+!/support/*.c
+!/mada/*.c
