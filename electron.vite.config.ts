@@ -43,6 +43,13 @@ export default defineConfig({
   main: {
     //plugins: [rustBuildPlugin()],
   },
+  preload: {
+    build: {
+      rollupOptions: {
+        external: ["electron"],
+      },
+    },
+  },
   renderer: {
     resolve: {
       alias: {

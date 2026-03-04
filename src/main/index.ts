@@ -98,7 +98,7 @@ function createWindow() {
 
 function setupIpcHandlers() {
   ipcMain.handle("daemon:call", async (_event, method: string, params: unknown) => {
-    if (!daemonClient) throw new Error("daemon not connected");
+    if (!daemonClient) return null;
     const fn = (daemonClient as unknown as Record<string, unknown>)[method];
     if (typeof fn !== "function") throw new Error(`unknown daemon method: ${method}`);
     return await (fn as Function).call(daemonClient, params);
