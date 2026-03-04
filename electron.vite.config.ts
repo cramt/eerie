@@ -41,7 +41,7 @@ function rustBuildPlugin(): Plugin {
 
 export default defineConfig({
   main: {
-    plugins: [rustBuildPlugin()],
+    //plugins: [rustBuildPlugin()],
   },
   renderer: {
     resolve: {

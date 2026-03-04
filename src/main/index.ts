@@ -1,5 +1,10 @@
+import WebSocket from "ws";
+// Polyfill WebSocket for Node.js (roam-ws needs it as a global)
+Object.assign(globalThis, { WebSocket });
+
 import { app, BrowserWindow, ipcMain, shell, dialog } from "electron";
 import { join } from "path";
+import { readFile, writeFile } from "fs/promises";
 import { spawn, ChildProcess } from "child_process";
 import { createInterface } from "readline";
 import {
@@ -23,20 +28,22 @@ async function startDaemon() {
       stdio: ["ignore", "pipe", "inherit"],
     });
 
-    // The daemon prints "PORT <n>" on the first stdout line.
     const port = await readDaemonPort(daemonProcess);
-
     daemonClient = await connectEerieDaemon(`127.0.0.1:${port}`);
-
     console.log(`Connected to eerie-daemon on port ${port}`);
+
+    // Notify renderer that daemon is connected
+    mainWindow?.webContents.send("daemon:status", true);
 
     daemonProcess.on("exit", (code) => {
       console.log(`eerie-daemon exited with code ${code}`);
       daemonProcess = null;
       daemonClient = null;
+      mainWindow?.webContents.send("daemon:status", false);
     });
   } catch (err) {
     console.warn("Could not start eerie-daemon:", err);
+    mainWindow?.webContents.send("daemon:status", false);
   }
 }
 
@@ -89,15 +96,62 @@ function createWindow() {
 
 // ── IPC handlers ───────────────────────────────────────────────────────────
 
-function requireClient(): EerieDaemonClient {
-  if (!daemonClient) throw new Error("daemon not connected");
-  return daemonClient;
+function setupIpcHandlers() {
+  ipcMain.handle("daemon:call", async (_event, method: string, params: unknown) => {
+    if (!daemonClient) throw new Error("daemon not connected");
+    const fn = (daemonClient as unknown as Record<string, unknown>)[method];
+    if (typeof fn !== "function") throw new Error(`unknown daemon method: ${method}`);
+    return await (fn as Function).call(daemonClient, params);
+  });
+
+  ipcMain.handle("daemon:connected", () => {
+    return daemonClient !== null;
+  });
+
+  ipcMain.handle("file:read", async (_event, path: string) => {
+    return await readFile(path, "utf-8");
+  });
+
+  ipcMain.handle("file:write", async (_event, path: string, content: string) => {
+    await writeFile(path, content, "utf-8");
+    return true;
+  });
+
+  ipcMain.handle("dialog:open", async () => {
+    if (!mainWindow) return null;
+    const result = await dialog.showOpenDialog(mainWindow, {
+      filters: [
+        { name: "Eerie Circuit", extensions: ["eerie"] },
+        { name: "All Files", extensions: ["*"] },
+      ],
+      properties: ["openFile"],
+    });
+    if (result.canceled || result.filePaths.length === 0) return null;
+    return result.filePaths[0];
+  });
+
+  ipcMain.handle("dialog:save", async (_event, defaultPath?: string) => {
+    if (!mainWindow) return null;
+    const result = await dialog.showSaveDialog(mainWindow, {
+      defaultPath,
+      filters: [
+        { name: "Eerie Circuit", extensions: ["eerie"] },
+      ],
+    });
+    if (result.canceled || !result.filePath) return null;
+    return result.filePath;
+  });
 }
 
-app.whenReady().then(async () => {
-  await startDaemon();
-  const result = await requireClient().ping();
+// ── App lifecycle ──────────────────────────────────────────────────────────
+
+app.whenReady().then(() => {
+  setupIpcHandlers();
   createWindow();
+
+  // Fire-and-forget: daemon starts in background, doesn't block the window
+  startDaemon();
+
   app.on("activate", () => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow();
   });
