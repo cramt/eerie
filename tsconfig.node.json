@@ -3,16 +3,18 @@
     "composite": true,
     "module": "ESNext",
     "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
     "target": "ES2022",
     "lib": ["ES2022"],
     "strict": true,
     "skipLibCheck": true,
     "noEmit": true,
-    "rootDir": "."
+    "rootDir": ".",
   },
   "include": [
     "electron.vite.config.ts",
     "src/main/**/*.ts",
-    "src/preload/**/*.ts"
-  ]
+    "src/codegen/**/*.ts",
+    "src/preload/**/*.ts",
+  ],
 }

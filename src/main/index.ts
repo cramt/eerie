@@ -5,7 +5,7 @@ import { createInterface } from "readline";
 import {
   connectEerieDaemon,
   EerieDaemonClient,
-} from "../renderer/src/types/generated-rpc";
+} from "../codegen/generated-rpc";
 
 let mainWindow: BrowserWindow | null = null;
 let daemonProcess: ChildProcess | null = null;
@@ -27,6 +27,7 @@ async function startDaemon() {
     const port = await readDaemonPort(daemonProcess);
 
     daemonClient = await connectEerieDaemon(`127.0.0.1:${port}`);
+
     console.log(`Connected to eerie-daemon on port ${port}`);
 
     daemonProcess.on("exit", (code) => {
@@ -93,74 +94,9 @@ function requireClient(): EerieDaemonClient {
   return daemonClient;
 }
 
-ipcMain.handle("daemon:ping", async () => {
-  return requireClient().ping().send();
-});
-
-ipcMain.handle("daemon:fileRead", async (_e, path: string) => {
-  const result = await requireClient().fileRead(path).send();
-  if (!result.ok) throw new Error(result.error);
-  return result.value;
-});
-
-ipcMain.handle(
-  "daemon:fileWrite",
-  async (_e, path: string, content: string) => {
-    const result = await requireClient().fileWrite(path, content).send();
-    if (!result.ok) throw new Error(result.error);
-  },
-);
-
-ipcMain.handle("daemon:circuitParseYaml", async (_e, yaml: string) => {
-  const result = await requireClient().circuitParseYaml(yaml).send();
-  if (!result.ok) throw new Error(result.error);
-  return result.value;
-});
-
-ipcMain.handle("daemon:circuitToYaml", async (_e, circuit: unknown) => {
-  const result = await requireClient()
-    .circuitToYaml(circuit as never)
-    .send();
-  if (!result.ok) throw new Error(result.error);
-  return result.value;
-});
-
-ipcMain.handle("daemon:circuitNew", async (_e, name: string) => {
-  const result = await requireClient().circuitNew(name).send();
-  if (!result.ok) throw new Error(result.error);
-  return result.value;
-});
-
-ipcMain.handle("daemon:simDc", async (_e, circuit: unknown) => {
-  const result = await requireClient()
-    .simDc(circuit as never)
-    .send();
-  if (!result.ok) throw new Error(result.error);
-  return result.value;
-});
-
-ipcMain.handle("dialog:open", async () => {
-  const result = await dialog.showOpenDialog(mainWindow!, {
-    filters: [
-      { name: "Eerie Circuits", extensions: ["eerie", "yaml", "yml"] },
-      { name: "All Files", extensions: ["*"] },
-    ],
-  });
-  return result.canceled ? null : result.filePaths[0];
-});
-
-ipcMain.handle("dialog:save", async (_e, defaultPath?: string) => {
-  const result = await dialog.showSaveDialog(mainWindow!, {
-    defaultPath: defaultPath ?? "untitled.eerie",
-    filters: [{ name: "Eerie Circuits", extensions: ["eerie"] }],
-  });
-  return result.canceled ? null : result.filePath;
-});
-
-// ── App lifecycle ──────────────────────────────────────────────────────────
-
 app.whenReady().then(async () => {
   await startDaemon();
+  const result = await requireClient().ping();
   createWindow();
   app.on("activate", () => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow();
