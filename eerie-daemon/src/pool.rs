@@ -27,10 +27,11 @@ use std::process::Stdio;
 use std::sync::Arc;
 use std::time::{Duration, Instant};
 
-use eerie_rpc::{NgspicePlot, NgspiceSimResponse, NgspiceVec, NgspiceWorkerClient};
+use eerie_rpc::{SimPlot, SimResult, SimVector, NgspiceWorkerClient};
 use log::{error, info};
 use roam::initiator;
 use roam_stream::LocalLinkAcceptor;
+use spice_netlist::Netlist;
 use tokio::process::Command;
 use tokio::sync::{Mutex, mpsc};
 
@@ -210,7 +211,7 @@ impl CircuitHandle {
     }
 
     /// Load a SPICE netlist into the worker, replacing any prior circuit.
-    pub async fn load_circuit(&self, netlist: Vec<String>) -> Result<(), String> {
+    pub async fn load_circuit(&self, netlist: Netlist) -> Result<(), String> {
         self.client().load_circuit(netlist).await.map_err(|e| format!("{e:?}"))
     }
 
@@ -235,7 +236,7 @@ impl CircuitHandle {
     }
 
     /// Fetch a simulation vector by name (bare or plot-qualified).
-    pub async fn vec_data(&self, vecname: String) -> Result<NgspiceVec, String> {
+    pub async fn vec_data(&self, vecname: String) -> Result<SimVector, String> {
         self.client().vec_data(vecname).await.map_err(|e| format!("{e:?}"))
     }
 
@@ -245,7 +246,7 @@ impl CircuitHandle {
     }
 
     /// Convenience: load a netlist, run it, and collect all result vectors.
-    pub async fn simulate(&self, netlist: Vec<String>) -> Result<NgspiceSimResponse, String> {
+    pub async fn simulate(&self, netlist: Netlist) -> Result<SimResult, String> {
         self.load_circuit(netlist).await?;
         self.command("run".to_string()).await?;
 
@@ -267,9 +268,9 @@ impl CircuitHandle {
                 }
             }
 
-            plots.push(NgspicePlot { name: plot_name.clone(), vecs });
+            plots.push(SimPlot { name: plot_name.clone(), vecs });
         }
 
-        Ok(NgspiceSimResponse { plots })
+        Ok(SimResult { plots })
     }
 }

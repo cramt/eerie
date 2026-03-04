@@ -7,9 +7,10 @@
 use std::io::{BufRead, BufReader};
 use std::process::{Command, Stdio};
 
-use eerie_rpc::EerieDaemonClient;
+use eerie_rpc::{EerieDaemonClient, SimResult};
 use roam::initiator;
 use roam_stream::StreamLink;
+use spice_netlist::Netlist;
 use tokio::net::TcpStream;
 
 // ---------------------------------------------------------------------------
@@ -71,27 +72,29 @@ impl Drop for Daemon {
 // ---------------------------------------------------------------------------
 
 /// Equal-value voltage divider: V(out) = supply_v / 2.
-fn voltage_divider(supply_v: f64) -> Vec<String> {
-    vec![
-        format!("* voltage divider {supply_v}V"),
-        format!("V1 in 0 {supply_v}"),
-        "R1 in out 1k".to_string(),
-        "R2 out 0 1k".to_string(),
-        ".op".to_string(),
-        ".end".to_string(),
-    ]
+fn voltage_divider(supply_v: f64) -> Netlist {
+    let src = format!(
+        "voltage divider {supply_v}V\n\
+         V1 in 0 {supply_v}\n\
+         R1 in out 1k\n\
+         R2 out 0 1k\n\
+         .op\n\
+         .end"
+    );
+    Netlist::parse(&src).expect("parse voltage_divider netlist")
 }
 
 /// 3:1 resistor divider: V(out) = supply_v / 4 (R1=3k, R2=1k).
-fn divider_3to1(supply_v: f64) -> Vec<String> {
-    vec![
-        format!("* 3:1 divider {supply_v}V"),
-        format!("V1 in 0 {supply_v}"),
-        "R1 in out 3k".to_string(),
-        "R2 out 0 1k".to_string(),
-        ".op".to_string(),
-        ".end".to_string(),
-    ]
+fn divider_3to1(supply_v: f64) -> Netlist {
+    let src = format!(
+        "3:1 divider {supply_v}V\n\
+         V1 in 0 {supply_v}\n\
+         R1 in out 3k\n\
+         R2 out 0 1k\n\
+         .op\n\
+         .end"
+    );
+    Netlist::parse(&src).expect("parse divider_3to1 netlist")
 }
 
 // ---------------------------------------------------------------------------
@@ -103,7 +106,7 @@ fn divider_3to1(supply_v: f64) -> Vec<String> {
 /// Accepts both `"out"` and `"v(out)"` notation, and matches against
 /// bare or plot-qualified vector names (e.g. `"op1.out"`).
 fn find_scalar(
-    resp: &eerie_rpc::NgspiceSimResponse,
+    resp: &SimResult,
     query: &str,
 ) -> Option<f64> {
     // Strip v() wrapper: "v(out)" → "out"
@@ -201,7 +204,7 @@ async fn concurrent_simulations_are_isolated() {
     let daemon = Daemon::spawn();
 
     // (netlist, expected V(out))
-    let cases: Vec<(Vec<String>, f64)> = vec![
+    let cases: Vec<(Netlist, f64)> = vec![
         (voltage_divider(2.0), 1.0),
         (voltage_divider(4.0), 2.0),
         (voltage_divider(6.0), 3.0),

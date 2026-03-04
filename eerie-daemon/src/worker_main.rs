@@ -19,9 +19,10 @@
 //! ```
 
 use eerie_rpc::{
-    NgspiceComplex, NgspiceRpcError, NgspiceVec,
+    Complex, NgspiceRpcError, SimVector,
     NgspiceWorker, NgspiceWorkerClient, NgspiceWorkerDispatcher,
 };
+use spice_netlist::Netlist;
 use ngspice::NgSpice;
 use roam::acceptor;
 use roam_stream::LocalLink;
@@ -33,7 +34,7 @@ use tokio::sync::{mpsc, oneshot};
 
 enum NgspiceOp {
     LoadCircuit {
-        netlist: Vec<String>,
+        netlist: Netlist,
         reply: oneshot::Sender<Result<(), String>>,
     },
     Command {
@@ -69,7 +70,7 @@ struct WorkerHandler {
 }
 
 impl NgspiceWorker for WorkerHandler {
-    async fn load_circuit(&self, netlist: Vec<String>) -> Result<(), NgspiceRpcError> {
+    async fn load_circuit(&self, netlist: Netlist) -> Result<(), NgspiceRpcError> {
         let (reply_tx, reply_rx) = oneshot::channel();
         let _ = self.tx.send(NgspiceOp::LoadCircuit { netlist, reply: reply_tx });
         reply_rx.await.unwrap_or(Err("worker died".into())).map_err(rpc_err)
@@ -99,13 +100,13 @@ impl NgspiceWorker for WorkerHandler {
         reply_rx.await.unwrap_or_default()
     }
 
-    async fn vec_data(&self, vecname: String) -> Result<NgspiceVec, NgspiceRpcError> {
+    async fn vec_data(&self, vecname: String) -> Result<SimVector, NgspiceRpcError> {
         let (reply_tx, reply_rx) = oneshot::channel();
         let _ = self.tx.send(NgspiceOp::VecData { vecname, reply: reply_tx });
         let result = reply_rx.await.unwrap_or(Err("worker died".into())).map_err(rpc_err)?;
         let (name, real, complex_raw) = result;
-        let complex = complex_raw.into_iter().map(|[re, im]| NgspiceComplex { re, im }).collect();
-        Ok(NgspiceVec { name, real, complex })
+        let complex = complex_raw.into_iter().map(|[re, im]| Complex { re, im }).collect();
+        Ok(SimVector { name, real, complex })
     }
 
     async fn is_running(&self) -> bool {
@@ -180,8 +181,9 @@ fn main() {
     while let Some(op) = rx.blocking_recv() {
         match op {
             NgspiceOp::LoadCircuit { netlist, reply } => {
+                let lines = netlist.to_lines();
                 let result = session
-                    .load_circuit(netlist.iter().map(String::as_str))
+                    .load_circuit(lines.iter().map(String::as_str))
                     .map_err(|e| e.to_string());
                 let _ = reply.send(result);
             }

@@ -750,6 +750,42 @@ impl fmt::Display for Netlist {
 }
 
 // ---------------------------------------------------------------------------
+// Simulation output types
+// ---------------------------------------------------------------------------
+
+/// Complex number pair for AC/frequency-domain vectors.
+#[derive(Facet, Debug, Clone)]
+pub struct Complex {
+    pub re: f64,
+    pub im: f64,
+}
+
+/// One simulation vector (real or complex data).
+#[derive(Facet, Debug, Clone)]
+pub struct SimVector {
+    /// Vector name as reported by ngspice (e.g. `"v(out)"`, `"i(r1)"`).
+    pub name: String,
+    /// Real-valued data points. Non-empty when the vector is real.
+    pub real: Vec<f64>,
+    /// Complex data points. Non-empty when the vector is complex.
+    pub complex: Vec<Complex>,
+}
+
+/// One ngspice plot (analysis result set) containing its vectors.
+#[derive(Facet, Debug, Clone)]
+pub struct SimPlot {
+    /// Plot name (e.g. `"op1"`, `"tran2"`).
+    pub name: String,
+    pub vecs: Vec<SimVector>,
+}
+
+/// Complete simulation response: all plots produced by one ngspice run.
+#[derive(Facet, Debug, Clone)]
+pub struct SimResult {
+    pub plots: Vec<SimPlot>,
+}
+
+// ---------------------------------------------------------------------------
 // Tests
 // ---------------------------------------------------------------------------
 
