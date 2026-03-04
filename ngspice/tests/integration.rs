@@ -9,6 +9,7 @@
 
 use std::sync::{LazyLock, Mutex, MutexGuard};
 
+use ngspice::code_model::*;
 use ngspice::{NgSpice, NgSpiceError};
 
 // ---------------------------------------------------------------------------
@@ -25,13 +26,29 @@ unsafe impl Send for S {}
 unsafe impl Sync for S {}
 
 static SPICE: LazyLock<Mutex<S>> = LazyLock::new(|| {
-    Mutex::new(S(
-        NgSpice::init(
-            |_| {},                                               // suppress output
-            |code| eprintln!("[ngspice] exit request: {code}"),
-        )
-        .expect("NgSpice::init failed"),
-    ))
+    let mut ng = NgSpice::init(
+        |_| {},                                               // suppress output
+        |code| eprintln!("[ngspice] exit request: {code}"),
+    )
+    .expect("NgSpice::init failed");
+
+    // Register a custom Rust gain code model for XSPICE tests.
+    // Uses a closure that captures `output_conn` to prove captures work.
+    let output_conn: usize = 1;
+    let model = CodeModelBuilder::new("rust_gain", "Rust gain block")
+        .conn(ConnSpec::new("in", Direction::In, PortType::Voltage))
+        .conn(ConnSpec::new("out", Direction::Out, PortType::Voltage))
+        .param(ParamSpec::real("gain", 1.0))
+        .build(move |ctx| {
+            let gain = ctx.param_real(0);
+            let input = ctx.input_real(0, 0);
+            ctx.set_output_real(output_conn, 0, gain * input);
+            ctx.set_partial(output_conn, 0, 0, 0, gain);
+        });
+    ng.register_code_model(model)
+        .expect("register_code_model failed");
+
+    Mutex::new(S(ng))
 });
 
 fn lock() -> MutexGuard<'static, S> {
@@ -284,4 +301,56 @@ fn nul_byte_in_circuit_line_returns_error() {
     let mut guard = lock();
     let err = guard.0.load_circuit(["bad\0line", ".end"]).unwrap_err();
     assert!(matches!(err, NgSpiceError::NulByte(_)));
+}
+
+// ---------------------------------------------------------------------------
+// XSPICE code model tests
+// ---------------------------------------------------------------------------
+
+/// Register a Rust gain model: V1=3, gain=2 → v(out) = 6.
+#[test]
+fn xspice_rust_gain_model() {
+    let mut guard = lock();
+    let mut ckt = guard.0.load_circuit([
+        "XSPICE gain test",
+        "V1 in 0 dc 3",
+        ".model mygain rust_gain gain=2.0",
+        "A1 in out mygain",
+        "R_load out 0 1k",
+        ".op",
+        ".end",
+    ]).unwrap();
+    ckt.run().unwrap();
+
+    let plot = ckt.current_plot().unwrap();
+    let v_out = ckt.vec_data(&format!("{plot}.out")).unwrap();
+    let val = v_out.real.as_deref().unwrap()[0];
+    assert!(
+        (val - 6.0).abs() < 1e-6,
+        "expected v(out)≈6.0, got {val}"
+    );
+}
+
+/// Same gain model but use default gain=1.0 → v(out) = 3.
+#[test]
+fn xspice_rust_model_default_params() {
+    let mut guard = lock();
+    let mut ckt = guard.0.load_circuit([
+        "XSPICE default param test",
+        "V1 in 0 dc 3",
+        ".model mygain2 rust_gain",
+        "A1 in out mygain2",
+        "R_load out 0 1k",
+        ".op",
+        ".end",
+    ]).unwrap();
+    ckt.run().unwrap();
+
+    let plot = ckt.current_plot().unwrap();
+    let v_out = ckt.vec_data(&format!("{plot}.out")).unwrap();
+    let val = v_out.real.as_deref().unwrap()[0];
+    assert!(
+        (val - 3.0).abs() < 1e-6,
+        "expected v(out)≈3.0, got {val}"
+    );
 }

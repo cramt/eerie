@@ -171,8 +171,8 @@ fn main() {
     // --with-ngshared enables the shared library API (sharedspice.h functions).
     // We must enable_shared() because ngspice's Makefile.am hardcodes -shared
     // flags for libngspice when SHARED_MODULE is set.
-    let install_dir = autotools::Config::new(&build_src)
-        .enable_shared()
+    let mut cfg = autotools::Config::new(&build_src);
+    cfg.enable_shared()
         .enable_static()
         .with("ngshared", None)
         .without("readline", None)
@@ -181,8 +181,15 @@ fn main() {
         .disable("osdi", None)
         .disable("debug", None)
         .disable("cider", None)
-        .disable("pss", None)
-        .build();
+        .disable("pss", None);
+
+    // If the vendored source doesn't have a `configure` script (e.g. after
+    // a fresh clone where only configure.ac is tracked), run autoreconf.
+    if !build_src.join("configure").exists() {
+        cfg.reconf("-ivf");
+    }
+
+    let install_dir = cfg.build();
 
     // ngspice's --with-ngshared only produces a .so — create a merged .a
     // from the component archives so we can link statically.
@@ -236,6 +243,12 @@ fn main() {
     let bindings = bindgen::Builder::default()
         .header("wrapper.h")
         .clang_arg(format!("-I{}", include_dir.display()))
+        // Internal ngspice headers (for XSPICE/MIF types not installed to include/)
+        .clang_arg(format!("-I{}", build_src.join("src/include").display()))
+        // Build-tree config.h (ensures bindgen sees same #defines as compiled archive)
+        .clang_arg(format!("-I{}", build_dir.join("src/include").display()))
+        .clang_arg("-DXSPICE=1")
+        // --- sharedspice.h API ---
         .allowlist_function("ngSpice_.*")
         .allowlist_function("ngGet_Vec_Info")
         .allowlist_type("ngcomplex_t")
@@ -258,6 +271,76 @@ fn main() {
         .allowlist_type("GetVSRCData")
         .allowlist_type("GetISRCData")
         .allowlist_type("GetSyncData")
+        // --- XSPICE / MIF types ---
+        .allowlist_type("SPICEdev")
+        .allowlist_type("IFdevice")
+        .allowlist_type("IFparm")
+        .allowlist_type("Mif_Private")
+        .allowlist_type("Mif_Private_t")
+        .allowlist_type("Mif_Conn_Info")
+        .allowlist_type("Mif_Conn_Info_t")
+        .allowlist_type("Mif_Param_Info")
+        .allowlist_type("Mif_Param_Info_t")
+        .allowlist_type("Mif_Inst_Var_Info")
+        .allowlist_type("Mif_Inst_Var_Info_t")
+        .allowlist_type("Mif_Value_t")
+        .allowlist_type("Mif_Parse_Value")
+        .allowlist_type("Mif_Parse_Value_t")
+        .allowlist_type("Mif_Port_Type_t")
+        .allowlist_type("Mif_Dir_t")
+        .allowlist_type("Mif_Data_Type_t")
+        .allowlist_type("Mif_Analysis_t")
+        .allowlist_type("Mif_Conn_Data")
+        .allowlist_type("Mif_Conn_Data_t")
+        .allowlist_type("Mif_Port_Data")
+        .allowlist_type("Mif_Port_Data_t")
+        .allowlist_type("Mif_Param_Data")
+        .allowlist_type("Mif_Param_Data_t")
+        .allowlist_type("Mif_Inst_Var_Data")
+        .allowlist_type("Mif_Inst_Var_Data_t")
+        .allowlist_type("Mif_Circ_Data")
+        .allowlist_type("Mif_Circ_Data_t")
+        .allowlist_type("MIFinstance")
+        .allowlist_type("MIFmodel")
+        .allowlist_type("Mif_Boolean_t")
+        .allowlist_type("Mif_Callback_t")
+        .allowlist_type("Mif_Callback_Reason_t")
+        // --- XSPICE functions ---
+        .allowlist_function("add_device")
+        .allowlist_function("MIFload")
+        .allowlist_function("MIFsetup")
+        .allowlist_function("MIFunsetup")
+        .allowlist_function("MIFmParam")
+        .allowlist_function("MIFask")
+        .allowlist_function("MIFmAsk")
+        .allowlist_function("MIFtrunc")
+        .allowlist_function("MIFconvTest")
+        .allowlist_function("MIFdelete")
+        .allowlist_function("MIFmDelete")
+        .allowlist_function("MIFdestroy")
+        // --- XSPICE variables ---
+        .allowlist_var("MIFiSize")
+        .allowlist_var("MIFmSize")
+        // Opaque types — avoid pulling in entire internal type graph.
+        // Must allowlist + mark opaque so bindgen emits an opaque stub.
+        .allowlist_type("CKTcircuit")
+        .opaque_type("CKTcircuit")
+        .allowlist_type("SMPmatrix")
+        .opaque_type("SMPmatrix")
+        .allowlist_type("SENstruct")
+        .opaque_type("SENstruct")
+        .allowlist_type("Ndata")
+        .opaque_type("Ndata")
+        .allowlist_type("SPcomplex")
+        .opaque_type("SPcomplex")
+        .allowlist_type("Evt_Output_Event")
+        .opaque_type("Evt_Output_Event")
+        .allowlist_type("GENmodel")
+        .opaque_type("GENmodel")
+        .allowlist_type("GENinstance")
+        .opaque_type("GENinstance")
+        .allowlist_type("IFvalue")
+        .opaque_type("IFvalue")
         .parse_callbacks(Box::new(bindgen::CargoCallbacks::new()))
         .generate()
         .expect("Failed to generate ngspice FFI bindings");

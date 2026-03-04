@@ -295,6 +295,8 @@ struct IFdevice {
 
     int num_inst_var;              /* number of instance vars = numInstanceParms */
     Mif_Inst_Var_Info_t *inst_var; /* array of instance var info for mif parser */
+
+    void *cm_user_data;            /* opaque user data passed to cm_func via Mif_Private */
 /* gtri - end - wbk - 10/11/90 */
 #endif
 

@@ -66,6 +66,8 @@
 //! must be `Send + Sync + 'static` because ngspice may call them from its own
 //! background simulation thread.
 
+pub mod code_model;
+
 use std::ffi::{CStr, CString, NulError};
 use std::marker::PhantomData;
 use std::os::raw::{c_char, c_int, c_void};
@@ -93,6 +95,9 @@ pub enum NgSpiceError {
 
     #[error("ngSpice_Circ returned non-zero: {0}")]
     CircFailed(i32),
+
+    #[error("add_device returned non-zero: {0}")]
+    CodeModelRegistrationFailed(i32),
 
     #[error("ngSpice_CurPlot returned a null pointer")]
     NullPlot,
@@ -299,6 +304,25 @@ impl NgSpice {
         unsafe { sys::ngSpice_nospinit() };
     }
 
+    /// Register a custom XSPICE code model with ngspice.
+    ///
+    /// Must be called **before** loading any circuit that references the
+    /// model.  The `CodeModel` is permanently leaked — ngspice takes
+    /// ownership of the device descriptor.
+    pub fn register_code_model(
+        &mut self,
+        model: code_model::CodeModel,
+    ) -> Result<(), NgSpiceError> {
+        // SAFETY: NgSpice is initialised (we hold the handle) and the
+        // CodeModel's SPICEdev has valid structure.
+        let rc = unsafe { model.register() };
+        if rc != 0 {
+            Err(NgSpiceError::CodeModelRegistrationFailed(rc))
+        } else {
+            Ok(())
+        }
+    }
+
     /// Convert this handle into a [`NgSpiceSession`] for long-lived or
     /// session-based use where multiple operations interleave without
     /// the compile-time lifetime coupling enforced by [`Circuit`].
@@ -328,6 +352,21 @@ pub struct NgSpiceSession {
 }
 
 impl NgSpiceSession {
+    /// Register a custom XSPICE code model.
+    ///
+    /// See [`NgSpice::register_code_model`] for details.
+    pub fn register_code_model(
+        &mut self,
+        model: code_model::CodeModel,
+    ) -> Result<(), NgSpiceError> {
+        let rc = unsafe { model.register() };
+        if rc != 0 {
+            Err(NgSpiceError::CodeModelRegistrationFailed(rc))
+        } else {
+            Ok(())
+        }
+    }
+
     /// Load a SPICE netlist, replacing any previously loaded circuit.
     ///
     /// `lines` must include a `.end` line; a `NULL` sentinel is appended

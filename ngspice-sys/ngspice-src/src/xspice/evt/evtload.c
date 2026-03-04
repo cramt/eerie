@@ -248,6 +248,7 @@ int EVTload_with_event(
     /* ******************* */
 
     mod_type = MIFmodPtr(inst)->MIFmodType;
+    cm_data.cm_user_data = DEVices[mod_type]->DEVpublic.cm_user_data;
     DEVices[mod_type]->DEVpublic.cm_func (&cm_data);
 
 
