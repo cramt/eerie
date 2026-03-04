@@ -298,6 +298,147 @@ impl NgSpice {
     pub fn suppress_spinit() {
         unsafe { sys::ngSpice_nospinit() };
     }
+
+    /// Convert this handle into a [`NgSpiceSession`] for long-lived or
+    /// session-based use where multiple operations interleave without
+    /// the compile-time lifetime coupling enforced by [`Circuit`].
+    pub fn into_session(self) -> NgSpiceSession {
+        NgSpiceSession { _ng: self, circuit_loaded: false }
+    }
+
+}
+
+// ---------------------------------------------------------------------------
+// NgSpiceSession — session-mode wrapper (no Circuit lifetime coupling)
+// ---------------------------------------------------------------------------
+
+/// Long-lived ngspice session handle.
+///
+/// Unlike the [`NgSpice`] + [`Circuit`] pair, all operations are available
+/// on this type directly.  The trade-off is that the compiler cannot
+/// statically guarantee a circuit is loaded before commands are run — callers
+/// get runtime errors instead.
+///
+/// Obtain via [`NgSpice::into_session`] or [`NgSpice::session_from_zygote`].
+///
+/// `NgSpiceSession` is `!Send + !Sync` for the same reasons as [`NgSpice`].
+pub struct NgSpiceSession {
+    _ng: NgSpice,
+    circuit_loaded: bool,
+}
+
+impl NgSpiceSession {
+    /// Load a SPICE netlist, replacing any previously loaded circuit.
+    ///
+    /// `lines` must include a `.end` line; a `NULL` sentinel is appended
+    /// automatically.
+    pub fn load_circuit<'a>(
+        &mut self,
+        lines: impl IntoIterator<Item = &'a str>,
+    ) -> Result<(), NgSpiceError> {
+        // Remove the previous circuit if one was loaded.
+        if self.circuit_loaded {
+            // Ignore errors — if no circuit was loaded this is a no-op.
+            unsafe { sys::ngSpice_Command(b"remcirc\0".as_ptr() as *mut c_char) };
+            self.circuit_loaded = false;
+        }
+
+        let cstrings: Vec<CString> = lines
+            .into_iter()
+            .map(CString::new)
+            .collect::<Result<_, _>>()?;
+        let mut ptrs: Vec<*mut c_char> = cstrings
+            .iter()
+            .map(|s| s.as_ptr() as *mut c_char)
+            .collect();
+        ptrs.push(std::ptr::null_mut());
+
+        let rc = unsafe { sys::ngSpice_Circ(ptrs.as_mut_ptr()) };
+        if rc != 0 {
+            return Err(NgSpiceError::CircFailed(rc));
+        }
+        self.circuit_loaded = true;
+        Ok(())
+    }
+
+    /// Send any ngspice interactive command.
+    pub fn command(&mut self, cmd: &str) -> Result<(), NgSpiceError> {
+        let c = CString::new(cmd)?;
+        let rc = unsafe { sys::ngSpice_Command(c.as_ptr() as *mut c_char) };
+        if rc != 0 { Err(NgSpiceError::CommandFailed(rc)) } else { Ok(()) }
+    }
+
+    /// Run the loaded simulation (equivalent to `command("run")`).
+    pub fn run(&mut self) -> Result<(), NgSpiceError> {
+        self.command("run")
+    }
+
+    /// Name of the current active plot (e.g. `"op1"`, `"tran2"`).
+    pub fn current_plot(&self) -> Result<String, NgSpiceError> {
+        let ptr = unsafe { sys::ngSpice_CurPlot() };
+        if ptr.is_null() {
+            return Err(NgSpiceError::NullPlot);
+        }
+        Ok(unsafe { CStr::from_ptr(ptr) }.to_string_lossy().into_owned())
+    }
+
+    /// Names of all plots created so far in this session.
+    pub fn all_plots(&self) -> Vec<String> {
+        collect_str_array(unsafe { sys::ngSpice_AllPlots() })
+    }
+
+    /// Names of all vectors in `plot`.
+    pub fn all_vecs(&self, plot: &str) -> Result<Vec<String>, NgSpiceError> {
+        let c = CString::new(plot)?;
+        Ok(collect_str_array(unsafe {
+            sys::ngSpice_AllVecs(c.as_ptr() as *mut c_char)
+        }))
+    }
+
+    /// Copy a simulation vector out of ngspice's internal buffers.
+    pub fn vec_data(&self, vecname: &str) -> Result<VecData, NgSpiceError> {
+        let c = CString::new(vecname)?;
+        let info_ptr = unsafe { sys::ngGet_Vec_Info(c.as_ptr() as *mut c_char) };
+        if info_ptr.is_null() {
+            return Err(NgSpiceError::VecNotFound(vecname.to_owned()));
+        }
+        let info = unsafe { &*info_ptr };
+
+        let name = if info.v_name.is_null() {
+            vecname.to_owned()
+        } else {
+            unsafe { CStr::from_ptr(info.v_name) }.to_string_lossy().into_owned()
+        };
+        let length = info.v_length as usize;
+        let real = (!info.v_realdata.is_null() && length > 0).then(|| {
+            unsafe { std::slice::from_raw_parts(info.v_realdata, length) }.to_vec()
+        });
+        let complex = (!info.v_compdata.is_null() && length > 0).then(|| {
+            unsafe { std::slice::from_raw_parts(info.v_compdata, length) }
+                .iter()
+                .map(|c| [c.cx_real, c.cx_imag])
+                .collect::<Vec<_>>()
+        });
+        Ok(VecData { name, real, complex })
+    }
+
+    /// `true` if ngspice is running a simulation in its background thread.
+    pub fn is_running(&self) -> bool {
+        unsafe { sys::ngSpice_running() }
+    }
+
+    /// Set a breakpoint at `time` seconds (transient simulation).
+    pub fn set_breakpoint(&self, time: f64) -> bool {
+        unsafe { sys::ngSpice_SetBkpt(time) }
+    }
+
+    /// Remove the currently loaded circuit, freeing ngspice's internal state.
+    pub fn remcirc(&mut self) {
+        if self.circuit_loaded {
+            unsafe { sys::ngSpice_Command(b"remcirc\0".as_ptr() as *mut c_char) };
+            self.circuit_loaded = false;
+        }
+    }
 }
 
 // ---------------------------------------------------------------------------
