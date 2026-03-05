@@ -1,7 +1,3 @@
-import WebSocket from "ws";
-// Polyfill WebSocket for Node.js (roam-ws needs it as a global)
-Object.assign(globalThis, { WebSocket });
-
 import { app, BrowserWindow, ipcMain, shell, dialog } from "electron";
 import { join } from "path";
 import { readFile, writeFile } from "fs/promises";
@@ -11,6 +7,7 @@ import {
   connectEerieDaemon,
   EerieDaemonClient,
 } from "../codegen/generated-rpc";
+import type { Netlist } from "../codegen/types";
 
 let mainWindow: BrowserWindow | null = null;
 let daemonProcess: ChildProcess | null = null;
@@ -98,15 +95,18 @@ function createWindow() {
 // ── IPC handlers ───────────────────────────────────────────────────────────
 
 function setupIpcHandlers() {
-  ipcMain.handle("daemon:call", async (_event, method: string, params: unknown) => {
+  ipcMain.handle("daemon:ping", async () => {
     if (!daemonClient) return null;
-    const fn = (daemonClient as unknown as Record<string, unknown>)[method];
-    if (typeof fn !== "function") throw new Error(`unknown daemon method: ${method}`);
-    return await (fn as Function).call(daemonClient, params);
+    return await daemonClient.ping();
   });
 
   ipcMain.handle("daemon:connected", () => {
     return daemonClient !== null;
+  });
+
+  ipcMain.handle("sim:dc", async (_event, netlist: Netlist) => {
+    if (!daemonClient) throw new Error("daemon not connected");
+    return await daemonClient.simDc(netlist);
   });
 
   ipcMain.handle("file:read", async (_event, path: string) => {

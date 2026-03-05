@@ -3,7 +3,11 @@ import { contextBridge, ipcRenderer } from 'electron'
 /** The API exposed to the renderer via window.eerie */
 export interface EerieAPI {
   daemon: {
-    call: (method: string, params: unknown) => Promise<unknown>
+    ping: () => Promise<string | null>
+    connected: () => Promise<boolean>
+  }
+  sim: {
+    dc: (netlist: unknown) => Promise<unknown>
   }
   file: {
     read: (path: string) => Promise<string>
@@ -17,8 +21,11 @@ export interface EerieAPI {
 
 contextBridge.exposeInMainWorld('eerie', {
   daemon: {
-    call: (method: string, params: unknown) =>
-      ipcRenderer.invoke('daemon:call', method, params),
+    ping: () => ipcRenderer.invoke('daemon:ping'),
+    connected: () => ipcRenderer.invoke('daemon:connected'),
+  },
+  sim: {
+    dc: (netlist: unknown) => ipcRenderer.invoke('sim:dc', netlist),
   },
   file: {
     read: (path: string) => ipcRenderer.invoke('file:read', path),
