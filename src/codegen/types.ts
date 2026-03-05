@@ -226,26 +226,41 @@ export interface Netlist {
   items: Item[];
 }
 
+/**
+ * Pin definition metadata for a component type.
+ */
+export interface PinMeta {
+  /**
+   * Canonical pin name used in the UI (e.g., "a", "collector", "positive").
+   */
+  name: string;
+  /**
+   * Alias used in .eerie files (e.g., "p" for "a", "n" for "b").
+   * When absent, the canonical name is used as-is.
+   */
+  file_alias?: string;
+}
+
 export interface ComponentData {
   meta: Metadata;
   component: Component;
 }
 
 export type Component =
-  | { Resistor: { pins: TwoPin; resistance: number; tolerance: number; temp_coefficient: number } }
-  | { Capacitor: { pins: TwoPin; capacitance: number; esr: number; leakage: number; voltage_rating: number } }
-  | { Inductor: { pins: TwoPin; inductance: number; dcr: number; saturation_current: number } }
-  | { Diode: { pins: TwoPin; forward_voltage: number; reverse_breakdown: number; reverse_leakage: number; junction_capacitance: number } }
-  | { NPN: { pins: BjtPins; beta: number; vbe_on: number; vce_sat: number; early_voltage: number } }
-  | { PNP: { pins: BjtPins; beta: number; vbe_on: number; vce_sat: number; early_voltage: number } }
-  | { NMOS: { pins: MosfetPins; threshold_voltage: number; k: number; channel_length_mod: number; rds_on: number; gate_capacitance: number } }
-  | { PMOS: { pins: MosfetPins; threshold_voltage: number; k: number; channel_length_mod: number; rds_on: number; gate_capacitance: number } }
-  | { IGBT: { pins: MosfetPins; gate_threshold: number; vce_sat: number; tail_current: number; switching_loss: number } }
-  | { OpAmp: { pins: OpAmpPins; gain: number; bandwidth: number; slew_rate: number; input_offset: number; input_bias_current: number; output_impedance: number } }
-  | { Transformer: { pins: TransformerPins; primary_inductance: number; turns_ratio: number; coupling: number; core_loss: number } }
-  | { Relay: { pins: RelayPins; coil_resistance: number; pull_in_voltage: number; drop_out_voltage: number; contact_resistance: number; switching_time: number } }
-  | { VoltageSource: { pins: TwoPin; voltage: number; internal_resistance: number } }
-  | { CurrentSource: { pins: TwoPin; current: number; compliance_voltage: number } }
+  | { Resistor: { pins: Record<string, string>; resistance: number; tolerance: number; temp_coefficient: number } }
+  | { Capacitor: { pins: Record<string, string>; capacitance: number; esr: number; leakage: number; voltage_rating: number } }
+  | { Inductor: { pins: Record<string, string>; inductance: number; dcr: number; saturation_current: number } }
+  | { Diode: { pins: Record<string, string>; forward_voltage: number; reverse_breakdown: number; reverse_leakage: number; junction_capacitance: number } }
+  | { NPN: { pins: Record<string, string>; beta: number; vbe_on: number; vce_sat: number; early_voltage: number } }
+  | { PNP: { pins: Record<string, string>; beta: number; vbe_on: number; vce_sat: number; early_voltage: number } }
+  | { NMOS: { pins: Record<string, string>; threshold_voltage: number; k: number; channel_length_mod: number; rds_on: number; gate_capacitance: number } }
+  | { PMOS: { pins: Record<string, string>; threshold_voltage: number; k: number; channel_length_mod: number; rds_on: number; gate_capacitance: number } }
+  | { IGBT: { pins: Record<string, string>; gate_threshold: number; vce_sat: number; tail_current: number; switching_loss: number } }
+  | { OpAmp: { pins: Record<string, string>; gain: number; bandwidth: number; slew_rate: number; input_offset: number; input_bias_current: number; output_impedance: number } }
+  | { Transformer: { pins: Record<string, string>; primary_inductance: number; turns_ratio: number; coupling: number; core_loss: number } }
+  | { Relay: { pins: Record<string, string>; coil_resistance: number; pull_in_voltage: number; drop_out_voltage: number; contact_resistance: number; switching_time: number } }
+  | { VoltageSource: { pins: Record<string, string>; voltage: number; internal_resistance: number } }
+  | { CurrentSource: { pins: Record<string, string>; current: number; compliance_voltage: number } }
   | { Composite: { circuit: Circuit } };
 
 export interface Circuit {
@@ -255,49 +270,118 @@ export interface Circuit {
   pins: string[];
 }
 
-export interface TwoPin {
-  a: string;
-  b: string;
-}
-
-export interface RelayPins {
-  coil_pos: string;
-  coil_neg: string;
-  contact_common: string;
-  contact_no: string;
-}
-
-export interface TransformerPins {
-  primary_pos: string;
-  primary_neg: string;
-  secondary_pos: string;
-  secondary_neg: string;
-}
-
-export interface OpAmpPins {
-  non_inverting: string;
-  inverting: string;
-  output: string;
-  v_pos: string;
-  v_neg: string;
-}
-
-export interface MosfetPins {
-  drain: string;
-  gate: string;
-  source: string;
-  body: string;
-}
-
-export interface BjtPins {
-  collector: string;
-  base: string;
-  emitter: string;
-}
-
 export interface Metadata {
   name: string;
   description?: string;
   tags: Record<string, string>;
 }
 
+
+/**
+ * Pin definitions per component type.
+ * Single source of truth — generated from Rust.
+ */
+export const PIN_DEFINITIONS: Record<string, PinMeta[]> = {
+  "resistor": [
+    { name: "a", file_alias: "p" },
+    { name: "b", file_alias: "n" },
+  ],
+  "capacitor": [
+    { name: "a", file_alias: "p" },
+    { name: "b", file_alias: "n" },
+  ],
+  "inductor": [
+    { name: "a", file_alias: "p" },
+    { name: "b", file_alias: "n" },
+  ],
+  "diode": [
+    { name: "anode", file_alias: "p" },
+    { name: "cathode", file_alias: "n" },
+  ],
+  "npn": [
+    { name: "collector", file_alias: null },
+    { name: "base", file_alias: null },
+    { name: "emitter", file_alias: null },
+  ],
+  "pnp": [
+    { name: "collector", file_alias: null },
+    { name: "base", file_alias: null },
+    { name: "emitter", file_alias: null },
+  ],
+  "nmos": [
+    { name: "drain", file_alias: null },
+    { name: "gate", file_alias: null },
+    { name: "source", file_alias: null },
+    { name: "body", file_alias: null },
+  ],
+  "pmos": [
+    { name: "drain", file_alias: null },
+    { name: "gate", file_alias: null },
+    { name: "source", file_alias: null },
+    { name: "body", file_alias: null },
+  ],
+  "igbt": [
+    { name: "drain", file_alias: null },
+    { name: "gate", file_alias: null },
+    { name: "source", file_alias: null },
+    { name: "body", file_alias: null },
+  ],
+  "opamp": [
+    { name: "non_inverting", file_alias: null },
+    { name: "inverting", file_alias: null },
+    { name: "output", file_alias: null },
+    { name: "v_pos", file_alias: null },
+    { name: "v_neg", file_alias: null },
+  ],
+  "transformer": [
+    { name: "primary_pos", file_alias: null },
+    { name: "primary_neg", file_alias: null },
+    { name: "secondary_pos", file_alias: null },
+    { name: "secondary_neg", file_alias: null },
+  ],
+  "relay": [
+    { name: "coil_pos", file_alias: null },
+    { name: "coil_neg", file_alias: null },
+    { name: "contact_common", file_alias: null },
+    { name: "contact_no", file_alias: null },
+  ],
+  "dc_voltage": [
+    { name: "positive", file_alias: "p" },
+    { name: "negative", file_alias: "n" },
+  ],
+  "dc_current": [
+    { name: "positive", file_alias: "p" },
+    { name: "negative", file_alias: "n" },
+  ],
+  "ground": [
+    { name: "gnd", file_alias: "p" },
+  ],
+};
+
+/**
+ * Pin name mapping: .eerie file pin_id → UI pin name.
+ * Generated from PIN_DEFINITIONS — do not edit.
+ */
+export const FILE_PIN_TO_UI: Record<string, Record<string, string>> = {
+  "resistor": { p: "a", n: "b", },
+  "capacitor": { p: "a", n: "b", },
+  "inductor": { p: "a", n: "b", },
+  "diode": { p: "anode", n: "cathode", },
+  "dc_voltage": { p: "positive", n: "negative", },
+  "dc_current": { p: "positive", n: "negative", },
+  "ground": { p: "gnd", },
+};
+
+/**
+ * Reverse mapping: UI pin name → .eerie file pin_id.
+ * Generated from PIN_DEFINITIONS — do not edit.
+ */
+export const UI_PIN_TO_FILE: Record<string, Record<string, string>> = {
+  "resistor": { a: "p", b: "n", },
+  "capacitor": { a: "p", b: "n", },
+  "inductor": { a: "p", b: "n", },
+  "diode": { anode: "p", cathode: "n", },
+  "dc_voltage": { positive: "p", negative: "n", },
+  "dc_current": { positive: "p", negative: "n", },
+  "ground": { gnd: "p", },
+};

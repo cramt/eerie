@@ -3,56 +3,103 @@ use std::collections::{HashMap, HashSet};
 
 use crate::circuit::Circuit;
 
+//
+// ---------- Pin metadata (single source of truth) ----------
+//
+
+/// Pin definition metadata for a component type.
 #[derive(Facet, Debug, Clone)]
-#[repr(C)]
-pub struct TwoPin {
-    pub a: String,
-    pub b: String,
+pub struct PinMeta {
+    /// Canonical pin name used in the UI (e.g., "a", "collector", "positive").
+    pub name: String,
+    /// Alias used in .eerie files (e.g., "p" for "a", "n" for "b").
+    /// When absent, the canonical name is used as-is.
+    pub file_alias: Option<String>,
 }
 
-#[derive(Facet, Debug, Clone)]
-#[repr(C)]
-pub struct BjtPins {
-    pub collector: String,
-    pub base: String,
-    pub emitter: String,
+impl PinMeta {
+    fn new(name: &str) -> Self {
+        Self {
+            name: name.to_string(),
+            file_alias: None,
+        }
+    }
+    fn with_alias(name: &str, alias: &str) -> Self {
+        Self {
+            name: name.to_string(),
+            file_alias: Some(alias.to_string()),
+        }
+    }
 }
 
-#[derive(Facet, Debug, Clone)]
-#[repr(C)]
-pub struct MosfetPins {
-    pub drain: String,
-    pub gate: String,
-    pub source: String,
-    pub body: String,
-}
+/// All known component type IDs.
+pub const COMPONENT_KINDS: &[&str] = &[
+    "resistor",
+    "capacitor",
+    "inductor",
+    "diode",
+    "npn",
+    "pnp",
+    "nmos",
+    "pmos",
+    "igbt",
+    "opamp",
+    "transformer",
+    "relay",
+    "dc_voltage",
+    "dc_current",
+    "ground",
+];
 
-#[derive(Facet, Debug, Clone)]
-#[repr(C)]
-pub struct OpAmpPins {
-    pub non_inverting: String,
-    pub inverting: String,
-    pub output: String,
-    pub v_pos: String,
-    pub v_neg: String,
-}
-
-#[derive(Facet, Debug, Clone)]
-#[repr(C)]
-pub struct TransformerPins {
-    pub primary_pos: String,
-    pub primary_neg: String,
-    pub secondary_pos: String,
-    pub secondary_neg: String,
-}
-
-#[derive(Facet, Debug, Clone)]
-#[repr(C)]
-pub struct RelayPins {
-    pub coil_pos: String,
-    pub coil_neg: String,
-    pub contact_common: String,
-    pub contact_no: String,
+/// Returns the canonical pin definitions for a component type ID.
+/// This is the single source of truth for pin names across Rust and TypeScript.
+pub fn pin_definitions(type_id: &str) -> Vec<PinMeta> {
+    match type_id {
+        "resistor" | "capacitor" | "inductor" => vec![
+            PinMeta::with_alias("a", "p"),
+            PinMeta::with_alias("b", "n"),
+        ],
+        "diode" => vec![
+            PinMeta::with_alias("anode", "p"),
+            PinMeta::with_alias("cathode", "n"),
+        ],
+        "npn" | "pnp" => vec![
+            PinMeta::new("collector"),
+            PinMeta::new("base"),
+            PinMeta::new("emitter"),
+        ],
+        "nmos" | "pmos" | "igbt" => vec![
+            PinMeta::new("drain"),
+            PinMeta::new("gate"),
+            PinMeta::new("source"),
+            PinMeta::new("body"),
+        ],
+        "opamp" => vec![
+            PinMeta::new("non_inverting"),
+            PinMeta::new("inverting"),
+            PinMeta::new("output"),
+            PinMeta::new("v_pos"),
+            PinMeta::new("v_neg"),
+        ],
+        "transformer" => vec![
+            PinMeta::new("primary_pos"),
+            PinMeta::new("primary_neg"),
+            PinMeta::new("secondary_pos"),
+            PinMeta::new("secondary_neg"),
+        ],
+        "relay" => vec![
+            PinMeta::new("coil_pos"),
+            PinMeta::new("coil_neg"),
+            PinMeta::new("contact_common"),
+            PinMeta::new("contact_no"),
+        ],
+        "dc_voltage" | "dc_current" => vec![
+            PinMeta::with_alias("positive", "p"),
+            PinMeta::with_alias("negative", "n"),
+        ],
+        "ground" => vec![PinMeta::with_alias("gnd", "p")],
+        _ => vec![],
+    }
 }
 
 //
@@ -71,14 +118,14 @@ pub struct Metadata {
 pub enum Component {
     // ----- Passive -----
     Resistor {
-        pins: TwoPin,
+        pins: HashMap<String, String>,
         resistance: f64,       // Ohms
-        tolerance: f64,        // ± fraction
+        tolerance: f64,        // +/- fraction
         temp_coefficient: f64, // ppm/K
     },
 
     Capacitor {
-        pins: TwoPin,
+        pins: HashMap<String, String>,
         capacitance: f64,    // Farads
         esr: f64,            // Ohms
         leakage: f64,        // Amps
@@ -86,14 +133,14 @@ pub enum Component {
     },
 
     Inductor {
-        pins: TwoPin,
+        pins: HashMap<String, String>,
         inductance: f64,         // Henry
         dcr: f64,                // Ohms
         saturation_current: f64, // Amps
     },
 
     Diode {
-        pins: TwoPin,              // a = anode, b = cathode
+        pins: HashMap<String, String>,
         forward_voltage: f64,      // Volts
         reverse_breakdown: f64,    // Volts
         reverse_leakage: f64,      // Amps
@@ -102,7 +149,7 @@ pub enum Component {
 
     // ----- BJTs -----
     NPN {
-        pins: BjtPins,
+        pins: HashMap<String, String>,
         beta: f64,
         vbe_on: f64,        // Volts
         vce_sat: f64,       // Volts
@@ -110,7 +157,7 @@ pub enum Component {
     },
 
     PNP {
-        pins: BjtPins,
+        pins: HashMap<String, String>,
         beta: f64,
         vbe_on: f64,
         vce_sat: f64,
@@ -119,7 +166,7 @@ pub enum Component {
 
     // ----- MOSFETs / IGBTs -----
     NMOS {
-        pins: MosfetPins,
+        pins: HashMap<String, String>,
         threshold_voltage: f64, // Volts
         k: f64,                 // Transconductance parameter
         channel_length_mod: f64,
@@ -128,7 +175,7 @@ pub enum Component {
     },
 
     PMOS {
-        pins: MosfetPins,
+        pins: HashMap<String, String>,
         threshold_voltage: f64,
         k: f64,
         channel_length_mod: f64,
@@ -137,7 +184,7 @@ pub enum Component {
     },
 
     IGBT {
-        pins: MosfetPins,    // Gate, Collector, Emitter, (Body unused)
+        pins: HashMap<String, String>,
         gate_threshold: f64, // Volts
         vce_sat: f64,        // Volts
         tail_current: f64,   // Amps
@@ -146,7 +193,7 @@ pub enum Component {
 
     // ----- Analog ICs -----
     OpAmp {
-        pins: OpAmpPins,
+        pins: HashMap<String, String>,
         gain: f64,               // Open-loop gain
         bandwidth: f64,          // Hz
         slew_rate: f64,          // V/s
@@ -157,7 +204,7 @@ pub enum Component {
 
     // ----- Magnetics -----
     Transformer {
-        pins: TransformerPins,
+        pins: HashMap<String, String>,
         primary_inductance: f64, // Henry
         turns_ratio: f64,        // Ns / Np
         coupling: f64,           // 0.0 .. 1.0
@@ -166,7 +213,7 @@ pub enum Component {
 
     // ----- Electromechanical -----
     Relay {
-        pins: RelayPins,
+        pins: HashMap<String, String>,
         coil_resistance: f64,    // Ohms
         pull_in_voltage: f64,    // Volts
         drop_out_voltage: f64,   // Volts
@@ -176,13 +223,13 @@ pub enum Component {
 
     // ----- Sources -----
     VoltageSource {
-        pins: TwoPin,
+        pins: HashMap<String, String>,
         voltage: f64,             // Volts
         internal_resistance: f64, // Ohms
     },
 
     CurrentSource {
-        pins: TwoPin,
+        pins: HashMap<String, String>,
         current: f64,            // Amps
         compliance_voltage: f64, // Volts
     },
@@ -199,52 +246,18 @@ impl Component {
             | Component::Capacitor { pins, .. }
             | Component::Inductor { pins, .. }
             | Component::Diode { pins, .. }
+            | Component::NPN { pins, .. }
+            | Component::PNP { pins, .. }
+            | Component::NMOS { pins, .. }
+            | Component::PMOS { pins, .. }
+            | Component::IGBT { pins, .. }
+            | Component::OpAmp { pins, .. }
+            | Component::Transformer { pins, .. }
+            | Component::Relay { pins, .. }
             | Component::VoltageSource { pins, .. }
             | Component::CurrentSource { pins, .. } => {
-                [pins.a.as_str(), pins.b.as_str()].into_iter().collect()
+                pins.keys().map(|k| k.as_str()).collect()
             }
-            Component::NPN { pins, .. } | Component::PNP { pins, .. } => [
-                pins.collector.as_str(),
-                pins.base.as_str(),
-                pins.emitter.as_str(),
-            ]
-            .into_iter()
-            .collect(),
-            Component::NMOS { pins, .. }
-            | Component::PMOS { pins, .. }
-            | Component::IGBT { pins, .. } => [
-                pins.drain.as_str(),
-                pins.gate.as_str(),
-                pins.source.as_str(),
-                pins.body.as_str(),
-            ]
-            .into_iter()
-            .collect(),
-            Component::OpAmp { pins, .. } => [
-                pins.non_inverting.as_str(),
-                pins.inverting.as_str(),
-                pins.output.as_str(),
-                pins.v_pos.as_str(),
-                pins.v_neg.as_str(),
-            ]
-            .into_iter()
-            .collect(),
-            Component::Transformer { pins, .. } => [
-                pins.primary_pos.as_str(),
-                pins.primary_neg.as_str(),
-                pins.secondary_pos.as_str(),
-                pins.secondary_neg.as_str(),
-            ]
-            .into_iter()
-            .collect(),
-            Component::Relay { pins, .. } => [
-                pins.coil_pos.as_str(),
-                pins.coil_neg.as_str(),
-                pins.contact_common.as_str(),
-                pins.contact_no.as_str(),
-            ]
-            .into_iter()
-            .collect(),
             Component::Composite { circuit } => circuit.pins.iter().map(|x| x.as_str()).collect(),
         }
     }
