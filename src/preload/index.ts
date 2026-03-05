@@ -1,4 +1,5 @@
 import { contextBridge, ipcRenderer } from 'electron'
+import type { Netlist, SimDcResponse } from '../codegen/generated-rpc'
 
 /** The API exposed to the renderer via window.eerie */
 export interface EerieAPI {
@@ -7,7 +8,7 @@ export interface EerieAPI {
     connected: () => Promise<boolean>
   }
   sim: {
-    dc: (netlist: unknown) => Promise<unknown>
+    dc: (netlist: Netlist) => Promise<SimDcResponse>
   }
   file: {
     read: (path: string) => Promise<string>
