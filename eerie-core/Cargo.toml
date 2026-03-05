@@ -9,7 +9,7 @@ crate-type = ["cdylib", "rlib"]
 
 [features]
 default = []
-wasm = ["wasm-bindgen", "js-sys", "console_error_panic_hook"]
+wasm = ["wasm-bindgen", "js-sys", "console_error_panic_hook", "uuid/js"]
 
 [dependencies]
 facet.workspace     = true

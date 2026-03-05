@@ -1,0 +1,125 @@
+app-id: io.github.cramt.Eerie
+runtime: org.freedesktop.Platform
+runtime-version: '24.08'
+sdk: org.freedesktop.Sdk
+sdk-extensions:
+  - org.freedesktop.Sdk.Extension.rust-stable
+  - org.freedesktop.Sdk.Extension.node22
+base: org.electronjs.Electron2.BaseApp
+base-version: '24.08'
+command: eerie
+
+finish-args:
+  - --share=ipc
+  - --socket=x11
+  - --socket=wayland
+  - --device=dri
+  - --share=network
+  - --filesystem=home
+
+build-options:
+  append-path: /usr/lib/sdk/rust-stable/bin:/usr/lib/sdk/node22/bin
+  env:
+    CARGO_HOME: /run/build/eerie-daemon/cargo
+    npm_config_nodedir: /usr/lib/sdk/node22
+
+modules:
+  # ── 1. Rust daemon + worker ─────────────────────────────────────────────
+  - name: eerie-daemon
+    buildsystem: simple
+    build-options:
+      env:
+        CARGO_HOME: /run/build/eerie-daemon/cargo
+    build-commands:
+      # Set up vendored cargo deps
+      - mkdir -p ${CARGO_HOME}
+      - cp cargo-config.toml ${CARGO_HOME}/config.toml
+      # Build only the eerie-daemon crate (produces eerie-daemon + eerie-worker binaries)
+      - cargo build --release --offline -p eerie-daemon
+      - install -Dm755 target/release/eerie-daemon /app/bin/eerie-daemon
+      - install -Dm755 target/release/eerie-worker /app/bin/eerie-worker
+    sources:
+      - type: dir
+        path: ..
+        skip:
+          - .git
+          - node_modules
+          - out
+          - dist
+          - target
+          - flatpak
+      # Vendored cargo dependencies — regenerate with flatpak/generate-sources.sh
+      - cargo-sources.json
+      # Cargo config for vendored deps
+      - type: inline
+        dest-filename: cargo-config.toml
+        contents: |
+          [source.crates-io]
+          replace-with = "vendored-sources"
+
+          [source.vendored-sources]
+          directory = "cargo-sources"
+
+  # ── 2. Pre-built WASM module ────────────────────────────────────────────
+  # The Rust SDK extension doesn't include wasm32 target, so we use a
+  # pre-built archive. Rebuild with:
+  #   wasm-pack build eerie-core --target bundler --out-dir ../wasm-out
+  #   tar czf flatpak/eerie-wasm.tar.gz -C wasm-out .
+  - name: eerie-wasm
+    buildsystem: simple
+    build-commands:
+      - mkdir -p /app/share/eerie/wasm
+      - cp -r * /app/share/eerie/wasm/
+    sources:
+      - type: archive
+        path: eerie-wasm.tar.gz
+
+  # ── 3. Electron app (JS/CSS bundles) ────────────────────────────────────
+  - name: eerie-app
+    buildsystem: simple
+    build-options:
+      env:
+        ELECTRON_SKIP_BINARY_DOWNLOAD: '1'
+    build-commands:
+      # Inject WASM module
+      - mkdir -p src/renderer/src/wasm/eerie-core
+      - cp -r /app/share/eerie/wasm/* src/renderer/src/wasm/eerie-core/
+      # Install pnpm deps offline and build
+      - pnpm install --offline --frozen-lockfile
+      - pnpm exec electron-vite build
+      # Install built app
+      - mkdir -p /app/lib/eerie
+      - cp -r out/* /app/lib/eerie/
+    sources:
+      - type: dir
+        path: ..
+        skip:
+          - .git
+          - node_modules
+          - out
+          - dist
+          - target
+          - flatpak
+          - ngspice-sys/ngspice-src
+      # Vendored pnpm dependencies — regenerate with flatpak/generate-sources.sh
+      - node-sources.json
+
+  # ── 4. Launcher + desktop integration ───────────────────────────────────
+  - name: eerie-launcher
+    buildsystem: simple
+    build-commands:
+      # Launcher script using zypak (required for Electron sandboxing in Flatpak)
+      - install -Dm755 eerie-launcher.sh /app/bin/eerie
+      # Desktop integration
+      - install -Dm644 io.github.cramt.Eerie.desktop /app/share/applications/io.github.cramt.Eerie.desktop
+      - install -Dm644 io.github.cramt.Eerie.svg /app/share/icons/hicolor/scalable/apps/io.github.cramt.Eerie.svg
+      - install -Dm644 io.github.cramt.Eerie.metainfo.xml /app/share/metainfo/io.github.cramt.Eerie.metainfo.xml
+    sources:
+      - type: dir
+        path: ../data
+      - type: inline
+        dest-filename: eerie-launcher.sh
+        contents: |
+          #!/bin/bash
+          export EERIE_DAEMON_BIN=/app/bin/eerie-daemon
+          exec zypak-wrapper.sh /app/lib/eerie/main/index.js "$@"

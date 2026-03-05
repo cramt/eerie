@@ -19,9 +19,10 @@ let daemonClient: EerieDaemonClient | null = null;
 // ── Daemon management ──────────────────────────────────────────────────────
 
 async function startDaemon() {
-  const daemonBin = app.isPackaged
-    ? join(process.resourcesPath, "eerie-daemon")
-    : join(__dirname, "../../target/debug/eerie-daemon");
+  const daemonBin = process.env["EERIE_DAEMON_BIN"]
+    ?? (app.isPackaged
+      ? join(process.resourcesPath, "eerie-daemon")
+      : join(__dirname, "../../target/debug/eerie-daemon"));
 
   try {
     daemonProcess = spawn(daemonBin, [], {
