@@ -144,23 +144,23 @@ fn main() {
 
     // Copy vendored source into OUT_DIR (using cp -a to preserve timestamps,
     // which prevents make from trying to re-run automake/autoconf).
-    // Also clear the autotools build directory to prevent stale objects
-    // when configure flags change (e.g. enabling/disabling XSPICE).
+    // We use rsync to do an incremental copy — only changed files are updated,
+    // so autotools' `make` can skip unchanged objects.
     let build_src = out_dir.join("ngspice-src");
     let build_dir = out_dir.join("build");
-    if build_src.exists() {
-        fs::remove_dir_all(&build_src).unwrap();
-    }
-    if build_dir.exists() {
-        fs::remove_dir_all(&build_dir).unwrap();
-    }
     let manifest_dir = PathBuf::from(env::var("CARGO_MANIFEST_DIR").unwrap());
     let vendored_src = manifest_dir.join("ngspice-src");
-    let status = Command::new("cp")
-        .args(["-a", vendored_src.to_str().unwrap(), build_src.to_str().unwrap()])
+    // rsync with --delete so removed upstream files are cleaned, but unchanged
+    // files keep their timestamps → make treats them as up-to-date.
+    let status = Command::new("rsync")
+        .args([
+            "-a", "--delete",
+            &format!("{}/", vendored_src.to_str().unwrap()),
+            &format!("{}/", build_src.to_str().unwrap()),
+        ])
         .status()
-        .expect("failed to run cp");
-    assert!(status.success(), "cp -a failed");
+        .expect("failed to run rsync — is it installed? add it to flake.nix devShell");
+    assert!(status.success(), "rsync failed");
 
     // Apply WASM patches if targeting Emscripten
     if target.contains("emscripten") {

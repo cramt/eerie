@@ -3,28 +3,43 @@ import { join } from "path";
 import { readFile, writeFile } from "fs/promises";
 import { spawn, ChildProcess } from "child_process";
 import { createInterface } from "readline";
+import { watch, type FSWatcher } from "fs";
 import {
   connectEerieDaemon,
   EerieDaemonClient,
 } from "../codegen/generated-rpc";
 import type { Netlist } from "../codegen/types";
 
+const isDev = !app.isPackaged;
+
 let mainWindow: BrowserWindow | null = null;
 let daemonProcess: ChildProcess | null = null;
 let daemonClient: EerieDaemonClient | null = null;
+let rustWatchers: FSWatcher[] = [];
 
 // ── Daemon management ──────────────────────────────────────────────────────
 
-async function startDaemon() {
-  const daemonBin = process.env["EERIE_DAEMON_BIN"]
+function getDaemonBinPath(): string {
+  return process.env["EERIE_DAEMON_BIN"]
     ?? (app.isPackaged
       ? join(process.resourcesPath, "eerie-daemon")
       : join(__dirname, "../../target/debug/eerie-daemon"));
+}
+
+async function startDaemon() {
+  const daemonBin = getDaemonBinPath();
 
   try {
-    daemonProcess = spawn(daemonBin, [], {
-      stdio: ["ignore", "pipe", "inherit"],
-    });
+    if (isDev) {
+      console.log("[dev] Starting daemon via cargo run...");
+      daemonProcess = spawn("cargo", ["run", "-p", "eerie-daemon", "--bin", "eerie-daemon"], {
+        stdio: ["ignore", "pipe", "inherit"],
+      });
+    } else {
+      daemonProcess = spawn(daemonBin, [], {
+        stdio: ["ignore", "pipe", "inherit"],
+      });
+    }
 
     const port = await readDaemonPort(daemonProcess);
     daemonClient = await connectEerieDaemon(`127.0.0.1:${port}`);
@@ -43,6 +58,38 @@ async function startDaemon() {
     console.warn("Could not start eerie-daemon:", err);
     mainWindow?.webContents.send("daemon:status", false);
   }
+}
+
+async function restartDaemon() {
+  console.log("[dev] Rust source changed — restarting daemon...");
+  if (daemonProcess) {
+    daemonProcess.kill();
+    daemonProcess = null;
+    daemonClient = null;
+  }
+  await startDaemon();
+}
+
+function watchRustSources() {
+  if (!isDev) return;
+
+  const rootDir = join(__dirname, "../..");
+  const srcDirs = ["eerie-core/src", "eerie-daemon/src", "eerie-rpc/src"];
+  let debounce: ReturnType<typeof setTimeout> | null = null;
+
+  for (const dir of srcDirs) {
+    try {
+      const w = watch(join(rootDir, dir), { recursive: true }, (_event, filename) => {
+        if (!filename?.endsWith(".rs")) return;
+        if (debounce) clearTimeout(debounce);
+        debounce = setTimeout(() => restartDaemon(), 300);
+      });
+      rustWatchers.push(w);
+    } catch {
+      console.warn(`[dev] Could not watch ${dir}`);
+    }
+  }
+  console.log("[dev] Watching Rust sources — daemon will auto-restart on changes");
 }
 
 function readDaemonPort(child: ChildProcess): Promise<number> {
@@ -152,6 +199,7 @@ app.whenReady().then(() => {
 
   // Fire-and-forget: daemon starts in background, doesn't block the window
   startDaemon();
+  watchRustSources();
 
   app.on("activate", () => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow();
@@ -159,6 +207,7 @@ app.whenReady().then(() => {
 });
 
 app.on("window-all-closed", () => {
+  rustWatchers.forEach(w => w.close());
   daemonProcess?.kill();
   if (process.platform !== "darwin") app.quit();
 });

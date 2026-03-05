@@ -27,7 +27,7 @@ use std::process::Stdio;
 use std::sync::Arc;
 use std::time::{Duration, Instant};
 
-use eerie_rpc::{SimPlot, SimResult, SimVector, NgspiceWorkerClient};
+use eerie_rpc::{NgspiceWorkerClient, SimPlot, SimResult, SimVector};
 use log::{error, info};
 use roam::initiator;
 use roam_stream::LocalLinkAcceptor;
@@ -68,7 +68,10 @@ impl WorkerPool {
         let idle = Arc::new(Mutex::new(VecDeque::<IdleWorker>::new()));
         let (return_tx, return_rx) = mpsc::unbounded_channel();
 
-        let pool = Arc::new(WorkerPool { return_tx, idle: idle.clone() });
+        let pool = Arc::new(WorkerPool {
+            return_tx,
+            idle: idle.clone(),
+        });
 
         tokio::spawn(reaper_task(return_rx, idle));
 
@@ -126,11 +129,10 @@ impl WorkerPool {
             let _ = child.wait().await;
         });
 
-        let link =
-            tokio::time::timeout(Duration::from_secs(30), acceptor.accept())
-                .await
-                .map_err(|_| "timeout waiting for worker to connect".to_string())?
-                .map_err(|e| format!("accept worker: {e}"))?;
+        let link = tokio::time::timeout(Duration::from_secs(30), acceptor.accept())
+            .await
+            .map_err(|_| "timeout waiting for worker to connect".to_string())?
+            .map_err(|e| format!("accept worker: {e}"))?;
 
         let _ = std::fs::remove_file(&socket_path);
 
@@ -212,17 +214,26 @@ impl CircuitHandle {
 
     /// Load a SPICE netlist into the worker, replacing any prior circuit.
     pub async fn load_circuit(&self, netlist: Netlist) -> Result<(), String> {
-        self.client().load_circuit(netlist).await.map_err(|e| format!("{e:?}"))
+        self.client()
+            .load_circuit(netlist)
+            .await
+            .map_err(|e| format!("{e:?}"))
     }
 
     /// Send any ngspice interactive command (e.g. `"run"`, `"op"`, `"dc v1 0 5 0.01"`).
     pub async fn command(&self, cmd: String) -> Result<(), String> {
-        self.client().command(cmd).await.map_err(|e| format!("{e:?}"))
+        self.client()
+            .command(cmd)
+            .await
+            .map_err(|e| format!("{e:?}"))
     }
 
     /// Name of the current active plot (e.g. `"op1"`, `"tran2"`).
     pub async fn current_plot(&self) -> Result<String, String> {
-        self.client().current_plot().await.map_err(|e| format!("{e:?}"))
+        self.client()
+            .current_plot()
+            .await
+            .map_err(|e| format!("{e:?}"))
     }
 
     /// Names of all plots produced so far in this session.
@@ -237,7 +248,10 @@ impl CircuitHandle {
 
     /// Fetch a simulation vector by name (bare or plot-qualified).
     pub async fn vec_data(&self, vecname: String) -> Result<SimVector, String> {
-        self.client().vec_data(vecname).await.map_err(|e| format!("{e:?}"))
+        self.client()
+            .vec_data(vecname)
+            .await
+            .map_err(|e| format!("{e:?}"))
     }
 
     /// `true` if a simulation is currently running in the background.
@@ -268,7 +282,10 @@ impl CircuitHandle {
                 }
             }
 
-            plots.push(SimPlot { name: plot_name.clone(), vecs });
+            plots.push(SimPlot {
+                name: plot_name.clone(),
+                vecs,
+            });
         }
 
         Ok(SimResult { plots })
