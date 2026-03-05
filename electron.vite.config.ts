@@ -42,6 +42,7 @@ function rustBuildPlugin(): Plugin {
 export default defineConfig({
   main: {
     //plugins: [rustBuildPlugin()],
+    plugins: [externalizeDepsPlugin({ exclude: ["@bearcove/roam-core", "@bearcove/roam-tcp", "@bearcove/roam-wire", "@bearcove/roam-postcard"] })],
   },
   preload: {
     build: {
