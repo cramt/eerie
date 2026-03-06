@@ -62,7 +62,9 @@ async function startDaemon() {
       console.log(`eerie-daemon exited with code ${code}`);
       daemonProcess = null;
       daemonClient = null;
-      mainWindow?.webContents.send("daemon:status", false);
+      if (mainWindow && !mainWindow.isDestroyed()) {
+        mainWindow.webContents.send("daemon:status", false);
+      }
     });
   } catch (err) {
     console.warn("Could not start eerie-daemon:", err);
