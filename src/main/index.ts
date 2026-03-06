@@ -1,5 +1,5 @@
 import { app, BrowserWindow, ipcMain, shell, dialog } from "electron";
-import { join } from "path";
+import { join, resolve, extname } from "path";
 import { readFile, writeFile } from "fs/promises";
 import { spawn, ChildProcess } from "child_process";
 import { createInterface } from "readline";
@@ -11,6 +11,16 @@ import {
 import type { Netlist } from "../codegen/types";
 
 const isDev = !app.isPackaged;
+
+const ALLOWED_EXTENSIONS = new Set([".eerie", ".yaml", ".yml"]);
+
+function validateFilePath(filePath: string): void {
+  const resolved = resolve(filePath);
+  const ext = extname(resolved);
+  if (!ALLOWED_EXTENSIONS.has(ext)) {
+    throw new Error(`File access denied: only ${[...ALLOWED_EXTENSIONS].join(", ")} files are allowed`);
+  }
+}
 
 let mainWindow: BrowserWindow | null = null;
 let daemonProcess: ChildProcess | null = null;
@@ -120,7 +130,6 @@ function createWindow() {
     titleBarStyle: "default",
     webPreferences: {
       preload: join(__dirname, "../preload/index.js"),
-      sandbox: false,
       contextIsolation: true,
     },
   });
@@ -157,10 +166,12 @@ function setupIpcHandlers() {
   });
 
   ipcMain.handle("file:read", async (_event, path: string) => {
+    validateFilePath(path);
     return await readFile(path, "utf-8");
   });
 
   ipcMain.handle("file:write", async (_event, path: string, content: string) => {
+    validateFilePath(path);
     await writeFile(path, content, "utf-8");
     return true;
   });
