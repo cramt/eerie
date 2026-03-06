@@ -3,6 +3,15 @@ use std::fs;
 use std::path::{Path, PathBuf};
 use std::process::Command;
 
+/// Custom parse callbacks that suppress all `cargo:rerun-if-changed` output.
+/// We declare our own rerun triggers manually (build.rs, wrapper.h, configure.ac)
+/// and don't want bindgen emitting rerun-if-changed for every header in OUT_DIR,
+/// which causes an infinite rebuild loop (autotools touches them each run).
+#[derive(Debug)]
+struct NoRerunCallbacks;
+
+impl bindgen::callbacks::ParseCallbacks for NoRerunCallbacks {}
+
 /// Apply patches needed for Emscripten/WASM builds.
 fn apply_wasm_patches(src_dir: &Path) {
     // Guard getrusage in misc_time.c — not available under Emscripten
@@ -137,7 +146,7 @@ fn create_merged_archive(build_dir: &Path, install_dir: &Path) {
 fn main() {
     println!("cargo:rerun-if-changed=build.rs");
     println!("cargo:rerun-if-changed=wrapper.h");
-    println!("cargo:rerun-if-changed=ngspice-src/configure");
+    println!("cargo:rerun-if-changed=ngspice-src/configure.ac");
 
     let out_dir = PathBuf::from(env::var("OUT_DIR").unwrap());
     let target = env::var("TARGET").unwrap_or_default();
@@ -341,7 +350,7 @@ fn main() {
         .opaque_type("GENinstance")
         .allowlist_type("IFvalue")
         .opaque_type("IFvalue")
-        .parse_callbacks(Box::new(bindgen::CargoCallbacks::new()))
+        .parse_callbacks(Box::new(NoRerunCallbacks))
         .generate()
         .expect("Failed to generate ngspice FFI bindings");
 
