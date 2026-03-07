@@ -57,6 +57,8 @@ struct ReturnedWorker {
 // ---------------------------------------------------------------------------
 
 pub struct WorkerPool {
+    worker_program: String,
+    worker_args: Vec<String>,
     return_tx: mpsc::UnboundedSender<ReturnedWorker>,
     idle: Arc<Mutex<VecDeque<IdleWorker>>>,
 }
@@ -64,11 +66,34 @@ pub struct WorkerPool {
 impl WorkerPool {
     /// Create a pool.  No subprocesses are started until the first
     /// [`WorkerPool::circuit`] call.
+    ///
+    /// The worker command is resolved from (in order):
+    /// 1. `EERIE_WORKER_CMD` environment variable (set by Electron)
+    /// 2. `eerie-worker` next to the current executable (production fallback)
     pub async fn spawn() -> Result<Arc<Self>, String> {
+        let (worker_program, worker_args) = match std::env::var("EERIE_WORKER_CMD") {
+            Ok(cmd) => {
+                let parts: Vec<String> = cmd.split_whitespace().map(String::from).collect();
+                if parts.is_empty() {
+                    return Err("EERIE_WORKER_CMD is empty".into());
+                }
+                (parts[0].clone(), parts[1..].to_vec())
+            }
+            Err(_) => {
+                let exe = std::env::current_exe()
+                    .map_err(|e| format!("current_exe: {e}"))?
+                    .with_file_name("eerie-worker");
+                (exe.to_string_lossy().into_owned(), vec![])
+            }
+        };
+        info!("worker command: {worker_program} {}", worker_args.join(" "));
+
         let idle = Arc::new(Mutex::new(VecDeque::<IdleWorker>::new()));
         let (return_tx, return_rx) = mpsc::unbounded_channel();
 
         let pool = Arc::new(WorkerPool {
+            worker_program,
+            worker_args,
             return_tx,
             idle: idle.clone(),
         });
@@ -112,11 +137,8 @@ impl WorkerPool {
         let acceptor = LocalLinkAcceptor::bind(&socket_path)
             .map_err(|e| format!("bind {socket_path}: {e}"))?;
 
-        let worker_exe = std::env::current_exe()
-            .map_err(|e| format!("current_exe: {e}"))?
-            .with_file_name("eerie-worker");
-
-        let mut child = Command::new(&worker_exe)
+        let mut child = Command::new(&self.worker_program)
+            .args(&self.worker_args)
             .env("EERIE_WORKER_SOCKET", &socket_path)
             .stdin(Stdio::null())
             .stdout(Stdio::null())

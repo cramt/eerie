@@ -41,13 +41,17 @@ async function startDaemon() {
 
   try {
     if (isDev) {
+      const workerCmd = "cargo run -p eerie-daemon --bin eerie-worker --";
       console.log("[dev] Starting daemon via cargo run...");
       daemonProcess = spawn("cargo", ["run", "-p", "eerie-daemon", "--bin", "eerie-daemon"], {
         stdio: ["ignore", "pipe", "inherit"],
+        env: { ...process.env, EERIE_WORKER_CMD: workerCmd },
       });
     } else {
+      const workerBin = join(process.resourcesPath, "eerie-worker");
       daemonProcess = spawn(daemonBin, [], {
         stdio: ["ignore", "pipe", "inherit"],
+        env: { ...process.env, EERIE_WORKER_CMD: workerBin },
       });
     }
 
