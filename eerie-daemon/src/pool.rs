@@ -283,6 +283,10 @@ impl CircuitHandle {
 
     /// Convenience: load a netlist, run it, and collect all result vectors.
     pub async fn simulate(&self, netlist: Netlist) -> Result<SimResult, String> {
+        // Snapshot existing plots so we only return new ones from this run.
+        let before: std::collections::HashSet<String> =
+            self.all_plots().await.into_iter().collect();
+
         self.load_circuit(netlist).await?;
         self.command("run".to_string()).await?;
 
@@ -290,7 +294,7 @@ impl CircuitHandle {
         let mut plots = Vec::new();
 
         for plot_name in &plot_names {
-            if plot_name == "const" {
+            if plot_name == "const" || before.contains(plot_name) {
                 continue;
             }
             let vec_names = self.all_vecs(plot_name.clone()).await;
