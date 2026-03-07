@@ -162,9 +162,9 @@ function setupIpcHandlers() {
     return daemonClient !== null;
   });
 
-  ipcMain.handle("sim:dc", async (_event, netlist: Netlist) => {
+  ipcMain.handle("sim:run", async (_event, netlist: Netlist) => {
     if (!daemonClient) throw new Error("daemon not connected");
-    return await daemonClient.simDc(netlist);
+    return await daemonClient.simulate(netlist);
   });
 
   ipcMain.handle("file:read", async (_event, path: string) => {
