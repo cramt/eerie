@@ -149,7 +149,7 @@ async fn single_simulation() {
     let daemon = Daemon::spawn();
     let (client, _session) = daemon.connect().await;
 
-    let resp = client.sim_dc(voltage_divider(5.0)).await.expect("sim_dc");
+    let resp = client.simulate(voltage_divider(5.0)).await.expect("simulate");
 
     let vout = find_scalar(&resp, "v(out)")
         .unwrap_or_else(|| {
@@ -183,9 +183,9 @@ async fn sequential_simulations() {
 
     for &(supply, expected) in cases {
         let resp = client
-            .sim_dc(voltage_divider(supply))
+            .simulate(voltage_divider(supply))
             .await
-            .unwrap_or_else(|e| panic!("sim_dc({supply}V): {e:?}"));
+            .unwrap_or_else(|e| panic!("simulate({supply}V): {e:?}"));
 
         let vout = find_scalar(&resp, "v(out)")
             .unwrap_or_else(|| panic!("no v(out) for {supply}V circuit"));
@@ -224,7 +224,7 @@ async fn concurrent_simulations_are_isolated() {
                 .await
                 .unwrap();
 
-            let resp = client.sim_dc(netlist).await.unwrap();
+            let resp = client.simulate(netlist).await.unwrap();
             (expected, resp)
         });
     }
@@ -261,7 +261,7 @@ async fn pool_reuse() {
         let expected = supply / 2.0;
 
         let resp = client
-            .sim_dc(voltage_divider(supply))
+            .simulate(voltage_divider(supply))
             .await
             .unwrap_or_else(|e| panic!("run {i}: sim_dc failed: {e:?}"));
 
