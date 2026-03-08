@@ -124,9 +124,7 @@ fn rpc_err(message: String) -> NgspiceRpcError {
 // Entry point
 // ---------------------------------------------------------------------------
 
-fn main() {
-    env_logger::init();
-
+pub fn main() {
     let socket_path = std::env::var("EERIE_WORKER_SOCKET")
         .expect("EERIE_WORKER_SOCKET must be set");
 

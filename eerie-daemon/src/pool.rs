@@ -1,7 +1,7 @@
 //! Ngspice process pool.
 //!
-//! Workers are plain subprocesses of the daemon binary
-//! (re-invoked with `EERIE_WORKER_SOCKET=<path>`).  Each worker
+//! Workers are subprocesses of the same binary, re-invoked with
+//! `--worker` and `EERIE_WORKER_SOCKET=<path>`.  Each worker
 //! initialises ngspice from scratch and exposes a full `NgspiceWorker`
 //! roam session over a Unix socket.
 //!
@@ -67,25 +67,12 @@ impl WorkerPool {
     /// Create a pool.  No subprocesses are started until the first
     /// [`WorkerPool::circuit`] call.
     ///
-    /// The worker command is resolved from (in order):
-    /// 1. `EERIE_WORKER_CMD` environment variable (set by Electron)
-    /// 2. `eerie-worker` next to the current executable (production fallback)
+    /// The worker is always `current_exe() --worker` — single binary.
     pub async fn spawn() -> Result<Arc<Self>, String> {
-        let (worker_program, worker_args) = match std::env::var("EERIE_WORKER_CMD") {
-            Ok(cmd) => {
-                let parts: Vec<String> = cmd.split_whitespace().map(String::from).collect();
-                if parts.is_empty() {
-                    return Err("EERIE_WORKER_CMD is empty".into());
-                }
-                (parts[0].clone(), parts[1..].to_vec())
-            }
-            Err(_) => {
-                let exe = std::env::current_exe()
-                    .map_err(|e| format!("current_exe: {e}"))?
-                    .with_file_name("eerie-worker");
-                (exe.to_string_lossy().into_owned(), vec![])
-            }
-        };
+        let exe = std::env::current_exe()
+            .map_err(|e| format!("current_exe: {e}"))?;
+        let worker_program = exe.to_string_lossy().into_owned();
+        let worker_args = vec!["--worker".to_string()];
         info!("worker command: {worker_program} {}", worker_args.join(" "));
 
         let idle = Arc::new(Mutex::new(VecDeque::<IdleWorker>::new()));
