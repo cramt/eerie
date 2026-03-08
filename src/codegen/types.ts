@@ -227,6 +227,21 @@ export interface Netlist {
 }
 
 /**
+ * Error from a file operation.
+ */
+export interface FileError {
+  message: string;
+}
+
+/**
+ * A file's path and content, returned by open_file.
+ */
+export interface FileContent {
+  path: string;
+  content: string;
+}
+
+/**
  * Pin definition metadata for a component type.
  */
 export interface PinMeta {
