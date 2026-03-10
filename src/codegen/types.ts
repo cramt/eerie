@@ -1,9 +1,9 @@
 // ⚠️  AUTO-GENERATED — do not edit by hand.
-// Source of truth: eerie-core/src/  (Rust types with #[derive(Facet)])
+// Source of truth: eerie-core/src/ + thevenin-types (Rust types with #[derive(Facet)])
 // Regenerate with: pnpm codegen
 //
 // All types here have an exact Rust counterpart. When you change a Rust
-// type, re-run codegen and commit the updated generated.ts alongside it.
+// type, re-run codegen and commit the updated types.ts alongside it.
 
 /**
  * Complex number pair for AC/frequency-domain vectors.
@@ -59,7 +59,18 @@ export type Analysis =
   | { Ac: { variation: AcVariation; n: number; fstart: Expr; fstop: Expr } }
   | { Noise: { output: string; ref_node?: string; src: string; variation: AcVariation; n: number; fstart: Expr; fstop: Expr } }
   | { Tf: { output: string; input: string } }
-  | { Sens: { output: string[] } };
+  | { Sens: { output: string[] } }
+  | { Pz: { node_i: string; node_g: string; node_j: string; node_k: string; input_type: PzInputType; analysis_type: PzAnalysisType } };
+
+/**
+ * Analysis type for pole-zero analysis.
+ */
+export type PzAnalysisType = "Pol" | "Zer" | "Pz";
+
+/**
+ * Input type for pole-zero analysis.
+ */
+export type PzInputType = "Vol" | "Cur";
 
 /**
  * A scalar value in a SPICE netlist.
@@ -143,8 +154,9 @@ export type ElementKind =
   | { CurrentSource: { pos: string; neg: string; source: Source } }
   | { Diode: { anode: string; cathode: string; model: string; params: Param[] } }
   | { Bjt: { c: string; b: string; e: string; substrate?: string; model: string; params: Param[] } }
-  | { Mosfet: { d: string; g: string; s: string; bulk: string; model: string; params: Param[] } }
+  | { Mosfet: { d: string; g: string; s: string; bulk: string; body?: string; model: string; params: Param[] } }
   | { Jfet: { d: string; g: string; s: string; model: string; params: Param[] } }
+  | { Mesa: { d: string; g: string; s: string; model: string; params: Param[] } }
   | { MutualCoupling: { l1: string; l2: string; coupling: Expr } }
   | { Vcvs: { out_pos: string; out_neg: string; in_pos: string; in_neg: string; gain: Expr } }
   | { Cccs: { out_pos: string; out_neg: string; vsrc: string; gain: Expr } }
@@ -224,21 +236,6 @@ export interface Netlist {
    */
   title: string;
   items: Item[];
-}
-
-/**
- * Error from a file operation.
- */
-export interface FileError {
-  message: string;
-}
-
-/**
- * A file's path and content, returned by open_file.
- */
-export interface FileContent {
-  path: string;
-  content: string;
 }
 
 /**

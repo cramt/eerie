@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import type { Analysis, SimResult } from '../../../codegen/generated-rpc'
+import type { Analysis, SimResult } from '../../../codegen/types'
 
 export interface SimulationState {
   analysis: Analysis
@@ -13,7 +13,7 @@ export interface SimulationState {
 }
 
 export const useSimulationStore = create<SimulationState>((set) => ({
-  analysis: { tag: 'Op' },
+  analysis: 'Op',
   result: null,
   error: null,
   running: false,

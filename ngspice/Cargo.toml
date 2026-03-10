@@ -1,9 +1,0 @@
-[package]
-name = "ngspice"
-version = "0.1.0"
-edition = "2024"
-description = "Safe Rust bindings to the ngspice circuit simulator"
-
-[dependencies]
-ngspice-sys = { path = "../ngspice-sys" }
-thiserror.workspace = true
