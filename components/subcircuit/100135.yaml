@@ -1,0 +1,88 @@
+id: '100135'
+name: '100135'
+description: 'SPICE subcircuit: 100135'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: c0
+  name: C0
+  position:
+    x: -16.0
+    y: -45.0
+  direction: left
+  pin_type: passive
+- id: s0
+  name: S0
+  position:
+    x: -16.0
+    y: -43.59375
+  direction: left
+  pin_type: passive
+- id: cp0
+  name: CP0
+  position:
+    x: -16.0
+    y: -42.1875
+  direction: left
+  pin_type: passive
+- id: j0
+  name: J0
+  position:
+    x: -16.0
+    y: -40.78125
+  direction: left
+  pin_type: passive
+- id: k0
+  name: K0
+  position:
+    x: -16.0
+    y: -39.375
+  direction: left
+  pin_type: passive
+- id: q0
+  name: Q0
+  position:
+    x: -16.0
+    y: -37.96875
+  direction: left
+  pin_type: passive
+- id: q0bar
+  name: Q0BAR
+  position:
+    x: -16.0
+    y: -36.5625
+  direction: left
+  pin_type: passive
+- id: optional_
+  name: 'optional:'
+  position:
+    x: -16.0
+    y: -35.15625
+  direction: left
+  pin_type: passive
+- id: vee_
+  name: VEE=
+  position:
+    x: -16.0
+    y: -33.75
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -45.0
+    width: 32.0
+    height: 90.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -45.0
+    width: 24.0
+    height: 90.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {C0} {S0} {CP0} {J0} {K0} {Q0} {Q0BAR} {optional:} {VEE=} 100135
+  model_name: '100135'

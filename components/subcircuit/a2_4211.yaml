@@ -1,0 +1,53 @@
+id: a2_4211
+name: A2_4211
+description: 'SPICE subcircuit: A2_4211'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: '1'
+  name: '1'
+  position:
+    x: -16.0
+    y: -20.0
+  direction: left
+  pin_type: passive
+- id: '2'
+  name: '2'
+  position:
+    x: -16.0
+    y: -15.555555
+  direction: left
+  pin_type: passive
+- id: '3'
+  name: '3'
+  position:
+    x: -16.0
+    y: -11.111111
+  direction: left
+  pin_type: passive
+- id: '4'
+  name: '4'
+  position:
+    x: -16.0
+    y: -6.666667
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -20.0
+    width: 32.0
+    height: 40.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -20.0
+    width: 24.0
+    height: 40.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {1} {2} {3} {4} A2_4211
+  model_name: A2_4211

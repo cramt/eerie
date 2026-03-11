@@ -1,0 +1,11 @@
+[Desktop Entry]
+Name=Eerie
+Comment=Circuit design and simulation
+Exec=eerie %F
+Icon=io.github.cramt.Eerie
+Terminal=false
+Type=Application
+Categories=Science;Electronics;Engineering;Education;
+MimeType=application/x-eerie;
+Keywords=circuit;simulation;spice;electronics;schematic;
+StartupWMClass=eerie

@@ -1,0 +1,144 @@
+id: 74hc393_a
+name: 74HC393_A
+description: 'SPICE subcircuit: 74HC393_A'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: 1mr
+  name: 1MR
+  position:
+    x: -16.0
+    y: -85.0
+  direction: left
+  pin_type: passive
+- id: 1cp
+  name: 1CP
+  position:
+    x: -16.0
+    y: -84.33594
+  direction: left
+  pin_type: passive
+- id: 1q0
+  name: 1Q0
+  position:
+    x: -16.0
+    y: -83.671875
+  direction: left
+  pin_type: passive
+- id: 1q1
+  name: 1Q1
+  position:
+    x: -16.0
+    y: -83.00781
+  direction: left
+  pin_type: passive
+- id: 1q2
+  name: 1Q2
+  position:
+    x: -16.0
+    y: -82.34375
+  direction: left
+  pin_type: passive
+- id: 1q3
+  name: 1Q3
+  position:
+    x: -16.0
+    y: -81.67969
+  direction: left
+  pin_type: passive
+- id: 2mr
+  name: 2MR
+  position:
+    x: -16.0
+    y: -81.015625
+  direction: left
+  pin_type: passive
+- id: 2cp
+  name: 2CP
+  position:
+    x: -16.0
+    y: -80.35156
+  direction: left
+  pin_type: passive
+- id: 2q0
+  name: 2Q0
+  position:
+    x: -16.0
+    y: -79.6875
+  direction: left
+  pin_type: passive
+- id: 2q1
+  name: 2Q1
+  position:
+    x: -16.0
+    y: -79.02344
+  direction: left
+  pin_type: passive
+- id: 2q2
+  name: 2Q2
+  position:
+    x: -16.0
+    y: -78.359375
+  direction: left
+  pin_type: passive
+- id: 2q3
+  name: 2Q3
+  position:
+    x: -16.0
+    y: -77.69531
+  direction: left
+  pin_type: passive
+- id: vcc
+  name: VCC
+  position:
+    x: -16.0
+    y: -77.03125
+  direction: left
+  pin_type: passive
+- id: vgnd
+  name: VGND
+  position:
+    x: -16.0
+    y: -76.36719
+  direction: left
+  pin_type: passive
+- id: vcc1__vcc_
+  name: vcc1={vcc}
+  position:
+    x: -16.0
+    y: -75.703125
+  direction: left
+  pin_type: passive
+- id: speed1__speed_
+  name: speed1={speed}
+  position:
+    x: -16.0
+    y: -75.03906
+  direction: left
+  pin_type: passive
+- id: tripdt1a__tripdt_
+  name: tripdt1a={tripdt}
+  position:
+    x: -16.0
+    y: -74.375
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -85.0
+    width: 32.0
+    height: 170.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -85.0
+    width: 24.0
+    height: 170.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {1MR} {1CP} {1Q0} {1Q1} {1Q2} {1Q3} {2MR} {2CP} {2Q0} {2Q1} {2Q2} {2Q3} {VCC} {VGND} {vcc1={vcc}} {speed1={speed}} {tripdt1a={tripdt}} 74HC393_A
+  model_name: 74HC393_A

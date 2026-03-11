@@ -1,0 +1,53 @@
+id: c3d30065d
+name: C3D30065D
+description: 'SPICE subcircuit: C3D30065D'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: a1
+  name: A1
+  position:
+    x: -16.0
+    y: -20.0
+  direction: left
+  pin_type: passive
+- id: a2
+  name: A2
+  position:
+    x: -16.0
+    y: -15.555555
+  direction: left
+  pin_type: passive
+- id: k
+  name: K
+  position:
+    x: -16.0
+    y: -11.111111
+  direction: left
+  pin_type: passive
+- id: case
+  name: Case
+  position:
+    x: -16.0
+    y: -6.666667
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -20.0
+    width: 32.0
+    height: 40.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -20.0
+    width: 24.0
+    height: 40.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {A1} {A2} {K} {Case} C3D30065D
+  model_name: C3D30065D

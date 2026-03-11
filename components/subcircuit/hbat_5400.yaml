@@ -1,0 +1,39 @@
+id: hbat_5400
+name: HBAT-5400
+description: 'SPICE subcircuit: HBAT-5400'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: a
+  name: A
+  position:
+    x: -16.0
+    y: -10.0
+  direction: left
+  pin_type: passive
+- id: c
+  name: C
+  position:
+    x: -16.0
+    y: 10.0
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -10.0
+    width: 32.0
+    height: 20.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -10.0
+    width: 24.0
+    height: 20.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {A} {C} HBAT-5400
+  model_name: HBAT-5400

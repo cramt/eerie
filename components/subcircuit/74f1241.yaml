@@ -1,0 +1,165 @@
+id: 74f1241
+name: 74F1241
+description: 'SPICE subcircuit: 74F1241'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: ia0
+  name: IA0
+  position:
+    x: -16.0
+    y: -100.0
+  direction: left
+  pin_type: passive
+- id: ia1
+  name: IA1
+  position:
+    x: -16.0
+    y: -99.445984
+  direction: left
+  pin_type: passive
+- id: ia2
+  name: IA2
+  position:
+    x: -16.0
+    y: -98.89197
+  direction: left
+  pin_type: passive
+- id: ia3
+  name: IA3
+  position:
+    x: -16.0
+    y: -98.33795
+  direction: left
+  pin_type: passive
+- id: ib0
+  name: IB0
+  position:
+    x: -16.0
+    y: -97.783936
+  direction: left
+  pin_type: passive
+- id: ib1
+  name: IB1
+  position:
+    x: -16.0
+    y: -97.22992
+  direction: left
+  pin_type: passive
+- id: ib2
+  name: IB2
+  position:
+    x: -16.0
+    y: -96.6759
+  direction: left
+  pin_type: passive
+- id: ib3
+  name: IB3
+  position:
+    x: -16.0
+    y: -96.12189
+  direction: left
+  pin_type: passive
+- id: oeabar
+  name: OEABAR
+  position:
+    x: -16.0
+    y: -95.56787
+  direction: left
+  pin_type: passive
+- id: oeb
+  name: OEB
+  position:
+    x: -16.0
+    y: -95.01385
+  direction: left
+  pin_type: passive
+- id: ya0
+  name: YA0
+  position:
+    x: -16.0
+    y: -94.45983
+  direction: left
+  pin_type: passive
+- id: ya1
+  name: YA1
+  position:
+    x: -16.0
+    y: -93.905815
+  direction: left
+  pin_type: passive
+- id: ya2
+  name: YA2
+  position:
+    x: -16.0
+    y: -93.3518
+  direction: left
+  pin_type: passive
+- id: ya3
+  name: YA3
+  position:
+    x: -16.0
+    y: -92.79778
+  direction: left
+  pin_type: passive
+- id: yb0
+  name: YB0
+  position:
+    x: -16.0
+    y: -92.24377
+  direction: left
+  pin_type: passive
+- id: yb1
+  name: YB1
+  position:
+    x: -16.0
+    y: -91.68975
+  direction: left
+  pin_type: passive
+- id: yb2
+  name: YB2
+  position:
+    x: -16.0
+    y: -91.135735
+  direction: left
+  pin_type: passive
+- id: yb3
+  name: YB3
+  position:
+    x: -16.0
+    y: -90.58172
+  direction: left
+  pin_type: passive
+- id: optional_
+  name: 'OPTIONAL:'
+  position:
+    x: -16.0
+    y: -90.0277
+  direction: left
+  pin_type: passive
+- id: dpwr_
+  name: DPWR=
+  position:
+    x: -16.0
+    y: -89.47369
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -100.0
+    width: 32.0
+    height: 200.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -100.0
+    width: 24.0
+    height: 200.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {IA0} {IA1} {IA2} {IA3} {IB0} {IB1} {IB2} {IB3} {OEABAR} {OEB} {YA0} {YA1} {YA2} {YA3} {YB0} {YB1} {YB2} {YB3} {OPTIONAL:} {DPWR=} 74F1241
+  model_name: 74F1241

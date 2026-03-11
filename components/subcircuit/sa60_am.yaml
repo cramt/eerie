@@ -1,0 +1,102 @@
+id: sa60_am
+name: SA60_AM
+description: 'SPICE subcircuit: SA60_AM'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: '1'
+  name: '1'
+  position:
+    x: -16.0
+    y: -55.0
+  direction: left
+  pin_type: passive
+- id: '2'
+  name: '2'
+  position:
+    x: -16.0
+    y: -53.9
+  direction: left
+  pin_type: passive
+- id: '3'
+  name: '3'
+  position:
+    x: -16.0
+    y: -52.8
+  direction: left
+  pin_type: passive
+- id: '4'
+  name: '4'
+  position:
+    x: -16.0
+    y: -51.7
+  direction: left
+  pin_type: passive
+- id: '6'
+  name: '6'
+  position:
+    x: -16.0
+    y: -50.6
+  direction: left
+  pin_type: passive
+- id: '7'
+  name: '7'
+  position:
+    x: -16.0
+    y: -49.5
+  direction: left
+  pin_type: passive
+- id: '8'
+  name: '8'
+  position:
+    x: -16.0
+    y: -48.4
+  direction: left
+  pin_type: passive
+- id: '9'
+  name: '9'
+  position:
+    x: -16.0
+    y: -47.3
+  direction: left
+  pin_type: passive
+- id: '10'
+  name: '10'
+  position:
+    x: -16.0
+    y: -46.2
+  direction: left
+  pin_type: passive
+- id: '11'
+  name: '11'
+  position:
+    x: -16.0
+    y: -45.1
+  direction: left
+  pin_type: passive
+- id: '12'
+  name: '12'
+  position:
+    x: -16.0
+    y: -44.0
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -55.0
+    width: 32.0
+    height: 110.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -55.0
+    width: 24.0
+    height: 110.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {1} {2} {3} {4} {6} {7} {8} {9} {10} {11} {12} SA60_AM
+  model_name: SA60_AM

@@ -1,0 +1,53 @@
+id: bpx38
+name: BPX38
+description: 'SPICE subcircuit: BPX38'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: opt
+  name: Opt
+  position:
+    x: -16.0
+    y: -20.0
+  direction: left
+  pin_type: passive
+- id: base
+  name: Base
+  position:
+    x: -16.0
+    y: -15.555555
+  direction: left
+  pin_type: passive
+- id: coll
+  name: Coll
+  position:
+    x: -16.0
+    y: -11.111111
+  direction: left
+  pin_type: passive
+- id: emit
+  name: Emit
+  position:
+    x: -16.0
+    y: -6.666667
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -20.0
+    width: 32.0
+    height: 40.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -20.0
+    width: 24.0
+    height: 40.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {Opt} {Base} {Coll} {Emit} BPX38
+  model_name: BPX38

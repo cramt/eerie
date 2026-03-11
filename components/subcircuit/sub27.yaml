@@ -1,0 +1,39 @@
+id: sub27
+name: SUB27
+description: 'SPICE subcircuit: SUB27'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: '146'
+  name: '146'
+  position:
+    x: -16.0
+    y: -10.0
+  direction: left
+  pin_type: passive
+- id: '147'
+  name: '147'
+  position:
+    x: -16.0
+    y: 10.0
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -10.0
+    width: 32.0
+    height: 20.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -10.0
+    width: 24.0
+    height: 20.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {146} {147} SUB27
+  model_name: SUB27

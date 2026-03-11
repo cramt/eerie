@@ -1,0 +1,137 @@
+id: 74act153
+name: 74ACT153
+description: 'SPICE subcircuit: 74ACT153'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: i0a
+  name: I0A
+  position:
+    x: -16.0
+    y: -80.0
+  direction: left
+  pin_type: passive
+- id: i1a
+  name: I1A
+  position:
+    x: -16.0
+    y: -79.28889
+  direction: left
+  pin_type: passive
+- id: i2a
+  name: I2A
+  position:
+    x: -16.0
+    y: -78.577774
+  direction: left
+  pin_type: passive
+- id: i3a
+  name: I3A
+  position:
+    x: -16.0
+    y: -77.86667
+  direction: left
+  pin_type: passive
+- id: i0b
+  name: I0B
+  position:
+    x: -16.0
+    y: -77.155556
+  direction: left
+  pin_type: passive
+- id: i1b
+  name: I1B
+  position:
+    x: -16.0
+    y: -76.44444
+  direction: left
+  pin_type: passive
+- id: i2b
+  name: I2B
+  position:
+    x: -16.0
+    y: -75.73333
+  direction: left
+  pin_type: passive
+- id: i3b
+  name: I3B
+  position:
+    x: -16.0
+    y: -75.022224
+  direction: left
+  pin_type: passive
+- id: s0
+  name: S0
+  position:
+    x: -16.0
+    y: -74.31111
+  direction: left
+  pin_type: passive
+- id: s1
+  name: S1
+  position:
+    x: -16.0
+    y: -73.6
+  direction: left
+  pin_type: passive
+- id: eabar
+  name: EABAR
+  position:
+    x: -16.0
+    y: -72.888885
+  direction: left
+  pin_type: passive
+- id: ebbar
+  name: EBBAR
+  position:
+    x: -16.0
+    y: -72.17778
+  direction: left
+  pin_type: passive
+- id: za
+  name: ZA
+  position:
+    x: -16.0
+    y: -71.46667
+  direction: left
+  pin_type: passive
+- id: zb
+  name: ZB
+  position:
+    x: -16.0
+    y: -70.755554
+  direction: left
+  pin_type: passive
+- id: optional_
+  name: 'optional:'
+  position:
+    x: -16.0
+    y: -70.04445
+  direction: left
+  pin_type: passive
+- id: dpwr_
+  name: DPWR=
+  position:
+    x: -16.0
+    y: -69.333336
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -80.0
+    width: 32.0
+    height: 160.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -80.0
+    width: 24.0
+    height: 160.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {I0A} {I1A} {I2A} {I3A} {I0B} {I1B} {I2B} {I3B} {S0} {S1} {EABAR} {EBBAR} {ZA} {ZB} {optional:} {DPWR=} 74ACT153
+  model_name: 74ACT153

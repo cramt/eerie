@@ -1,0 +1,74 @@
+id: 74als13
+name: 74ALS13
+description: 'SPICE subcircuit: 74ALS13'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: a1
+  name: A1
+  position:
+    x: -16.0
+    y: -35.0
+  direction: left
+  pin_type: passive
+- id: b1
+  name: B1
+  position:
+    x: -16.0
+    y: -33.055557
+  direction: left
+  pin_type: passive
+- id: c1
+  name: C1
+  position:
+    x: -16.0
+    y: -31.11111
+  direction: left
+  pin_type: passive
+- id: d1
+  name: D1
+  position:
+    x: -16.0
+    y: -29.166666
+  direction: left
+  pin_type: passive
+- id: y1
+  name: Y1
+  position:
+    x: -16.0
+    y: -27.222221
+  direction: left
+  pin_type: passive
+- id: optional_
+  name: 'OPTIONAL:'
+  position:
+    x: -16.0
+    y: -25.277779
+  direction: left
+  pin_type: passive
+- id: dpwr_
+  name: DPWR=
+  position:
+    x: -16.0
+    y: -23.333332
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -35.0
+    width: 32.0
+    height: 70.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -35.0
+    width: 24.0
+    height: 70.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {A1} {B1} {C1} {D1} {Y1} {OPTIONAL:} {DPWR=} 74ALS13
+  model_name: 74ALS13

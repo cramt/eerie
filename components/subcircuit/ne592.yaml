@@ -1,0 +1,95 @@
+id: ne592
+name: NE592
+description: 'SPICE subcircuit: NE592'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: '14'
+  name: '14'
+  position:
+    x: -16.0
+    y: -50.0
+  direction: left
+  pin_type: passive
+- id: '15'
+  name: '15'
+  position:
+    x: -16.0
+    y: -48.76543
+  direction: left
+  pin_type: passive
+- id: '13'
+  name: '13'
+  position:
+    x: -16.0
+    y: -47.530865
+  direction: left
+  pin_type: passive
+- id: '21'
+  name: '21'
+  position:
+    x: -16.0
+    y: -46.296295
+  direction: left
+  pin_type: passive
+- id: '20'
+  name: '20'
+  position:
+    x: -16.0
+    y: -45.06173
+  direction: left
+  pin_type: passive
+- id: '19'
+  name: '19'
+  position:
+    x: -16.0
+    y: -43.82716
+  direction: left
+  pin_type: passive
+- id: '17'
+  name: '17'
+  position:
+    x: -16.0
+    y: -42.59259
+  direction: left
+  pin_type: passive
+- id: '18'
+  name: '18'
+  position:
+    x: -16.0
+    y: -41.358025
+  direction: left
+  pin_type: passive
+- id: '16'
+  name: '16'
+  position:
+    x: -16.0
+    y: -40.123455
+  direction: left
+  pin_type: passive
+- id: '22'
+  name: '22'
+  position:
+    x: -16.0
+    y: -38.88889
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -50.0
+    width: 32.0
+    height: 100.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -50.0
+    width: 24.0
+    height: 100.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {14} {15} {13} {21} {20} {19} {17} {18} {16} {22} NE592
+  model_name: NE592

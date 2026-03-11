@@ -1,0 +1,74 @@
+id: '74279'
+name: '74279'
+description: 'SPICE subcircuit: 74279'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: 1rb
+  name: 1rb
+  position:
+    x: -16.0
+    y: -35.0
+  direction: left
+  pin_type: passive
+- id: 1s1b
+  name: 1s1b
+  position:
+    x: -16.0
+    y: -33.055557
+  direction: left
+  pin_type: passive
+- id: 1s2b
+  name: 1s2b
+  position:
+    x: -16.0
+    y: -31.11111
+  direction: left
+  pin_type: passive
+- id: 2rb
+  name: 2rb
+  position:
+    x: -16.0
+    y: -29.166666
+  direction: left
+  pin_type: passive
+- id: 2sb
+  name: 2sb
+  position:
+    x: -16.0
+    y: -27.222221
+  direction: left
+  pin_type: passive
+- id: 1q
+  name: 1q
+  position:
+    x: -16.0
+    y: -25.277779
+  direction: left
+  pin_type: passive
+- id: 2q
+  name: 2q
+  position:
+    x: -16.0
+    y: -23.333332
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -35.0
+    width: 32.0
+    height: 70.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -35.0
+    width: 24.0
+    height: 70.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {1rb} {1s1b} {1s2b} {2rb} {2sb} {1q} {2q} 74279
+  model_name: '74279'

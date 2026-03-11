@@ -1,0 +1,116 @@
+id: 750342851_b
+name: 750342851_B
+description: 'SPICE subcircuit: 750342851_B'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: '5'
+  name: '5'
+  position:
+    x: -16.0
+    y: -65.0
+  direction: left
+  pin_type: passive
+- id: '4'
+  name: '4'
+  position:
+    x: -16.0
+    y: -64.09722
+  direction: left
+  pin_type: passive
+- id: '3'
+  name: '3'
+  position:
+    x: -16.0
+    y: -63.194443
+  direction: left
+  pin_type: passive
+- id: '6'
+  name: '6'
+  position:
+    x: -16.0
+    y: -62.291668
+  direction: left
+  pin_type: passive
+- id: '7'
+  name: '7'
+  position:
+    x: -16.0
+    y: -61.38889
+  direction: left
+  pin_type: passive
+- id: '14'
+  name: '14'
+  position:
+    x: -16.0
+    y: -60.48611
+  direction: left
+  pin_type: passive
+- id: '1'
+  name: '1'
+  position:
+    x: -16.0
+    y: -59.583332
+  direction: left
+  pin_type: passive
+- id: '12'
+  name: '12'
+  position:
+    x: -16.0
+    y: -58.680557
+  direction: left
+  pin_type: passive
+- id: '13'
+  name: '13'
+  position:
+    x: -16.0
+    y: -57.77778
+  direction: left
+  pin_type: passive
+- id: '10'
+  name: '10'
+  position:
+    x: -16.0
+    y: -56.875
+  direction: left
+  pin_type: passive
+- id: '11'
+  name: '11'
+  position:
+    x: -16.0
+    y: -55.97222
+  direction: left
+  pin_type: passive
+- id: '8'
+  name: '8'
+  position:
+    x: -16.0
+    y: -55.069443
+  direction: left
+  pin_type: passive
+- id: '9'
+  name: '9'
+  position:
+    x: -16.0
+    y: -54.166668
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -65.0
+    width: 32.0
+    height: 130.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -65.0
+    width: 24.0
+    height: 130.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {5} {4} {3} {6} {7} {14} {1} {12} {13} {10} {11} {8} {9} 750342851_B
+  model_name: 750342851_B

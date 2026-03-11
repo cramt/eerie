@@ -1,0 +1,46 @@
+id: cool_tech0pfd7_2_a
+name: cool_tech0pfd7_2_a
+description: 'SPICE subcircuit: cool_tech0pfd7_2_a'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: d1
+  name: d1
+  position:
+    x: -16.0
+    y: -15.0
+  direction: left
+  pin_type: passive
+- id: g2
+  name: g2
+  position:
+    x: -16.0
+    y: -7.5
+  direction: left
+  pin_type: passive
+- id: s2
+  name: s2
+  position:
+    x: -16.0
+    y: 0.0
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -15.0
+    width: 32.0
+    height: 30.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -15.0
+    width: 24.0
+    height: 30.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {d1} {g2} {s2} cool_tech0pfd7_2_a
+  model_name: cool_tech0pfd7_2_a

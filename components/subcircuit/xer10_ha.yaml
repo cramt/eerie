@@ -1,0 +1,74 @@
+id: xer10_ha
+name: XER10_HA
+description: 'SPICE subcircuit: XER10_HA'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: '107'
+  name: '107'
+  position:
+    x: -16.0
+    y: -35.0
+  direction: left
+  pin_type: passive
+- id: '122'
+  name: '122'
+  position:
+    x: -16.0
+    y: -33.055557
+  direction: left
+  pin_type: passive
+- id: '115'
+  name: '115'
+  position:
+    x: -16.0
+    y: -31.11111
+  direction: left
+  pin_type: passive
+- id: '101'
+  name: '101'
+  position:
+    x: -16.0
+    y: -29.166666
+  direction: left
+  pin_type: passive
+- id: '123'
+  name: '123'
+  position:
+    x: -16.0
+    y: -27.222221
+  direction: left
+  pin_type: passive
+- id: '118'
+  name: '118'
+  position:
+    x: -16.0
+    y: -25.277779
+  direction: left
+  pin_type: passive
+- id: '106'
+  name: '106'
+  position:
+    x: -16.0
+    y: -23.333332
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -35.0
+    width: 32.0
+    height: 70.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -35.0
+    width: 24.0
+    height: 70.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {107} {122} {115} {101} {123} {118} {106} XER10_HA
+  model_name: XER10_HA

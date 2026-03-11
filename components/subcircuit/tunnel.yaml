@@ -1,0 +1,95 @@
+id: tunnel
+name: TUNNEL
+description: 'SPICE subcircuit: TUNNEL'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: '1'
+  name: '1'
+  position:
+    x: -16.0
+    y: -50.0
+  direction: left
+  pin_type: passive
+- id: '20'
+  name: '20'
+  position:
+    x: -16.0
+    y: -48.76543
+  direction: left
+  pin_type: passive
+- id: vp_60mv
+  name: Vp=60mV
+  position:
+    x: -16.0
+    y: -47.530865
+  direction: left
+  pin_type: passive
+- id: ip_50ma
+  name: Ip=50mA
+  position:
+    x: -16.0
+    y: -46.296295
+  direction: left
+  pin_type: passive
+- id: vv_1_5v
+  name: Vv=1.5V
+  position:
+    x: -16.0
+    y: -45.06173
+  direction: left
+  pin_type: passive
+- id: iv_3ma
+  name: Iv=3mA
+  position:
+    x: -16.0
+    y: -43.82716
+  direction: left
+  pin_type: passive
+- id: vpp_500mv
+  name: Vpp=500mV
+  position:
+    x: -16.0
+    y: -42.59259
+  direction: left
+  pin_type: passive
+- id: c_0_1pf
+  name: c=0.1pF
+  position:
+    x: -16.0
+    y: -41.358025
+  direction: left
+  pin_type: passive
+- id: l_0_1n
+  name: L=0.1n
+  position:
+    x: -16.0
+    y: -40.123455
+  direction: left
+  pin_type: passive
+- id: m_1
+  name: m=1
+  position:
+    x: -16.0
+    y: -38.88889
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -50.0
+    width: 32.0
+    height: 100.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -50.0
+    width: 24.0
+    height: 100.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {1} {20} {Vp=60mV} {Ip=50mA} {Vv=1.5V} {Iv=3mA} {Vpp=500mV} {c=0.1pF} {L=0.1n} {m=1} TUNNEL
+  model_name: TUNNEL

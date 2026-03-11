@@ -1,0 +1,102 @@
+id: scrg
+name: SCRG
+description: 'SPICE subcircuit: SCRG'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: '1'
+  name: '1'
+  position:
+    x: -16.0
+    y: -55.0
+  direction: left
+  pin_type: passive
+- id: '3'
+  name: '3'
+  position:
+    x: -16.0
+    y: -53.9
+  direction: left
+  pin_type: passive
+- id: '2'
+  name: '2'
+  position:
+    x: -16.0
+    y: -52.8
+  direction: left
+  pin_type: passive
+- id: _ron_0_1
+  name: '{RON=0.1'
+  position:
+    x: -16.0
+    y: -51.7
+  direction: left
+  pin_type: passive
+- id: roff_2_5meg
+  name: ROFF=2.5MEG
+  position:
+    x: -16.0
+    y: -50.6
+  direction: left
+  pin_type: passive
+- id: ih_10m
+  name: IH=10M
+  position:
+    x: -16.0
+    y: -49.5
+  direction: left
+  pin_type: passive
+- id: igt_10m
+  name: IGT=10M
+  position:
+    x: -16.0
+    y: -48.4
+  direction: left
+  pin_type: passive
+- id: alpha_45
+  name: ALPHA=45
+  position:
+    x: -16.0
+    y: -47.3
+  direction: left
+  pin_type: passive
+- id: per_16_6667
+  name: PER=16.6667
+  position:
+    x: -16.0
+    y: -46.2
+  direction: left
+  pin_type: passive
+- id: pw__5m
+  name: PW=.5M
+  position:
+    x: -16.0
+    y: -45.1
+  direction: left
+  pin_type: passive
+- id: icgate_0_
+  name: ICGATE=0}
+  position:
+    x: -16.0
+    y: -44.0
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -55.0
+    width: 32.0
+    height: 110.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -55.0
+    width: 24.0
+    height: 110.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {1} {3} {2} {{RON=0.1} {ROFF=2.5MEG} {IH=10M} {IGT=10M} {ALPHA=45} {PER=16.6667} {PW=.5M} {ICGATE=0}} SCRG
+  model_name: SCRG

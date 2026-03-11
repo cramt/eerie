@@ -1,0 +1,81 @@
+id: max4147
+name: MAX4147
+description: 'SPICE subcircuit: MAX4147'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: '501'
+  name: '501'
+  position:
+    x: -16.0
+    y: -40.0
+  direction: left
+  pin_type: passive
+- id: '201'
+  name: '201'
+  position:
+    x: -16.0
+    y: -38.367348
+  direction: left
+  pin_type: passive
+- id: '99'
+  name: '99'
+  position:
+    x: -16.0
+    y: -36.734695
+  direction: left
+  pin_type: passive
+- id: '50'
+  name: '50'
+  position:
+    x: -16.0
+    y: -35.10204
+  direction: left
+  pin_type: passive
+- id: '340'
+  name: '340'
+  position:
+    x: -16.0
+    y: -33.469387
+  direction: left
+  pin_type: passive
+- id: '1200'
+  name: '1200'
+  position:
+    x: -16.0
+    y: -31.836735
+  direction: left
+  pin_type: passive
+- id: '40'
+  name: '40'
+  position:
+    x: -16.0
+    y: -30.204082
+  direction: left
+  pin_type: passive
+- id: '1000'
+  name: '1000'
+  position:
+    x: -16.0
+    y: -28.571428
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -40.0
+    width: 32.0
+    height: 80.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -40.0
+    width: 24.0
+    height: 80.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {501} {201} {99} {50} {340} {1200} {40} {1000} MAX4147
+  model_name: MAX4147

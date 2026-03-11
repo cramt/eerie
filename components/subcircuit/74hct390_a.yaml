@@ -1,0 +1,158 @@
+id: 74hct390_a
+name: 74HCT390_a
+description: 'SPICE subcircuit: 74HCT390_a'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: 1mr
+  name: 1MR
+  position:
+    x: -16.0
+    y: -95.0
+  direction: left
+  pin_type: passive
+- id: 1cp0
+  name: 1CP0
+  position:
+    x: -16.0
+    y: -94.41358
+  direction: left
+  pin_type: passive
+- id: 1cp1
+  name: 1CP1
+  position:
+    x: -16.0
+    y: -93.82716
+  direction: left
+  pin_type: passive
+- id: 1q0
+  name: 1Q0
+  position:
+    x: -16.0
+    y: -93.24074
+  direction: left
+  pin_type: passive
+- id: 1q1
+  name: 1Q1
+  position:
+    x: -16.0
+    y: -92.65432
+  direction: left
+  pin_type: passive
+- id: 1q2
+  name: 1Q2
+  position:
+    x: -16.0
+    y: -92.0679
+  direction: left
+  pin_type: passive
+- id: 1q3
+  name: 1Q3
+  position:
+    x: -16.0
+    y: -91.48148
+  direction: left
+  pin_type: passive
+- id: 2mr
+  name: 2MR
+  position:
+    x: -16.0
+    y: -90.895065
+  direction: left
+  pin_type: passive
+- id: 2cp0
+  name: 2CP0
+  position:
+    x: -16.0
+    y: -90.30864
+  direction: left
+  pin_type: passive
+- id: 2cp1
+  name: 2CP1
+  position:
+    x: -16.0
+    y: -89.72222
+  direction: left
+  pin_type: passive
+- id: 2q0
+  name: 2Q0
+  position:
+    x: -16.0
+    y: -89.1358
+  direction: left
+  pin_type: passive
+- id: 2q1
+  name: 2Q1
+  position:
+    x: -16.0
+    y: -88.549385
+  direction: left
+  pin_type: passive
+- id: 2q2
+  name: 2Q2
+  position:
+    x: -16.0
+    y: -87.96296
+  direction: left
+  pin_type: passive
+- id: 2q3
+  name: 2Q3
+  position:
+    x: -16.0
+    y: -87.37654
+  direction: left
+  pin_type: passive
+- id: vcc
+  name: VCC
+  position:
+    x: -16.0
+    y: -86.79012
+  direction: left
+  pin_type: passive
+- id: vgnd
+  name: VGND
+  position:
+    x: -16.0
+    y: -86.203705
+  direction: left
+  pin_type: passive
+- id: vcc1__vcc_
+  name: vcc1={vcc}
+  position:
+    x: -16.0
+    y: -85.61729
+  direction: left
+  pin_type: passive
+- id: speed1__speed_
+  name: speed1={speed}
+  position:
+    x: -16.0
+    y: -85.03087
+  direction: left
+  pin_type: passive
+- id: tripdt1__tripdt_
+  name: tripdt1={tripdt}
+  position:
+    x: -16.0
+    y: -84.44444
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -95.0
+    width: 32.0
+    height: 190.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -95.0
+    width: 24.0
+    height: 190.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {1MR} {1CP0} {1CP1} {1Q0} {1Q1} {1Q2} {1Q3} {2MR} {2CP0} {2CP1} {2Q0} {2Q1} {2Q2} {2Q3} {VCC} {VGND} {vcc1={vcc}} {speed1={speed}} {tripdt1={tripdt}} 74HCT390_a
+  model_name: 74HCT390_a

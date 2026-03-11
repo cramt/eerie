@@ -1,0 +1,74 @@
+id: 750342104_b
+name: 750342104_B
+description: 'SPICE subcircuit: 750342104_B'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: '4'
+  name: '4'
+  position:
+    x: -16.0
+    y: -35.0
+  direction: left
+  pin_type: passive
+- id: '2'
+  name: '2'
+  position:
+    x: -16.0
+    y: -33.055557
+  direction: left
+  pin_type: passive
+- id: '1'
+  name: '1'
+  position:
+    x: -16.0
+    y: -31.11111
+  direction: left
+  pin_type: passive
+- id: '5'
+  name: '5'
+  position:
+    x: -16.0
+    y: -29.166666
+  direction: left
+  pin_type: passive
+- id: '3'
+  name: '3'
+  position:
+    x: -16.0
+    y: -27.222221
+  direction: left
+  pin_type: passive
+- id: '10'
+  name: '10'
+  position:
+    x: -16.0
+    y: -25.277779
+  direction: left
+  pin_type: passive
+- id: '6'
+  name: '6'
+  position:
+    x: -16.0
+    y: -23.333332
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -35.0
+    width: 32.0
+    height: 70.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -35.0
+    width: 24.0
+    height: 70.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {4} {2} {1} {5} {3} {10} {6} 750342104_B
+  model_name: 750342104_B

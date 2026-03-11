@@ -1,0 +1,165 @@
+id: 74hct356
+name: 74HCT356
+description: 'SPICE subcircuit: 74HCT356'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: lebar
+  name: LEBAR
+  position:
+    x: -16.0
+    y: -100.0
+  direction: left
+  pin_type: passive
+- id: s0
+  name: S0
+  position:
+    x: -16.0
+    y: -99.445984
+  direction: left
+  pin_type: passive
+- id: s1
+  name: S1
+  position:
+    x: -16.0
+    y: -98.89197
+  direction: left
+  pin_type: passive
+- id: s2
+  name: S2
+  position:
+    x: -16.0
+    y: -98.33795
+  direction: left
+  pin_type: passive
+- id: cp
+  name: CP
+  position:
+    x: -16.0
+    y: -97.783936
+  direction: left
+  pin_type: passive
+- id: d0
+  name: D0
+  position:
+    x: -16.0
+    y: -97.22992
+  direction: left
+  pin_type: passive
+- id: d1
+  name: D1
+  position:
+    x: -16.0
+    y: -96.6759
+  direction: left
+  pin_type: passive
+- id: d2
+  name: D2
+  position:
+    x: -16.0
+    y: -96.12189
+  direction: left
+  pin_type: passive
+- id: d3
+  name: D3
+  position:
+    x: -16.0
+    y: -95.56787
+  direction: left
+  pin_type: passive
+- id: d4
+  name: D4
+  position:
+    x: -16.0
+    y: -95.01385
+  direction: left
+  pin_type: passive
+- id: d5
+  name: D5
+  position:
+    x: -16.0
+    y: -94.45983
+  direction: left
+  pin_type: passive
+- id: d6
+  name: D6
+  position:
+    x: -16.0
+    y: -93.905815
+  direction: left
+  pin_type: passive
+- id: d7
+  name: D7
+  position:
+    x: -16.0
+    y: -93.3518
+  direction: left
+  pin_type: passive
+- id: oe1bar
+  name: OE1BAR
+  position:
+    x: -16.0
+    y: -92.79778
+  direction: left
+  pin_type: passive
+- id: oe2bar
+  name: OE2BAR
+  position:
+    x: -16.0
+    y: -92.24377
+  direction: left
+  pin_type: passive
+- id: oe3
+  name: OE3
+  position:
+    x: -16.0
+    y: -91.68975
+  direction: left
+  pin_type: passive
+- id: y
+  name: Y
+  position:
+    x: -16.0
+    y: -91.135735
+  direction: left
+  pin_type: passive
+- id: ybar
+  name: YBAR
+  position:
+    x: -16.0
+    y: -90.58172
+  direction: left
+  pin_type: passive
+- id: optional_
+  name: 'OPTIONAL:'
+  position:
+    x: -16.0
+    y: -90.0277
+  direction: left
+  pin_type: passive
+- id: dpwr_
+  name: DPWR=
+  position:
+    x: -16.0
+    y: -89.47369
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -100.0
+    width: 32.0
+    height: 200.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -100.0
+    width: 24.0
+    height: 200.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {LEBAR} {S0} {S1} {S2} {CP} {D0} {D1} {D2} {D3} {D4} {D5} {D6} {D7} {OE1BAR} {OE2BAR} {OE3} {Y} {YBAR} {OPTIONAL:} {DPWR=} 74HCT356
+  model_name: 74HCT356

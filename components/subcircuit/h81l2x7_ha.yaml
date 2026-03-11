@@ -1,0 +1,151 @@
+id: h81l2x7_ha
+name: H81L2X7_HA
+description: 'SPICE subcircuit: H81L2X7_HA'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: '107'
+  name: '107'
+  position:
+    x: -16.0
+    y: -90.0
+  direction: left
+  pin_type: passive
+- id: '105'
+  name: '105'
+  position:
+    x: -16.0
+    y: -89.37716
+  direction: left
+  pin_type: passive
+- id: '103'
+  name: '103'
+  position:
+    x: -16.0
+    y: -88.754326
+  direction: left
+  pin_type: passive
+- id: '109'
+  name: '109'
+  position:
+    x: -16.0
+    y: -88.131485
+  direction: left
+  pin_type: passive
+- id: '117'
+  name: '117'
+  position:
+    x: -16.0
+    y: -87.50865
+  direction: left
+  pin_type: passive
+- id: '108'
+  name: '108'
+  position:
+    x: -16.0
+    y: -86.88581
+  direction: left
+  pin_type: passive
+- id: '111'
+  name: '111'
+  position:
+    x: -16.0
+    y: -86.26298
+  direction: left
+  pin_type: passive
+- id: '102'
+  name: '102'
+  position:
+    x: -16.0
+    y: -85.64014
+  direction: left
+  pin_type: passive
+- id: '101'
+  name: '101'
+  position:
+    x: -16.0
+    y: -85.0173
+  direction: left
+  pin_type: passive
+- id: '106'
+  name: '106'
+  position:
+    x: -16.0
+    y: -84.39446
+  direction: left
+  pin_type: passive
+- id: '100'
+  name: '100'
+  position:
+    x: -16.0
+    y: -83.77163
+  direction: left
+  pin_type: passive
+- id: '112'
+  name: '112'
+  position:
+    x: -16.0
+    y: -83.14879
+  direction: left
+  pin_type: passive
+- id: '104'
+  name: '104'
+  position:
+    x: -16.0
+    y: -82.525955
+  direction: left
+  pin_type: passive
+- id: '118'
+  name: '118'
+  position:
+    x: -16.0
+    y: -81.903114
+  direction: left
+  pin_type: passive
+- id: '119'
+  name: '119'
+  position:
+    x: -16.0
+    y: -81.28027
+  direction: left
+  pin_type: passive
+- id: '120'
+  name: '120'
+  position:
+    x: -16.0
+    y: -80.65744
+  direction: left
+  pin_type: passive
+- id: '124'
+  name: '124'
+  position:
+    x: -16.0
+    y: -80.0346
+  direction: left
+  pin_type: passive
+- id: '126'
+  name: '126'
+  position:
+    x: -16.0
+    y: -79.411766
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -90.0
+    width: 32.0
+    height: 180.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -90.0
+    width: 24.0
+    height: 180.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {107} {105} {103} {109} {117} {108} {111} {102} {101} {106} {100} {112} {104} {118} {119} {120} {124} {126} H81L2X7_HA
+  model_name: H81L2X7_HA

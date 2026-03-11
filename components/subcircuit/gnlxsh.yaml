@@ -1,0 +1,81 @@
+id: gnlxsh
+name: GNLXSH
+description: 'SPICE subcircuit: GNLXSH'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: '1'
+  name: '1'
+  position:
+    x: -16.0
+    y: -40.0
+  direction: left
+  pin_type: passive
+- id: '2'
+  name: '2'
+  position:
+    x: -16.0
+    y: -38.367348
+  direction: left
+  pin_type: passive
+- id: '3'
+  name: '3'
+  position:
+    x: -16.0
+    y: -36.734695
+  direction: left
+  pin_type: passive
+- id: _bi_0
+  name: '{BI=0'
+  position:
+    x: -16.0
+    y: -35.10204
+  direction: left
+  pin_type: passive
+- id: n_200
+  name: N=200
+  position:
+    x: -16.0
+    y: -33.469387
+  direction: left
+  pin_type: passive
+- id: acore__289
+  name: ACORE=.289
+  position:
+    x: -16.0
+    y: -31.836735
+  direction: left
+  pin_type: passive
+- id: lm_5_19
+  name: LM=5.19
+  position:
+    x: -16.0
+    y: -30.204082
+  direction: left
+  pin_type: passive
+- id: br_4k_
+  name: BR=4K}
+  position:
+    x: -16.0
+    y: -28.571428
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -40.0
+    width: 32.0
+    height: 80.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -40.0
+    width: 24.0
+    height: 80.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {1} {2} {3} {{BI=0} {N=200} {ACORE=.289} {LM=5.19} {BR=4K}} GNLXSH
+  model_name: GNLXSH

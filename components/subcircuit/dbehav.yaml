@@ -1,0 +1,88 @@
+id: dbehav
+name: DBEHAV
+description: 'SPICE subcircuit: DBEHAV'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: '1'
+  name: '1'
+  position:
+    x: -16.0
+    y: -45.0
+  direction: left
+  pin_type: passive
+- id: '9'
+  name: '9'
+  position:
+    x: -16.0
+    y: -43.59375
+  direction: left
+  pin_type: passive
+- id: _is1_1e_6
+  name: '{IS1=1E-6'
+  position:
+    x: -16.0
+    y: -42.1875
+  direction: left
+  pin_type: passive
+- id: tm_100n
+  name: TM=100N
+  position:
+    x: -16.0
+    y: -40.78125
+  direction: left
+  pin_type: passive
+- id: tau_100n
+  name: TAU=100N
+  position:
+    x: -16.0
+    y: -39.375
+  direction: left
+  pin_type: passive
+- id: rmo_1
+  name: RMO=1
+  position:
+    x: -16.0
+    y: -37.96875
+  direction: left
+  pin_type: passive
+- id: vta__0259
+  name: VTA=.0259
+  position:
+    x: -16.0
+    y: -36.5625
+  direction: left
+  pin_type: passive
+- id: cap_100p
+  name: CAP=100P
+  position:
+    x: -16.0
+    y: -35.15625
+  direction: left
+  pin_type: passive
+- id: ise_1e_30_
+  name: ISE=1E-30}
+  position:
+    x: -16.0
+    y: -33.75
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -45.0
+    width: 32.0
+    height: 90.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -45.0
+    width: 24.0
+    height: 90.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {1} {9} {{IS1=1E-6} {TM=100N} {TAU=100N} {RMO=1} {VTA=.0259} {CAP=100P} {ISE=1E-30}} DBEHAV
+  model_name: DBEHAV

@@ -1,0 +1,123 @@
+id: 54ls153
+name: 54LS153
+description: 'SPICE subcircuit: 54LS153'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: eabar
+  name: eabar
+  position:
+    x: -16.0
+    y: -70.0
+  direction: left
+  pin_type: passive
+- id: ebbar
+  name: ebbar
+  position:
+    x: -16.0
+    y: -69.1716
+  direction: left
+  pin_type: passive
+- id: s0
+  name: s0
+  position:
+    x: -16.0
+    y: -68.34319
+  direction: left
+  pin_type: passive
+- id: s1
+  name: s1
+  position:
+    x: -16.0
+    y: -67.51479
+  direction: left
+  pin_type: passive
+- id: i0a
+  name: i0a
+  position:
+    x: -16.0
+    y: -66.68639
+  direction: left
+  pin_type: passive
+- id: i1a
+  name: i1a
+  position:
+    x: -16.0
+    y: -65.85799
+  direction: left
+  pin_type: passive
+- id: i2a
+  name: i2a
+  position:
+    x: -16.0
+    y: -65.02959
+  direction: left
+  pin_type: passive
+- id: i3a
+  name: i3a
+  position:
+    x: -16.0
+    y: -64.20119
+  direction: left
+  pin_type: passive
+- id: i0b
+  name: i0b
+  position:
+    x: -16.0
+    y: -63.37278
+  direction: left
+  pin_type: passive
+- id: i1b
+  name: i1b
+  position:
+    x: -16.0
+    y: -62.54438
+  direction: left
+  pin_type: passive
+- id: i2b
+  name: i2b
+  position:
+    x: -16.0
+    y: -61.715977
+  direction: left
+  pin_type: passive
+- id: i3b
+  name: i3b
+  position:
+    x: -16.0
+    y: -60.887573
+  direction: left
+  pin_type: passive
+- id: za
+  name: za
+  position:
+    x: -16.0
+    y: -60.059174
+  direction: left
+  pin_type: passive
+- id: zb
+  name: zb
+  position:
+    x: -16.0
+    y: -59.23077
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -70.0
+    width: 32.0
+    height: 140.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -70.0
+    width: 24.0
+    height: 140.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {eabar} {ebbar} {s0} {s1} {i0a} {i1a} {i2a} {i3a} {i0b} {i1b} {i2b} {i3b} {za} {zb} 54LS153
+  model_name: 54LS153

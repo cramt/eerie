@@ -1,0 +1,144 @@
+id: 74ac590
+name: 74AC590
+description: 'SPICE subcircuit: 74AC590'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: oebar
+  name: OEBAR
+  position:
+    x: -16.0
+    y: -85.0
+  direction: left
+  pin_type: passive
+- id: rck
+  name: RCK
+  position:
+    x: -16.0
+    y: -84.33594
+  direction: left
+  pin_type: passive
+- id: cckenbar
+  name: CCKENBAR
+  position:
+    x: -16.0
+    y: -83.671875
+  direction: left
+  pin_type: passive
+- id: cck
+  name: CCK
+  position:
+    x: -16.0
+    y: -83.00781
+  direction: left
+  pin_type: passive
+- id: cclrbar
+  name: CCLRBAR
+  position:
+    x: -16.0
+    y: -82.34375
+  direction: left
+  pin_type: passive
+- id: rcobar
+  name: RCOBAR
+  position:
+    x: -16.0
+    y: -81.67969
+  direction: left
+  pin_type: passive
+- id: qa
+  name: QA
+  position:
+    x: -16.0
+    y: -81.015625
+  direction: left
+  pin_type: passive
+- id: qb
+  name: QB
+  position:
+    x: -16.0
+    y: -80.35156
+  direction: left
+  pin_type: passive
+- id: qc
+  name: QC
+  position:
+    x: -16.0
+    y: -79.6875
+  direction: left
+  pin_type: passive
+- id: qd
+  name: QD
+  position:
+    x: -16.0
+    y: -79.02344
+  direction: left
+  pin_type: passive
+- id: qe
+  name: QE
+  position:
+    x: -16.0
+    y: -78.359375
+  direction: left
+  pin_type: passive
+- id: qf
+  name: QF
+  position:
+    x: -16.0
+    y: -77.69531
+  direction: left
+  pin_type: passive
+- id: qg
+  name: QG
+  position:
+    x: -16.0
+    y: -77.03125
+  direction: left
+  pin_type: passive
+- id: qh
+  name: QH
+  position:
+    x: -16.0
+    y: -76.36719
+  direction: left
+  pin_type: passive
+- id: optional_
+  name: 'OPTIONAL:'
+  position:
+    x: -16.0
+    y: -75.703125
+  direction: left
+  pin_type: passive
+- id: dpwr
+  name: DPWR
+  position:
+    x: -16.0
+    y: -75.03906
+  direction: left
+  pin_type: passive
+- id: _
+  name: =
+  position:
+    x: -16.0
+    y: -74.375
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -85.0
+    width: 32.0
+    height: 170.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -85.0
+    width: 24.0
+    height: 170.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {OEBAR} {RCK} {CCKENBAR} {CCK} {CCLRBAR} {RCOBAR} {QA} {QB} {QC} {QD} {QE} {QF} {QG} {QH} {OPTIONAL:} {DPWR} {=} 74AC590
+  model_name: 74AC590

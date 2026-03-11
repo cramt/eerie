@@ -1,0 +1,116 @@
+id: 74act874
+name: 74ACT874
+description: 'SPICE subcircuit: 74ACT874'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: oebar
+  name: OEBAR
+  position:
+    x: -16.0
+    y: -65.0
+  direction: left
+  pin_type: passive
+- id: clk
+  name: CLK
+  position:
+    x: -16.0
+    y: -64.09722
+  direction: left
+  pin_type: passive
+- id: clrbar
+  name: CLRBAR
+  position:
+    x: -16.0
+    y: -63.194443
+  direction: left
+  pin_type: passive
+- id: d1
+  name: D1
+  position:
+    x: -16.0
+    y: -62.291668
+  direction: left
+  pin_type: passive
+- id: d2
+  name: D2
+  position:
+    x: -16.0
+    y: -61.38889
+  direction: left
+  pin_type: passive
+- id: d3
+  name: D3
+  position:
+    x: -16.0
+    y: -60.48611
+  direction: left
+  pin_type: passive
+- id: d4
+  name: D4
+  position:
+    x: -16.0
+    y: -59.583332
+  direction: left
+  pin_type: passive
+- id: q1
+  name: Q1
+  position:
+    x: -16.0
+    y: -58.680557
+  direction: left
+  pin_type: passive
+- id: q2
+  name: Q2
+  position:
+    x: -16.0
+    y: -57.77778
+  direction: left
+  pin_type: passive
+- id: q3
+  name: Q3
+  position:
+    x: -16.0
+    y: -56.875
+  direction: left
+  pin_type: passive
+- id: q4
+  name: Q4
+  position:
+    x: -16.0
+    y: -55.97222
+  direction: left
+  pin_type: passive
+- id: optional_
+  name: 'OPTIONAL:'
+  position:
+    x: -16.0
+    y: -55.069443
+  direction: left
+  pin_type: passive
+- id: dpwr_
+  name: DPWR=
+  position:
+    x: -16.0
+    y: -54.166668
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -65.0
+    width: 32.0
+    height: 130.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -65.0
+    width: 24.0
+    height: 130.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {OEBAR} {CLK} {CLRBAR} {D1} {D2} {D3} {D4} {Q1} {Q2} {Q3} {Q4} {OPTIONAL:} {DPWR=} 74ACT874
+  model_name: 74ACT874

@@ -1,0 +1,88 @@
+id: multiout
+name: MULTIOUT
+description: 'SPICE subcircuit: MULTIOUT'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: '100'
+  name: '100'
+  position:
+    x: -16.0
+    y: -45.0
+  direction: left
+  pin_type: passive
+- id: '200'
+  name: '200'
+  position:
+    x: -16.0
+    y: -43.59375
+  direction: left
+  pin_type: passive
+- id: '300'
+  name: '300'
+  position:
+    x: -16.0
+    y: -42.1875
+  direction: left
+  pin_type: passive
+- id: '400'
+  name: '400'
+  position:
+    x: -16.0
+    y: -40.78125
+  direction: left
+  pin_type: passive
+- id: '603'
+  name: '603'
+  position:
+    x: -16.0
+    y: -39.375
+  direction: left
+  pin_type: passive
+- id: '632'
+  name: '632'
+  position:
+    x: -16.0
+    y: -37.96875
+  direction: left
+  pin_type: passive
+- id: '631'
+  name: '631'
+  position:
+    x: -16.0
+    y: -36.5625
+  direction: left
+  pin_type: passive
+- id: '634'
+  name: '634'
+  position:
+    x: -16.0
+    y: -35.15625
+  direction: left
+  pin_type: passive
+- id: '633'
+  name: '633'
+  position:
+    x: -16.0
+    y: -33.75
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -45.0
+    width: 32.0
+    height: 90.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -45.0
+    width: 24.0
+    height: 90.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {100} {200} {300} {400} {603} {632} {631} {634} {633} MULTIOUT
+  model_name: MULTIOUT

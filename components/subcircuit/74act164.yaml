@@ -1,0 +1,123 @@
+id: 74act164
+name: 74ACT164
+description: 'SPICE subcircuit: 74ACT164'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: a
+  name: A
+  position:
+    x: -16.0
+    y: -70.0
+  direction: left
+  pin_type: passive
+- id: b
+  name: B
+  position:
+    x: -16.0
+    y: -69.1716
+  direction: left
+  pin_type: passive
+- id: q0
+  name: Q0
+  position:
+    x: -16.0
+    y: -68.34319
+  direction: left
+  pin_type: passive
+- id: q1
+  name: Q1
+  position:
+    x: -16.0
+    y: -67.51479
+  direction: left
+  pin_type: passive
+- id: q2
+  name: Q2
+  position:
+    x: -16.0
+    y: -66.68639
+  direction: left
+  pin_type: passive
+- id: q3
+  name: Q3
+  position:
+    x: -16.0
+    y: -65.85799
+  direction: left
+  pin_type: passive
+- id: q4
+  name: Q4
+  position:
+    x: -16.0
+    y: -65.02959
+  direction: left
+  pin_type: passive
+- id: q5
+  name: Q5
+  position:
+    x: -16.0
+    y: -64.20119
+  direction: left
+  pin_type: passive
+- id: q6
+  name: Q6
+  position:
+    x: -16.0
+    y: -63.37278
+  direction: left
+  pin_type: passive
+- id: q7
+  name: Q7
+  position:
+    x: -16.0
+    y: -62.54438
+  direction: left
+  pin_type: passive
+- id: mrbar
+  name: MRBAR
+  position:
+    x: -16.0
+    y: -61.715977
+  direction: left
+  pin_type: passive
+- id: cp
+  name: CP
+  position:
+    x: -16.0
+    y: -60.887573
+  direction: left
+  pin_type: passive
+- id: optional_
+  name: 'OPTIONAL:'
+  position:
+    x: -16.0
+    y: -60.059174
+  direction: left
+  pin_type: passive
+- id: dpwr_
+  name: DPWR=
+  position:
+    x: -16.0
+    y: -59.23077
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -70.0
+    width: 32.0
+    height: 140.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -70.0
+    width: 24.0
+    height: 140.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {A} {B} {Q0} {Q1} {Q2} {Q3} {Q4} {Q5} {Q6} {Q7} {MRBAR} {CP} {OPTIONAL:} {DPWR=} 74ACT164
+  model_name: 74ACT164

@@ -1,0 +1,95 @@
+id: triodeg
+name: TRIODEG
+description: 'SPICE subcircuit: TRIODEG'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: '1'
+  name: '1'
+  position:
+    x: -16.0
+    y: -50.0
+  direction: left
+  pin_type: passive
+- id: '3'
+  name: '3'
+  position:
+    x: -16.0
+    y: -48.76543
+  direction: left
+  pin_type: passive
+- id: '4'
+  name: '4'
+  position:
+    x: -16.0
+    y: -47.530865
+  direction: left
+  pin_type: passive
+- id: _kt____
+  name: '{KT=???'
+  position:
+    x: -16.0
+    y: -46.296295
+  direction: left
+  pin_type: passive
+- id: k1____
+  name: K1=???
+  position:
+    x: -16.0
+    y: -45.06173
+  direction: left
+  pin_type: passive
+- id: k2____
+  name: K2=???
+  position:
+    x: -16.0
+    y: -43.82716
+  direction: left
+  pin_type: passive
+- id: mu____
+  name: MU=???
+  position:
+    x: -16.0
+    y: -42.59259
+  direction: left
+  pin_type: passive
+- id: cgp____
+  name: CGP=???
+  position:
+    x: -16.0
+    y: -41.358025
+  direction: left
+  pin_type: passive
+- id: cgc____
+  name: CGC=???
+  position:
+    x: -16.0
+    y: -40.123455
+  direction: left
+  pin_type: passive
+- id: cpc_____
+  name: CPC=???}
+  position:
+    x: -16.0
+    y: -38.88889
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -50.0
+    width: 32.0
+    height: 100.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -50.0
+    width: 24.0
+    height: 100.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {1} {3} {4} {{KT=???} {K1=???} {K2=???} {MU=???} {CGP=???} {CGC=???} {CPC=???}} TRIODEG
+  model_name: TRIODEG

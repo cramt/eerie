@@ -1,0 +1,95 @@
+id: if_centre_tap
+name: if-centre-tap
+description: 'SPICE subcircuit: if-centre-tap'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: '1'
+  name: '1'
+  position:
+    x: -16.0
+    y: -50.0
+  direction: left
+  pin_type: passive
+- id: '2'
+  name: '2'
+  position:
+    x: -16.0
+    y: -48.76543
+  direction: left
+  pin_type: passive
+- id: '3'
+  name: '3'
+  position:
+    x: -16.0
+    y: -47.530865
+  direction: left
+  pin_type: passive
+- id: '4'
+  name: '4'
+  position:
+    x: -16.0
+    y: -46.296295
+  direction: left
+  pin_type: passive
+- id: '5'
+  name: '5'
+  position:
+    x: -16.0
+    y: -45.06173
+  direction: left
+  pin_type: passive
+- id: cp__cp_
+  name: Cp={Cp}
+  position:
+    x: -16.0
+    y: -43.82716
+  direction: left
+  pin_type: passive
+- id: cs__cs_
+  name: Cs={Cs}
+  position:
+    x: -16.0
+    y: -42.59259
+  direction: left
+  pin_type: passive
+- id: lp__lp_
+  name: Lp={Lp}
+  position:
+    x: -16.0
+    y: -41.358025
+  direction: left
+  pin_type: passive
+- id: ls__ls_
+  name: Ls={Ls}
+  position:
+    x: -16.0
+    y: -40.123455
+  direction: left
+  pin_type: passive
+- id: rs__rs_
+  name: Rs={Rs}
+  position:
+    x: -16.0
+    y: -38.88889
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -50.0
+    width: 32.0
+    height: 100.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -50.0
+    width: 24.0
+    height: 100.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {1} {2} {3} {4} {5} {Cp={Cp}} {Cs={Cs}} {Lp={Lp}} {Ls={Ls}} {Rs={Rs}} if-centre-tap
+  model_name: if-centre-tap

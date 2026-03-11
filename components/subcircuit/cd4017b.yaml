@@ -1,0 +1,158 @@
+id: cd4017b
+name: CD4017B
+description: 'SPICE subcircuit: CD4017B'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: mr
+  name: MR
+  position:
+    x: -16.0
+    y: -95.0
+  direction: left
+  pin_type: passive
+- id: cp1
+  name: CP1
+  position:
+    x: -16.0
+    y: -94.41358
+  direction: left
+  pin_type: passive
+- id: cp0
+  name: CP0
+  position:
+    x: -16.0
+    y: -93.82716
+  direction: left
+  pin_type: passive
+- id: o0
+  name: O0
+  position:
+    x: -16.0
+    y: -93.24074
+  direction: left
+  pin_type: passive
+- id: o1
+  name: O1
+  position:
+    x: -16.0
+    y: -92.65432
+  direction: left
+  pin_type: passive
+- id: o2
+  name: O2
+  position:
+    x: -16.0
+    y: -92.0679
+  direction: left
+  pin_type: passive
+- id: o3
+  name: O3
+  position:
+    x: -16.0
+    y: -91.48148
+  direction: left
+  pin_type: passive
+- id: o4
+  name: O4
+  position:
+    x: -16.0
+    y: -90.895065
+  direction: left
+  pin_type: passive
+- id: o5
+  name: O5
+  position:
+    x: -16.0
+    y: -90.30864
+  direction: left
+  pin_type: passive
+- id: o6
+  name: O6
+  position:
+    x: -16.0
+    y: -89.72222
+  direction: left
+  pin_type: passive
+- id: o7
+  name: O7
+  position:
+    x: -16.0
+    y: -89.1358
+  direction: left
+  pin_type: passive
+- id: o8
+  name: O8
+  position:
+    x: -16.0
+    y: -88.549385
+  direction: left
+  pin_type: passive
+- id: o9
+  name: O9
+  position:
+    x: -16.0
+    y: -87.96296
+  direction: left
+  pin_type: passive
+- id: o59
+  name: O59
+  position:
+    x: -16.0
+    y: -87.37654
+  direction: left
+  pin_type: passive
+- id: vdd
+  name: VDD
+  position:
+    x: -16.0
+    y: -86.79012
+  direction: left
+  pin_type: passive
+- id: vgnd
+  name: VGND
+  position:
+    x: -16.0
+    y: -86.203705
+  direction: left
+  pin_type: passive
+- id: vdd1__vdd_
+  name: vdd1={vdd}
+  position:
+    x: -16.0
+    y: -85.61729
+  direction: left
+  pin_type: passive
+- id: speed1__speed_
+  name: speed1={speed}
+  position:
+    x: -16.0
+    y: -85.03087
+  direction: left
+  pin_type: passive
+- id: tripdt1__tripdt_
+  name: tripdt1={tripdt}
+  position:
+    x: -16.0
+    y: -84.44444
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -95.0
+    width: 32.0
+    height: 190.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -95.0
+    width: 24.0
+    height: 190.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {MR} {CP1} {CP0} {O0} {O1} {O2} {O3} {O4} {O5} {O6} {O7} {O8} {O9} {O59} {VDD} {VGND} {vdd1={vdd}} {speed1={speed}} {tripdt1={tripdt}} CD4017B
+  model_name: CD4017B

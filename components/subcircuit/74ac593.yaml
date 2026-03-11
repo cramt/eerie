@@ -1,0 +1,165 @@
+id: 74ac593
+name: 74AC593
+description: 'SPICE subcircuit: 74AC593'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: oe
+  name: OE
+  position:
+    x: -16.0
+    y: -100.0
+  direction: left
+  pin_type: passive
+- id: oebar
+  name: OEBAR
+  position:
+    x: -16.0
+    y: -99.445984
+  direction: left
+  pin_type: passive
+- id: ccken
+  name: CCKEN
+  position:
+    x: -16.0
+    y: -98.89197
+  direction: left
+  pin_type: passive
+- id: cckenbar
+  name: CCKENBAR
+  position:
+    x: -16.0
+    y: -98.33795
+  direction: left
+  pin_type: passive
+- id: cck
+  name: CCK
+  position:
+    x: -16.0
+    y: -97.783936
+  direction: left
+  pin_type: passive
+- id: cclrbar
+  name: CCLRBAR
+  position:
+    x: -16.0
+    y: -97.22992
+  direction: left
+  pin_type: passive
+- id: cloadbar
+  name: CLOADBAR
+  position:
+    x: -16.0
+    y: -96.6759
+  direction: left
+  pin_type: passive
+- id: rckbar
+  name: RCKBAR
+  position:
+    x: -16.0
+    y: -96.12189
+  direction: left
+  pin_type: passive
+- id: rck
+  name: RCK
+  position:
+    x: -16.0
+    y: -95.56787
+  direction: left
+  pin_type: passive
+- id: a_qa
+  name: A/QA
+  position:
+    x: -16.0
+    y: -95.01385
+  direction: left
+  pin_type: passive
+- id: b_qb
+  name: B/QB
+  position:
+    x: -16.0
+    y: -94.45983
+  direction: left
+  pin_type: passive
+- id: c_qc
+  name: C/QC
+  position:
+    x: -16.0
+    y: -93.905815
+  direction: left
+  pin_type: passive
+- id: d_qd
+  name: D/QD
+  position:
+    x: -16.0
+    y: -93.3518
+  direction: left
+  pin_type: passive
+- id: e_qe
+  name: E/QE
+  position:
+    x: -16.0
+    y: -92.79778
+  direction: left
+  pin_type: passive
+- id: f_qf
+  name: F/QF
+  position:
+    x: -16.0
+    y: -92.24377
+  direction: left
+  pin_type: passive
+- id: g_qg
+  name: G/QG
+  position:
+    x: -16.0
+    y: -91.68975
+  direction: left
+  pin_type: passive
+- id: h_qh
+  name: H/QH
+  position:
+    x: -16.0
+    y: -91.135735
+  direction: left
+  pin_type: passive
+- id: rcobar
+  name: RCOBAR
+  position:
+    x: -16.0
+    y: -90.58172
+  direction: left
+  pin_type: passive
+- id: optional_
+  name: 'OPTIONAL:'
+  position:
+    x: -16.0
+    y: -90.0277
+  direction: left
+  pin_type: passive
+- id: dpwr_
+  name: DPWR=
+  position:
+    x: -16.0
+    y: -89.47369
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -100.0
+    width: 32.0
+    height: 200.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -100.0
+    width: 24.0
+    height: 200.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {OE} {OEBAR} {CCKEN} {CCKENBAR} {CCK} {CCLRBAR} {CLOADBAR} {RCKBAR} {RCK} {A/QA} {B/QB} {C/QC} {D/QD} {E/QE} {F/QF} {G/QG} {H/QH} {RCOBAR} {OPTIONAL:} {DPWR=} 74AC593
+  model_name: 74AC593

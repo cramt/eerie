@@ -1,0 +1,67 @@
+id: el2004_el
+name: EL2004_EL
+description: 'SPICE subcircuit: EL2004_EL'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: '5'
+  name: '5'
+  position:
+    x: -16.0
+    y: -30.0
+  direction: left
+  pin_type: passive
+- id: '12'
+  name: '12'
+  position:
+    x: -16.0
+    y: -27.6
+  direction: left
+  pin_type: passive
+- id: '1'
+  name: '1'
+  position:
+    x: -16.0
+    y: -25.2
+  direction: left
+  pin_type: passive
+- id: '10'
+  name: '10'
+  position:
+    x: -16.0
+    y: -22.8
+  direction: left
+  pin_type: passive
+- id: '9'
+  name: '9'
+  position:
+    x: -16.0
+    y: -20.4
+  direction: left
+  pin_type: passive
+- id: '11'
+  name: '11'
+  position:
+    x: -16.0
+    y: -18.0
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -30.0
+    width: 32.0
+    height: 60.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -30.0
+    width: 24.0
+    height: 60.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {5} {12} {1} {10} {9} {11} EL2004_EL
+  model_name: EL2004_EL

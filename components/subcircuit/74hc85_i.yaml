@@ -1,0 +1,151 @@
+id: 74hc85_i
+name: 74HC85_i
+description: 'SPICE subcircuit: 74HC85_i'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: a0
+  name: A0
+  position:
+    x: -16.0
+    y: -90.0
+  direction: left
+  pin_type: passive
+- id: a1
+  name: A1
+  position:
+    x: -16.0
+    y: -89.37716
+  direction: left
+  pin_type: passive
+- id: a2
+  name: A2
+  position:
+    x: -16.0
+    y: -88.754326
+  direction: left
+  pin_type: passive
+- id: a3
+  name: A3
+  position:
+    x: -16.0
+    y: -88.131485
+  direction: left
+  pin_type: passive
+- id: b0
+  name: B0
+  position:
+    x: -16.0
+    y: -87.50865
+  direction: left
+  pin_type: passive
+- id: b1
+  name: B1
+  position:
+    x: -16.0
+    y: -86.88581
+  direction: left
+  pin_type: passive
+- id: b2
+  name: B2
+  position:
+    x: -16.0
+    y: -86.26298
+  direction: left
+  pin_type: passive
+- id: b3
+  name: B3
+  position:
+    x: -16.0
+    y: -85.64014
+  direction: left
+  pin_type: passive
+- id: ialb
+  name: IALB
+  position:
+    x: -16.0
+    y: -85.0173
+  direction: left
+  pin_type: passive
+- id: iaeb
+  name: IAEB
+  position:
+    x: -16.0
+    y: -84.39446
+  direction: left
+  pin_type: passive
+- id: iagb
+  name: IAGB
+  position:
+    x: -16.0
+    y: -83.77163
+  direction: left
+  pin_type: passive
+- id: qagb
+  name: QAGB
+  position:
+    x: -16.0
+    y: -83.14879
+  direction: left
+  pin_type: passive
+- id: qaeb
+  name: QAEB
+  position:
+    x: -16.0
+    y: -82.525955
+  direction: left
+  pin_type: passive
+- id: qalb
+  name: QALB
+  position:
+    x: -16.0
+    y: -81.903114
+  direction: left
+  pin_type: passive
+- id: tripdt1__tripdt2_
+  name: tripdt1={tripdt2}
+  position:
+    x: -16.0
+    y: -81.28027
+  direction: left
+  pin_type: passive
+- id: td1b__td1a_
+  name: td1b={td1a}
+  position:
+    x: -16.0
+    y: -80.65744
+  direction: left
+  pin_type: passive
+- id: td2b__td2a_
+  name: td2b={td2a}
+  position:
+    x: -16.0
+    y: -80.0346
+  direction: left
+  pin_type: passive
+- id: td3b__td3a_
+  name: td3b={td3a}
+  position:
+    x: -16.0
+    y: -79.411766
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -90.0
+    width: 32.0
+    height: 180.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -90.0
+    width: 24.0
+    height: 180.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {A0} {A1} {A2} {A3} {B0} {B1} {B2} {B3} {IALB} {IAEB} {IAGB} {QAGB} {QAEB} {QALB} {tripdt1={tripdt2}} {td1b={td1a}} {td2b={td2a}} {td3b={td3a}} 74HC85_i
+  model_name: 74HC85_i

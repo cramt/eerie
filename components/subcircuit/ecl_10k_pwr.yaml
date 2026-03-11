@@ -1,0 +1,46 @@
+id: ecl_10k_pwr
+name: ECL_10K_PWR
+description: 'SPICE subcircuit: ECL_10K_PWR'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: agnd
+  name: AGND
+  position:
+    x: -16.0
+    y: -15.0
+  direction: left
+  pin_type: passive
+- id: optional_
+  name: 'optional:'
+  position:
+    x: -16.0
+    y: -7.5
+  direction: left
+  pin_type: passive
+- id: vcc1_
+  name: VCC1=
+  position:
+    x: -16.0
+    y: 0.0
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -15.0
+    width: 32.0
+    height: 30.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -15.0
+    width: 24.0
+    height: 30.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {AGND} {optional:} {VCC1=} ECL_10K_PWR
+  model_name: ECL_10K_PWR

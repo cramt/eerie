@@ -1,0 +1,123 @@
+id: 74h101
+name: 74H101
+description: 'SPICE subcircuit: 74H101'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: prebar
+  name: PREBAR
+  position:
+    x: -16.0
+    y: -70.0
+  direction: left
+  pin_type: passive
+- id: clk
+  name: CLK
+  position:
+    x: -16.0
+    y: -69.1716
+  direction: left
+  pin_type: passive
+- id: j1a
+  name: J1A
+  position:
+    x: -16.0
+    y: -68.34319
+  direction: left
+  pin_type: passive
+- id: j1b
+  name: J1B
+  position:
+    x: -16.0
+    y: -67.51479
+  direction: left
+  pin_type: passive
+- id: j2a
+  name: J2A
+  position:
+    x: -16.0
+    y: -66.68639
+  direction: left
+  pin_type: passive
+- id: j2b
+  name: J2B
+  position:
+    x: -16.0
+    y: -65.85799
+  direction: left
+  pin_type: passive
+- id: k1a
+  name: K1A
+  position:
+    x: -16.0
+    y: -65.02959
+  direction: left
+  pin_type: passive
+- id: k1b
+  name: K1B
+  position:
+    x: -16.0
+    y: -64.20119
+  direction: left
+  pin_type: passive
+- id: k2a
+  name: K2A
+  position:
+    x: -16.0
+    y: -63.37278
+  direction: left
+  pin_type: passive
+- id: k2b
+  name: K2B
+  position:
+    x: -16.0
+    y: -62.54438
+  direction: left
+  pin_type: passive
+- id: q
+  name: Q
+  position:
+    x: -16.0
+    y: -61.715977
+  direction: left
+  pin_type: passive
+- id: qbar
+  name: QBAR
+  position:
+    x: -16.0
+    y: -60.887573
+  direction: left
+  pin_type: passive
+- id: optional_
+  name: 'optional:'
+  position:
+    x: -16.0
+    y: -60.059174
+  direction: left
+  pin_type: passive
+- id: dpwr_
+  name: DPWR=
+  position:
+    x: -16.0
+    y: -59.23077
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -70.0
+    width: 32.0
+    height: 140.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -70.0
+    width: 24.0
+    height: 140.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {PREBAR} {CLK} {J1A} {J1B} {J2A} {J2B} {K1A} {K1B} {K2A} {K2B} {Q} {QBAR} {optional:} {DPWR=} 74H101
+  model_name: 74H101

@@ -1,0 +1,151 @@
+id: '74276'
+name: '74276'
+description: 'SPICE subcircuit: 74276'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: preb
+  name: preb
+  position:
+    x: -16.0
+    y: -90.0
+  direction: left
+  pin_type: passive
+- id: clrb
+  name: clrb
+  position:
+    x: -16.0
+    y: -89.37716
+  direction: left
+  pin_type: passive
+- id: clk1
+  name: clk1
+  position:
+    x: -16.0
+    y: -88.754326
+  direction: left
+  pin_type: passive
+- id: clk2
+  name: clk2
+  position:
+    x: -16.0
+    y: -88.131485
+  direction: left
+  pin_type: passive
+- id: clk3
+  name: clk3
+  position:
+    x: -16.0
+    y: -87.50865
+  direction: left
+  pin_type: passive
+- id: clk4
+  name: clk4
+  position:
+    x: -16.0
+    y: -86.88581
+  direction: left
+  pin_type: passive
+- id: j1
+  name: j1
+  position:
+    x: -16.0
+    y: -86.26298
+  direction: left
+  pin_type: passive
+- id: j2
+  name: j2
+  position:
+    x: -16.0
+    y: -85.64014
+  direction: left
+  pin_type: passive
+- id: j3
+  name: j3
+  position:
+    x: -16.0
+    y: -85.0173
+  direction: left
+  pin_type: passive
+- id: j4
+  name: j4
+  position:
+    x: -16.0
+    y: -84.39446
+  direction: left
+  pin_type: passive
+- id: k1b
+  name: k1b
+  position:
+    x: -16.0
+    y: -83.77163
+  direction: left
+  pin_type: passive
+- id: k2b
+  name: k2b
+  position:
+    x: -16.0
+    y: -83.14879
+  direction: left
+  pin_type: passive
+- id: k3b
+  name: k3b
+  position:
+    x: -16.0
+    y: -82.525955
+  direction: left
+  pin_type: passive
+- id: k4b
+  name: k4b
+  position:
+    x: -16.0
+    y: -81.903114
+  direction: left
+  pin_type: passive
+- id: q1
+  name: q1
+  position:
+    x: -16.0
+    y: -81.28027
+  direction: left
+  pin_type: passive
+- id: q2
+  name: q2
+  position:
+    x: -16.0
+    y: -80.65744
+  direction: left
+  pin_type: passive
+- id: q3
+  name: q3
+  position:
+    x: -16.0
+    y: -80.0346
+  direction: left
+  pin_type: passive
+- id: q4
+  name: q4
+  position:
+    x: -16.0
+    y: -79.411766
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -90.0
+    width: 32.0
+    height: 180.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -90.0
+    width: 24.0
+    height: 180.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {preb} {clrb} {clk1} {clk2} {clk3} {clk4} {j1} {j2} {j3} {j4} {k1b} {k2b} {k3b} {k4b} {q1} {q2} {q3} {q4} 74276
+  model_name: '74276'

@@ -1,0 +1,53 @@
+id: bcv61c
+name: BCV61c
+description: 'SPICE subcircuit: BCV61c'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: n1
+  name: N1
+  position:
+    x: -16.0
+    y: -20.0
+  direction: left
+  pin_type: passive
+- id: n2
+  name: N2
+  position:
+    x: -16.0
+    y: -15.555555
+  direction: left
+  pin_type: passive
+- id: n3
+  name: N3
+  position:
+    x: -16.0
+    y: -11.111111
+  direction: left
+  pin_type: passive
+- id: n4
+  name: N4
+  position:
+    x: -16.0
+    y: -6.666667
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -20.0
+    width: 32.0
+    height: 40.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -20.0
+    width: 24.0
+    height: 40.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {N1} {N2} {N3} {N4} BCV61c
+  model_name: BCV61c

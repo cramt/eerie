@@ -1,0 +1,67 @@
+id: el7144_el
+name: EL7144_EL
+description: 'SPICE subcircuit: EL7144_EL'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: '2'
+  name: '2'
+  position:
+    x: -16.0
+    y: -30.0
+  direction: left
+  pin_type: passive
+- id: '3'
+  name: '3'
+  position:
+    x: -16.0
+    y: -27.6
+  direction: left
+  pin_type: passive
+- id: '5'
+  name: '5'
+  position:
+    x: -16.0
+    y: -25.2
+  direction: left
+  pin_type: passive
+- id: '6'
+  name: '6'
+  position:
+    x: -16.0
+    y: -22.8
+  direction: left
+  pin_type: passive
+- id: '7'
+  name: '7'
+  position:
+    x: -16.0
+    y: -20.4
+  direction: left
+  pin_type: passive
+- id: '8'
+  name: '8'
+  position:
+    x: -16.0
+    y: -18.0
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -30.0
+    width: 32.0
+    height: 60.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -30.0
+    width: 24.0
+    height: 60.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {2} {3} {5} {6} {7} {8} EL7144_EL
+  model_name: EL7144_EL

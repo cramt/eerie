@@ -1,0 +1,81 @@
+id: 74s113
+name: 74S113
+description: 'SPICE subcircuit: 74S113'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: 1prebar
+  name: 1PREBAR
+  position:
+    x: -16.0
+    y: -40.0
+  direction: left
+  pin_type: passive
+- id: 1clk
+  name: 1CLK
+  position:
+    x: -16.0
+    y: -38.367348
+  direction: left
+  pin_type: passive
+- id: 1j
+  name: 1J
+  position:
+    x: -16.0
+    y: -36.734695
+  direction: left
+  pin_type: passive
+- id: 1k
+  name: 1K
+  position:
+    x: -16.0
+    y: -35.10204
+  direction: left
+  pin_type: passive
+- id: 1q
+  name: 1Q
+  position:
+    x: -16.0
+    y: -33.469387
+  direction: left
+  pin_type: passive
+- id: 1qbar
+  name: 1QBAR
+  position:
+    x: -16.0
+    y: -31.836735
+  direction: left
+  pin_type: passive
+- id: optional_
+  name: 'optional:'
+  position:
+    x: -16.0
+    y: -30.204082
+  direction: left
+  pin_type: passive
+- id: dpwr_
+  name: DPWR=
+  position:
+    x: -16.0
+    y: -28.571428
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -40.0
+    width: 32.0
+    height: 80.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -40.0
+    width: 24.0
+    height: 80.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {1PREBAR} {1CLK} {1J} {1K} {1Q} {1QBAR} {optional:} {DPWR=} 74S113
+  model_name: 74S113

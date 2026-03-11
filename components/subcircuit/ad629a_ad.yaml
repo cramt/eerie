@@ -1,0 +1,74 @@
+id: ad629a_ad
+name: AD629A_AD
+description: 'SPICE subcircuit: AD629A_AD'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: '20'
+  name: '20'
+  position:
+    x: -16.0
+    y: -35.0
+  direction: left
+  pin_type: passive
+- id: '10'
+  name: '10'
+  position:
+    x: -16.0
+    y: -33.055557
+  direction: left
+  pin_type: passive
+- id: '99'
+  name: '99'
+  position:
+    x: -16.0
+    y: -31.11111
+  direction: left
+  pin_type: passive
+- id: '98'
+  name: '98'
+  position:
+    x: -16.0
+    y: -29.166666
+  direction: left
+  pin_type: passive
+- id: '70'
+  name: '70'
+  position:
+    x: -16.0
+    y: -27.222221
+  direction: left
+  pin_type: passive
+- id: '1'
+  name: '1'
+  position:
+    x: -16.0
+    y: -25.277779
+  direction: left
+  pin_type: passive
+- id: '5'
+  name: '5'
+  position:
+    x: -16.0
+    y: -23.333332
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -35.0
+    width: 32.0
+    height: 70.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -35.0
+    width: 24.0
+    height: 70.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {20} {10} {99} {98} {70} {1} {5} AD629A_AD
+  model_name: AD629A_AD

@@ -1,0 +1,165 @@
+id: 74hc40103
+name: 74HC40103
+description: 'SPICE subcircuit: 74HC40103'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: _mrx
+  name: _MRx
+  position:
+    x: -16.0
+    y: -100.0
+  direction: left
+  pin_type: passive
+- id: _plx
+  name: _PLx
+  position:
+    x: -16.0
+    y: -99.445984
+  direction: left
+  pin_type: passive
+- id: _pex
+  name: _PEx
+  position:
+    x: -16.0
+    y: -98.89197
+  direction: left
+  pin_type: passive
+- id: _tex
+  name: _TEx
+  position:
+    x: -16.0
+    y: -98.33795
+  direction: left
+  pin_type: passive
+- id: cpx
+  name: CPx
+  position:
+    x: -16.0
+    y: -97.783936
+  direction: left
+  pin_type: passive
+- id: p0x
+  name: P0x
+  position:
+    x: -16.0
+    y: -97.22992
+  direction: left
+  pin_type: passive
+- id: p1x
+  name: P1x
+  position:
+    x: -16.0
+    y: -96.6759
+  direction: left
+  pin_type: passive
+- id: p2x
+  name: P2x
+  position:
+    x: -16.0
+    y: -96.12189
+  direction: left
+  pin_type: passive
+- id: p3x
+  name: P3x
+  position:
+    x: -16.0
+    y: -95.56787
+  direction: left
+  pin_type: passive
+- id: p4x
+  name: P4x
+  position:
+    x: -16.0
+    y: -95.01385
+  direction: left
+  pin_type: passive
+- id: p5x
+  name: P5x
+  position:
+    x: -16.0
+    y: -94.45983
+  direction: left
+  pin_type: passive
+- id: p6x
+  name: P6x
+  position:
+    x: -16.0
+    y: -93.905815
+  direction: left
+  pin_type: passive
+- id: p7x
+  name: P7x
+  position:
+    x: -16.0
+    y: -93.3518
+  direction: left
+  pin_type: passive
+- id: _tcx
+  name: _TCx
+  position:
+    x: -16.0
+    y: -92.79778
+  direction: left
+  pin_type: passive
+- id: ii
+  name: ii
+  position:
+    x: -16.0
+    y: -92.24377
+  direction: left
+  pin_type: passive
+- id: vcc
+  name: VCC
+  position:
+    x: -16.0
+    y: -91.68975
+  direction: left
+  pin_type: passive
+- id: vgnd
+  name: VGND
+  position:
+    x: -16.0
+    y: -91.135735
+  direction: left
+  pin_type: passive
+- id: vcc1__vcc_
+  name: vcc1={vcc}
+  position:
+    x: -16.0
+    y: -90.58172
+  direction: left
+  pin_type: passive
+- id: speed1__speed_
+  name: speed1={speed}
+  position:
+    x: -16.0
+    y: -90.0277
+  direction: left
+  pin_type: passive
+- id: tripdt1__tripdt_
+  name: tripdt1={tripdt}
+  position:
+    x: -16.0
+    y: -89.47369
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -100.0
+    width: 32.0
+    height: 200.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -100.0
+    width: 24.0
+    height: 200.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {_MRx} {_PLx} {_PEx} {_TEx} {CPx} {P0x} {P1x} {P2x} {P3x} {P4x} {P5x} {P6x} {P7x} {_TCx} {ii} {VCC} {VGND} {vcc1={vcc}} {speed1={speed}} {tripdt1={tripdt}} 74HC40103
+  model_name: 74HC40103

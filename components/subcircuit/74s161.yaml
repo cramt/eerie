@@ -1,0 +1,137 @@
+id: 74s161
+name: 74S161
+description: 'SPICE subcircuit: 74S161'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: dataa
+  name: DATAA
+  position:
+    x: -16.0
+    y: -80.0
+  direction: left
+  pin_type: passive
+- id: datab
+  name: DATAB
+  position:
+    x: -16.0
+    y: -79.28889
+  direction: left
+  pin_type: passive
+- id: datac
+  name: DATAC
+  position:
+    x: -16.0
+    y: -78.577774
+  direction: left
+  pin_type: passive
+- id: datad
+  name: DATAD
+  position:
+    x: -16.0
+    y: -77.86667
+  direction: left
+  pin_type: passive
+- id: clrbar
+  name: CLRBAR
+  position:
+    x: -16.0
+    y: -77.155556
+  direction: left
+  pin_type: passive
+- id: clock
+  name: CLOCK
+  position:
+    x: -16.0
+    y: -76.44444
+  direction: left
+  pin_type: passive
+- id: enabp
+  name: ENABP
+  position:
+    x: -16.0
+    y: -75.73333
+  direction: left
+  pin_type: passive
+- id: enabt
+  name: ENABT
+  position:
+    x: -16.0
+    y: -75.022224
+  direction: left
+  pin_type: passive
+- id: ldbar
+  name: LDBAR
+  position:
+    x: -16.0
+    y: -74.31111
+  direction: left
+  pin_type: passive
+- id: qa
+  name: QA
+  position:
+    x: -16.0
+    y: -73.6
+  direction: left
+  pin_type: passive
+- id: qb
+  name: QB
+  position:
+    x: -16.0
+    y: -72.888885
+  direction: left
+  pin_type: passive
+- id: qc
+  name: QC
+  position:
+    x: -16.0
+    y: -72.17778
+  direction: left
+  pin_type: passive
+- id: qd
+  name: QD
+  position:
+    x: -16.0
+    y: -71.46667
+  direction: left
+  pin_type: passive
+- id: rco
+  name: RCO
+  position:
+    x: -16.0
+    y: -70.755554
+  direction: left
+  pin_type: passive
+- id: optional_
+  name: 'OPTIONAL:'
+  position:
+    x: -16.0
+    y: -70.04445
+  direction: left
+  pin_type: passive
+- id: dpwr_
+  name: DPWR=
+  position:
+    x: -16.0
+    y: -69.333336
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -80.0
+    width: 32.0
+    height: 160.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -80.0
+    width: 24.0
+    height: 160.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {DATAA} {DATAB} {DATAC} {DATAD} {CLRBAR} {CLOCK} {ENABP} {ENABT} {LDBAR} {QA} {QB} {QC} {QD} {RCO} {OPTIONAL:} {DPWR=} 74S161
+  model_name: 74S161

@@ -1,0 +1,137 @@
+id: 74f138
+name: 74F138
+description: 'SPICE subcircuit: 74F138'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: a0
+  name: A0
+  position:
+    x: -16.0
+    y: -80.0
+  direction: left
+  pin_type: passive
+- id: a1
+  name: A1
+  position:
+    x: -16.0
+    y: -79.28889
+  direction: left
+  pin_type: passive
+- id: a2
+  name: A2
+  position:
+    x: -16.0
+    y: -78.577774
+  direction: left
+  pin_type: passive
+- id: e0bar
+  name: E0BAR
+  position:
+    x: -16.0
+    y: -77.86667
+  direction: left
+  pin_type: passive
+- id: e1bar
+  name: E1BAR
+  position:
+    x: -16.0
+    y: -77.155556
+  direction: left
+  pin_type: passive
+- id: e2
+  name: E2
+  position:
+    x: -16.0
+    y: -76.44444
+  direction: left
+  pin_type: passive
+- id: q0
+  name: Q0
+  position:
+    x: -16.0
+    y: -75.73333
+  direction: left
+  pin_type: passive
+- id: q1
+  name: Q1
+  position:
+    x: -16.0
+    y: -75.022224
+  direction: left
+  pin_type: passive
+- id: q2
+  name: Q2
+  position:
+    x: -16.0
+    y: -74.31111
+  direction: left
+  pin_type: passive
+- id: q3
+  name: Q3
+  position:
+    x: -16.0
+    y: -73.6
+  direction: left
+  pin_type: passive
+- id: q4
+  name: Q4
+  position:
+    x: -16.0
+    y: -72.888885
+  direction: left
+  pin_type: passive
+- id: q5
+  name: Q5
+  position:
+    x: -16.0
+    y: -72.17778
+  direction: left
+  pin_type: passive
+- id: q6
+  name: Q6
+  position:
+    x: -16.0
+    y: -71.46667
+  direction: left
+  pin_type: passive
+- id: q7
+  name: Q7
+  position:
+    x: -16.0
+    y: -70.755554
+  direction: left
+  pin_type: passive
+- id: optional_
+  name: 'optional:'
+  position:
+    x: -16.0
+    y: -70.04445
+  direction: left
+  pin_type: passive
+- id: dpwr_
+  name: DPWR=
+  position:
+    x: -16.0
+    y: -69.333336
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -80.0
+    width: 32.0
+    height: 160.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -80.0
+    width: 24.0
+    height: 160.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {A0} {A1} {A2} {E0BAR} {E1BAR} {E2} {Q0} {Q1} {Q2} {Q3} {Q4} {Q5} {Q6} {Q7} {optional:} {DPWR=} 74F138
+  model_name: 74F138

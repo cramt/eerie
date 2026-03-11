@@ -1,0 +1,109 @@
+id: cd4541b
+name: CD4541B
+description: 'SPICE subcircuit: CD4541B'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: rtc
+  name: RTC
+  position:
+    x: -16.0
+    y: -60.0
+  direction: left
+  pin_type: passive
+- id: ctc
+  name: CTC
+  position:
+    x: -16.0
+    y: -59.008263
+  direction: left
+  pin_type: passive
+- id: rs
+  name: RS
+  position:
+    x: -16.0
+    y: -58.01653
+  direction: left
+  pin_type: passive
+- id: ar
+  name: AR
+  position:
+    x: -16.0
+    y: -57.02479
+  direction: left
+  pin_type: passive
+- id: mr
+  name: MR
+  position:
+    x: -16.0
+    y: -56.03306
+  direction: left
+  pin_type: passive
+- id: vss
+  name: VSS
+  position:
+    x: -16.0
+    y: -55.04132
+  direction: left
+  pin_type: passive
+- id: vcc
+  name: VCC
+  position:
+    x: -16.0
+    y: -54.049587
+  direction: left
+  pin_type: passive
+- id: b
+  name: B
+  position:
+    x: -16.0
+    y: -53.057854
+  direction: left
+  pin_type: passive
+- id: a
+  name: A
+  position:
+    x: -16.0
+    y: -52.066116
+  direction: left
+  pin_type: passive
+- id: mode
+  name: MODE
+  position:
+    x: -16.0
+    y: -51.07438
+  direction: left
+  pin_type: passive
+- id: sel
+  name: SEL
+  position:
+    x: -16.0
+    y: -50.082645
+  direction: left
+  pin_type: passive
+- id: q
+  name: Q
+  position:
+    x: -16.0
+    y: -49.090908
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -60.0
+    width: 32.0
+    height: 120.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -60.0
+    width: 24.0
+    height: 120.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {RTC} {CTC} {RS} {AR} {MR} {VSS} {VCC} {B} {A} {MODE} {SEL} {Q} CD4541B
+  model_name: CD4541B

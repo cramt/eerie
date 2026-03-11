@@ -1,0 +1,158 @@
+id: 74hc195
+name: 74HC195
+description: 'SPICE subcircuit: 74HC195'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: mr
+  name: MR
+  position:
+    x: -16.0
+    y: -95.0
+  direction: left
+  pin_type: passive
+- id: pe
+  name: PE
+  position:
+    x: -16.0
+    y: -94.41358
+  direction: left
+  pin_type: passive
+- id: cp
+  name: CP
+  position:
+    x: -16.0
+    y: -93.82716
+  direction: left
+  pin_type: passive
+- id: j
+  name: J
+  position:
+    x: -16.0
+    y: -93.24074
+  direction: left
+  pin_type: passive
+- id: k
+  name: K
+  position:
+    x: -16.0
+    y: -92.65432
+  direction: left
+  pin_type: passive
+- id: d0
+  name: D0
+  position:
+    x: -16.0
+    y: -92.0679
+  direction: left
+  pin_type: passive
+- id: d1
+  name: D1
+  position:
+    x: -16.0
+    y: -91.48148
+  direction: left
+  pin_type: passive
+- id: d2
+  name: D2
+  position:
+    x: -16.0
+    y: -90.895065
+  direction: left
+  pin_type: passive
+- id: d3
+  name: D3
+  position:
+    x: -16.0
+    y: -90.30864
+  direction: left
+  pin_type: passive
+- id: q0
+  name: Q0
+  position:
+    x: -16.0
+    y: -89.72222
+  direction: left
+  pin_type: passive
+- id: q1
+  name: Q1
+  position:
+    x: -16.0
+    y: -89.1358
+  direction: left
+  pin_type: passive
+- id: q2
+  name: Q2
+  position:
+    x: -16.0
+    y: -88.549385
+  direction: left
+  pin_type: passive
+- id: q3
+  name: Q3
+  position:
+    x: -16.0
+    y: -87.96296
+  direction: left
+  pin_type: passive
+- id: q3b
+  name: Q3B
+  position:
+    x: -16.0
+    y: -87.37654
+  direction: left
+  pin_type: passive
+- id: vcc
+  name: VCC
+  position:
+    x: -16.0
+    y: -86.79012
+  direction: left
+  pin_type: passive
+- id: vgnd
+  name: VGND
+  position:
+    x: -16.0
+    y: -86.203705
+  direction: left
+  pin_type: passive
+- id: vcc1__vcc_
+  name: vcc1={vcc}
+  position:
+    x: -16.0
+    y: -85.61729
+  direction: left
+  pin_type: passive
+- id: speed1__speed_
+  name: speed1={speed}
+  position:
+    x: -16.0
+    y: -85.03087
+  direction: left
+  pin_type: passive
+- id: tripdt1__tripdt_
+  name: tripdt1={tripdt}
+  position:
+    x: -16.0
+    y: -84.44444
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -95.0
+    width: 32.0
+    height: 190.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -95.0
+    width: 24.0
+    height: 190.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {MR} {PE} {CP} {J} {K} {D0} {D1} {D2} {D3} {Q0} {Q1} {Q2} {Q3} {Q3B} {VCC} {VGND} {vcc1={vcc}} {speed1={speed}} {tripdt1={tripdt}} 74HC195
+  model_name: 74HC195

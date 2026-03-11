@@ -1,0 +1,165 @@
+id: hip4081l2_ha
+name: HIP4081L2_HA
+description: 'SPICE subcircuit: HIP4081L2_HA'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: '107'
+  name: '107'
+  position:
+    x: -16.0
+    y: -100.0
+  direction: left
+  pin_type: passive
+- id: '105'
+  name: '105'
+  position:
+    x: -16.0
+    y: -99.445984
+  direction: left
+  pin_type: passive
+- id: '103'
+  name: '103'
+  position:
+    x: -16.0
+    y: -98.89197
+  direction: left
+  pin_type: passive
+- id: '109'
+  name: '109'
+  position:
+    x: -16.0
+    y: -98.33795
+  direction: left
+  pin_type: passive
+- id: '108'
+  name: '108'
+  position:
+    x: -16.0
+    y: -97.783936
+  direction: left
+  pin_type: passive
+- id: '111'
+  name: '111'
+  position:
+    x: -16.0
+    y: -97.22992
+  direction: left
+  pin_type: passive
+- id: '102'
+  name: '102'
+  position:
+    x: -16.0
+    y: -96.6759
+  direction: left
+  pin_type: passive
+- id: '101'
+  name: '101'
+  position:
+    x: -16.0
+    y: -96.12189
+  direction: left
+  pin_type: passive
+- id: '106'
+  name: '106'
+  position:
+    x: -16.0
+    y: -95.56787
+  direction: left
+  pin_type: passive
+- id: '100'
+  name: '100'
+  position:
+    x: -16.0
+    y: -95.01385
+  direction: left
+  pin_type: passive
+- id: '112'
+  name: '112'
+  position:
+    x: -16.0
+    y: -94.45983
+  direction: left
+  pin_type: passive
+- id: '104'
+  name: '104'
+  position:
+    x: -16.0
+    y: -93.905815
+  direction: left
+  pin_type: passive
+- id: '113'
+  name: '113'
+  position:
+    x: -16.0
+    y: -93.3518
+  direction: left
+  pin_type: passive
+- id: '114'
+  name: '114'
+  position:
+    x: -16.0
+    y: -92.79778
+  direction: left
+  pin_type: passive
+- id: '115'
+  name: '115'
+  position:
+    x: -16.0
+    y: -92.24377
+  direction: left
+  pin_type: passive
+- id: '116'
+  name: '116'
+  position:
+    x: -16.0
+    y: -91.68975
+  direction: left
+  pin_type: passive
+- id: '117'
+  name: '117'
+  position:
+    x: -16.0
+    y: -91.135735
+  direction: left
+  pin_type: passive
+- id: '118'
+  name: '118'
+  position:
+    x: -16.0
+    y: -90.58172
+  direction: left
+  pin_type: passive
+- id: '119'
+  name: '119'
+  position:
+    x: -16.0
+    y: -90.0277
+  direction: left
+  pin_type: passive
+- id: '120'
+  name: '120'
+  position:
+    x: -16.0
+    y: -89.47369
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -100.0
+    width: 32.0
+    height: 200.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -100.0
+    width: 24.0
+    height: 200.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {107} {105} {103} {109} {108} {111} {102} {101} {106} {100} {112} {104} {113} {114} {115} {116} {117} {118} {119} {120} HIP4081L2_HA
+  model_name: HIP4081L2_HA

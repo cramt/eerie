@@ -1,0 +1,39 @@
+id: itf86174sqt_100t_is
+name: ITF86174SQT_100T_IS
+description: 'SPICE subcircuit: ITF86174SQT_100T_IS'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: junction
+  name: Junction
+  position:
+    x: -16.0
+    y: -10.0
+  direction: left
+  pin_type: passive
+- id: ambient
+  name: Ambient
+  position:
+    x: -16.0
+    y: 10.0
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -10.0
+    width: 32.0
+    height: 20.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -10.0
+    width: 24.0
+    height: 20.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {Junction} {Ambient} ITF86174SQT_100T_IS
+  model_name: ITF86174SQT_100T_IS

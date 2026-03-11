@@ -1,0 +1,67 @@
+id: bcr108u_in
+name: BCR108U_IN
+description: 'SPICE subcircuit: BCR108U_IN'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: '100'
+  name: '100'
+  position:
+    x: -16.0
+    y: -30.0
+  direction: left
+  pin_type: passive
+- id: '200'
+  name: '200'
+  position:
+    x: -16.0
+    y: -27.6
+  direction: left
+  pin_type: passive
+- id: '300'
+  name: '300'
+  position:
+    x: -16.0
+    y: -25.2
+  direction: left
+  pin_type: passive
+- id: '400'
+  name: '400'
+  position:
+    x: -16.0
+    y: -22.8
+  direction: left
+  pin_type: passive
+- id: '500'
+  name: '500'
+  position:
+    x: -16.0
+    y: -20.4
+  direction: left
+  pin_type: passive
+- id: '600'
+  name: '600'
+  position:
+    x: -16.0
+    y: -18.0
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -30.0
+    width: 32.0
+    height: 60.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -30.0
+    width: 24.0
+    height: 60.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {100} {200} {300} {400} {500} {600} BCR108U_IN
+  model_name: BCR108U_IN

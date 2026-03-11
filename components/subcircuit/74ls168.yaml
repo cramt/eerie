@@ -1,0 +1,137 @@
+id: 74ls168
+name: 74LS168
+description: 'SPICE subcircuit: 74LS168'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: pebar
+  name: PEBAR
+  position:
+    x: -16.0
+    y: -80.0
+  direction: left
+  pin_type: passive
+- id: p0
+  name: P0
+  position:
+    x: -16.0
+    y: -79.28889
+  direction: left
+  pin_type: passive
+- id: p1
+  name: P1
+  position:
+    x: -16.0
+    y: -78.577774
+  direction: left
+  pin_type: passive
+- id: p2
+  name: P2
+  position:
+    x: -16.0
+    y: -77.86667
+  direction: left
+  pin_type: passive
+- id: p3
+  name: P3
+  position:
+    x: -16.0
+    y: -77.155556
+  direction: left
+  pin_type: passive
+- id: cepbar
+  name: CEPBAR
+  position:
+    x: -16.0
+    y: -76.44444
+  direction: left
+  pin_type: passive
+- id: cetbar
+  name: CETBAR
+  position:
+    x: -16.0
+    y: -75.73333
+  direction: left
+  pin_type: passive
+- id: u_dbar
+  name: U/DBAR
+  position:
+    x: -16.0
+    y: -75.022224
+  direction: left
+  pin_type: passive
+- id: cp
+  name: CP
+  position:
+    x: -16.0
+    y: -74.31111
+  direction: left
+  pin_type: passive
+- id: q0
+  name: Q0
+  position:
+    x: -16.0
+    y: -73.6
+  direction: left
+  pin_type: passive
+- id: q1
+  name: Q1
+  position:
+    x: -16.0
+    y: -72.888885
+  direction: left
+  pin_type: passive
+- id: q2
+  name: Q2
+  position:
+    x: -16.0
+    y: -72.17778
+  direction: left
+  pin_type: passive
+- id: q3
+  name: Q3
+  position:
+    x: -16.0
+    y: -71.46667
+  direction: left
+  pin_type: passive
+- id: tcbar
+  name: TCBAR
+  position:
+    x: -16.0
+    y: -70.755554
+  direction: left
+  pin_type: passive
+- id: optional_
+  name: 'OPTIONAL:'
+  position:
+    x: -16.0
+    y: -70.04445
+  direction: left
+  pin_type: passive
+- id: dpwr_
+  name: DPWR=
+  position:
+    x: -16.0
+    y: -69.333336
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -80.0
+    width: 32.0
+    height: 160.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -80.0
+    width: 24.0
+    height: 160.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {PEBAR} {P0} {P1} {P2} {P3} {CEPBAR} {CETBAR} {U/DBAR} {CP} {Q0} {Q1} {Q2} {Q3} {TCBAR} {OPTIONAL:} {DPWR=} 74LS168
+  model_name: 74LS168

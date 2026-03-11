@@ -1,0 +1,193 @@
+id: 74ls460a
+name: 74LS460A
+description: 'SPICE subcircuit: 74LS460A'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: a0
+  name: A0
+  position:
+    x: -16.0
+    y: -120.0
+  direction: left
+  pin_type: passive
+- id: a1
+  name: A1
+  position:
+    x: -16.0
+    y: -119.54631
+  direction: left
+  pin_type: passive
+- id: a2
+  name: A2
+  position:
+    x: -16.0
+    y: -119.09263
+  direction: left
+  pin_type: passive
+- id: a3
+  name: A3
+  position:
+    x: -16.0
+    y: -118.63894
+  direction: left
+  pin_type: passive
+- id: a4
+  name: A4
+  position:
+    x: -16.0
+    y: -118.18526
+  direction: left
+  pin_type: passive
+- id: a5
+  name: A5
+  position:
+    x: -16.0
+    y: -117.73157
+  direction: left
+  pin_type: passive
+- id: a6
+  name: A6
+  position:
+    x: -16.0
+    y: -117.277885
+  direction: left
+  pin_type: passive
+- id: a7
+  name: A7
+  position:
+    x: -16.0
+    y: -116.824196
+  direction: left
+  pin_type: passive
+- id: a8
+  name: A8
+  position:
+    x: -16.0
+    y: -116.370514
+  direction: left
+  pin_type: passive
+- id: a9
+  name: A9
+  position:
+    x: -16.0
+    y: -115.916824
+  direction: left
+  pin_type: passive
+- id: b0
+  name: B0
+  position:
+    x: -16.0
+    y: -115.463135
+  direction: left
+  pin_type: passive
+- id: b1
+  name: B1
+  position:
+    x: -16.0
+    y: -115.00945
+  direction: left
+  pin_type: passive
+- id: b2
+  name: B2
+  position:
+    x: -16.0
+    y: -114.55576
+  direction: left
+  pin_type: passive
+- id: b3
+  name: B3
+  position:
+    x: -16.0
+    y: -114.10208
+  direction: left
+  pin_type: passive
+- id: b4
+  name: B4
+  position:
+    x: -16.0
+    y: -113.64839
+  direction: left
+  pin_type: passive
+- id: b5
+  name: B5
+  position:
+    x: -16.0
+    y: -113.19471
+  direction: left
+  pin_type: passive
+- id: b6
+  name: B6
+  position:
+    x: -16.0
+    y: -112.74102
+  direction: left
+  pin_type: passive
+- id: b7
+  name: B7
+  position:
+    x: -16.0
+    y: -112.28734
+  direction: left
+  pin_type: passive
+- id: b8
+  name: B8
+  position:
+    x: -16.0
+    y: -111.83365
+  direction: left
+  pin_type: passive
+- id: b9
+  name: B9
+  position:
+    x: -16.0
+    y: -111.37996
+  direction: left
+  pin_type: passive
+- id: ne
+  name: NE
+  position:
+    x: -16.0
+    y: -110.92628
+  direction: left
+  pin_type: passive
+- id: eq
+  name: EQ
+  position:
+    x: -16.0
+    y: -110.47259
+  direction: left
+  pin_type: passive
+- id: optional_
+  name: 'OPTIONAL:'
+  position:
+    x: -16.0
+    y: -110.018906
+  direction: left
+  pin_type: passive
+- id: dpwr_
+  name: DPWR=
+  position:
+    x: -16.0
+    y: -109.565216
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -120.0
+    width: 32.0
+    height: 240.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -120.0
+    width: 24.0
+    height: 240.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {A0} {A1} {A2} {A3} {A4} {A5} {A6} {A7} {A8} {A9} {B0} {B1} {B2} {B3} {B4} {B5} {B6} {B7} {B8} {B9} {NE} {EQ} {OPTIONAL:} {DPWR=} 74LS460A
+  model_name: 74LS460A

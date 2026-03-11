@@ -1,0 +1,186 @@
+id: 74ls674
+name: 74LS674
+description: 'SPICE subcircuit: 74LS674'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: p0
+  name: P0
+  position:
+    x: -16.0
+    y: -115.0
+  direction: left
+  pin_type: passive
+- id: p1
+  name: P1
+  position:
+    x: -16.0
+    y: -114.524796
+  direction: left
+  pin_type: passive
+- id: p2
+  name: P2
+  position:
+    x: -16.0
+    y: -114.04958
+  direction: left
+  pin_type: passive
+- id: p3
+  name: P3
+  position:
+    x: -16.0
+    y: -113.57438
+  direction: left
+  pin_type: passive
+- id: p4
+  name: P4
+  position:
+    x: -16.0
+    y: -113.099174
+  direction: left
+  pin_type: passive
+- id: p5
+  name: P5
+  position:
+    x: -16.0
+    y: -112.62397
+  direction: left
+  pin_type: passive
+- id: p6
+  name: P6
+  position:
+    x: -16.0
+    y: -112.14876
+  direction: left
+  pin_type: passive
+- id: p7
+  name: P7
+  position:
+    x: -16.0
+    y: -111.67355
+  direction: left
+  pin_type: passive
+- id: p8
+  name: P8
+  position:
+    x: -16.0
+    y: -111.19835
+  direction: left
+  pin_type: passive
+- id: p9
+  name: P9
+  position:
+    x: -16.0
+    y: -110.72314
+  direction: left
+  pin_type: passive
+- id: p10
+  name: P10
+  position:
+    x: -16.0
+    y: -110.24793
+  direction: left
+  pin_type: passive
+- id: p11
+  name: P11
+  position:
+    x: -16.0
+    y: -109.77273
+  direction: left
+  pin_type: passive
+- id: p12
+  name: P12
+  position:
+    x: -16.0
+    y: -109.29752
+  direction: left
+  pin_type: passive
+- id: p13
+  name: P13
+  position:
+    x: -16.0
+    y: -108.82231
+  direction: left
+  pin_type: passive
+- id: p14
+  name: P14
+  position:
+    x: -16.0
+    y: -108.34711
+  direction: left
+  pin_type: passive
+- id: p15
+  name: P15
+  position:
+    x: -16.0
+    y: -107.8719
+  direction: left
+  pin_type: passive
+- id: csbar
+  name: CSBAR
+  position:
+    x: -16.0
+    y: -107.39669
+  direction: left
+  pin_type: passive
+- id: clk
+  name: CLK
+  position:
+    x: -16.0
+    y: -106.921486
+  direction: left
+  pin_type: passive
+- id: mode
+  name: MODE
+  position:
+    x: -16.0
+    y: -106.44628
+  direction: left
+  pin_type: passive
+- id: r_wbar
+  name: R/WBAR
+  position:
+    x: -16.0
+    y: -105.97108
+  direction: left
+  pin_type: passive
+- id: ser_q15
+  name: SER/Q15
+  position:
+    x: -16.0
+    y: -105.495865
+  direction: left
+  pin_type: passive
+- id: optional_
+  name: 'OPTIONAL:'
+  position:
+    x: -16.0
+    y: -105.02066
+  direction: left
+  pin_type: passive
+- id: dpwr_
+  name: DPWR=
+  position:
+    x: -16.0
+    y: -104.545456
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -115.0
+    width: 32.0
+    height: 230.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -115.0
+    width: 24.0
+    height: 230.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {P0} {P1} {P2} {P3} {P4} {P5} {P6} {P7} {P8} {P9} {P10} {P11} {P12} {P13} {P14} {P15} {CSBAR} {CLK} {MODE} {R/WBAR} {SER/Q15} {OPTIONAL:} {DPWR=} 74LS674
+  model_name: 74LS674

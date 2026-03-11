@@ -1,0 +1,67 @@
+id: mc44608ac_mc
+name: MC44608AC_MC
+description: 'SPICE subcircuit: MC44608AC_MC'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: '77'
+  name: '77'
+  position:
+    x: -16.0
+    y: -30.0
+  direction: left
+  pin_type: passive
+- id: '81'
+  name: '81'
+  position:
+    x: -16.0
+    y: -27.6
+  direction: left
+  pin_type: passive
+- id: '11'
+  name: '11'
+  position:
+    x: -16.0
+    y: -25.2
+  direction: left
+  pin_type: passive
+- id: '31'
+  name: '31'
+  position:
+    x: -16.0
+    y: -22.8
+  direction: left
+  pin_type: passive
+- id: '51'
+  name: '51'
+  position:
+    x: -16.0
+    y: -20.4
+  direction: left
+  pin_type: passive
+- id: '61'
+  name: '61'
+  position:
+    x: -16.0
+    y: -18.0
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -30.0
+    width: 32.0
+    height: 60.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -30.0
+    width: 24.0
+    height: 60.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {77} {81} {11} {31} {51} {61} MC44608AC_MC
+  model_name: MC44608AC_MC

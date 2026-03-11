@@ -1,0 +1,74 @@
+pub use thevenin_types::{Netlist, SimResult};
+
+/// Describes what the backend can do. The frontend queries this once on
+/// connect and adapts its behaviour accordingly.
+#[derive(facet::Facet, Clone, Debug)]
+pub struct Capabilities {
+    /// Backend can read/write files on the host filesystem.
+    pub file_io: bool,
+}
+
+/// Content returned when opening a file via the daemon.
+#[derive(facet::Facet, Clone, Debug)]
+pub struct FileContent {
+    pub name: String,
+    pub content: String,
+}
+
+/// Request to open a file. If `path` is empty the daemon should show a
+/// native file-picker dialog (if available) or return an error.
+#[derive(facet::Facet, Clone, Debug)]
+pub struct FileOpenRequest {
+    pub path: String,
+}
+
+/// Request to save a file. If `path` is empty the daemon should show a
+/// native save dialog.
+#[derive(facet::Facet, Clone, Debug)]
+pub struct FileSaveRequest {
+    pub path: String,
+    pub content: String,
+}
+
+/// Result of a save — contains the path that was actually written to
+/// (may differ from request when the user picked a new name).
+#[derive(facet::Facet, Clone, Debug)]
+pub struct FileSaveResult {
+    pub path: String,
+}
+
+#[roam::service]
+pub trait EerieService {
+    /// Query what this backend supports.
+    async fn get_capabilities(&self) -> Result<Capabilities, String>;
+
+    /// Open a file on the host filesystem.
+    async fn file_open(&self, req: FileOpenRequest) -> Result<FileContent, String>;
+
+    /// Save a file on the host filesystem.
+    async fn file_save(&self, req: FileSaveRequest) -> Result<FileSaveResult, String>;
+
+    /// Run .op analysis.
+    async fn simulate_op(&self, netlist: Netlist) -> Result<SimResult, String>;
+
+    /// Run .dc sweep analysis.
+    async fn simulate_dc(&self, netlist: Netlist) -> Result<SimResult, String>;
+
+    /// Run .ac frequency sweep analysis.
+    async fn simulate_ac(&self, netlist: Netlist) -> Result<SimResult, String>;
+
+    /// Run .tran transient analysis.
+    async fn simulate_tran(&self, netlist: Netlist) -> Result<SimResult, String>;
+
+    /// Run .noise analysis.
+    async fn simulate_noise(&self, netlist: Netlist) -> Result<SimResult, String>;
+
+    /// Run .tf transfer function analysis.
+    async fn simulate_tf(&self, netlist: Netlist) -> Result<SimResult, String>;
+
+    /// Run .sens sensitivity analysis.
+    async fn simulate_sens(&self, netlist: Netlist) -> Result<SimResult, String>;
+
+    /// Run .pz pole-zero analysis.
+    async fn simulate_pz(&self, netlist: Netlist) -> Result<SimResult, String>;
+}

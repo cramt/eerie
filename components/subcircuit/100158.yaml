@@ -1,0 +1,179 @@
+id: '100158'
+name: '100158'
+description: 'SPICE subcircuit: 100158'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: m
+  name: M
+  position:
+    x: -16.0
+    y: -110.0
+  direction: left
+  pin_type: passive
+- id: s2
+  name: S2
+  position:
+    x: -16.0
+    y: -109.50114
+  direction: left
+  pin_type: passive
+- id: s1
+  name: S1
+  position:
+    x: -16.0
+    y: -109.002266
+  direction: left
+  pin_type: passive
+- id: s0
+  name: S0
+  position:
+    x: -16.0
+    y: -108.5034
+  direction: left
+  pin_type: passive
+- id: d0
+  name: D0
+  position:
+    x: -16.0
+    y: -108.00453
+  direction: left
+  pin_type: passive
+- id: d1
+  name: D1
+  position:
+    x: -16.0
+    y: -107.50567
+  direction: left
+  pin_type: passive
+- id: d2
+  name: D2
+  position:
+    x: -16.0
+    y: -107.006805
+  direction: left
+  pin_type: passive
+- id: d3
+  name: D3
+  position:
+    x: -16.0
+    y: -106.507935
+  direction: left
+  pin_type: passive
+- id: d4
+  name: D4
+  position:
+    x: -16.0
+    y: -106.00907
+  direction: left
+  pin_type: passive
+- id: d5
+  name: D5
+  position:
+    x: -16.0
+    y: -105.5102
+  direction: left
+  pin_type: passive
+- id: d6
+  name: D6
+  position:
+    x: -16.0
+    y: -105.01134
+  direction: left
+  pin_type: passive
+- id: d7
+  name: D7
+  position:
+    x: -16.0
+    y: -104.512474
+  direction: left
+  pin_type: passive
+- id: z0
+  name: Z0
+  position:
+    x: -16.0
+    y: -104.0136
+  direction: left
+  pin_type: passive
+- id: z1
+  name: Z1
+  position:
+    x: -16.0
+    y: -103.51474
+  direction: left
+  pin_type: passive
+- id: z2
+  name: Z2
+  position:
+    x: -16.0
+    y: -103.01587
+  direction: left
+  pin_type: passive
+- id: z3
+  name: Z3
+  position:
+    x: -16.0
+    y: -102.517006
+  direction: left
+  pin_type: passive
+- id: z4
+  name: Z4
+  position:
+    x: -16.0
+    y: -102.01814
+  direction: left
+  pin_type: passive
+- id: z5
+  name: Z5
+  position:
+    x: -16.0
+    y: -101.51927
+  direction: left
+  pin_type: passive
+- id: z6
+  name: Z6
+  position:
+    x: -16.0
+    y: -101.02041
+  direction: left
+  pin_type: passive
+- id: z7
+  name: Z7
+  position:
+    x: -16.0
+    y: -100.521545
+  direction: left
+  pin_type: passive
+- id: optional_
+  name: 'optional:'
+  position:
+    x: -16.0
+    y: -100.022675
+  direction: left
+  pin_type: passive
+- id: vee_
+  name: VEE=
+  position:
+    x: -16.0
+    y: -99.52381
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -110.0
+    width: 32.0
+    height: 220.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -110.0
+    width: 24.0
+    height: 220.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {M} {S2} {S1} {S0} {D0} {D1} {D2} {D3} {D4} {D5} {D6} {D7} {Z0} {Z1} {Z2} {Z3} {Z4} {Z5} {Z6} {Z7} {optional:} {VEE=} 100158
+  model_name: '100158'

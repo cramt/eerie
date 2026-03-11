@@ -1,0 +1,64 @@
+id: capacitor
+name: Capacitor
+description: Passive two-terminal capacitor
+category: passive
+subcategory: capacitors
+keywords: [C, farad, passive, capacitor]
+
+pins:
+  - id: p
+    name: "+"
+    position: { x: -8, y: 0 }
+    direction: left
+    pin_type: passive
+  - id: n
+    name: "-"
+    position: { x: 8, y: 0 }
+    direction: right
+    pin_type: passive
+
+symbol:
+  bounds: { x: -8, y: -6, width: 16, height: 12 }
+  graphics:
+    - kind: line
+      x1: -8.0
+      y1: 0.0
+      x2: -2.0
+      y2: 0.0
+      stroke_width: 1.5
+    - kind: line
+      x1: -2.0
+      y1: -5.0
+      x2: -2.0
+      y2: 5.0
+      stroke_width: 2.0
+    - kind: line
+      x1: 2.0
+      y1: -5.0
+      x2: 2.0
+      y2: 5.0
+      stroke_width: 2.0
+    - kind: line
+      x1: 2.0
+      y1: 0.0
+      x2: 8.0
+      y2: 0.0
+      stroke_width: 1.5
+
+properties:
+  - id: capacitance
+    label: Capacitance
+    unit: F
+    property_type: float
+    default: { Float: 0.000001 }
+    min: 0.0
+    si_prefixes: true
+  - id: voltage_rating
+    label: Voltage Rating
+    unit: V
+    property_type: float
+    default: { Float: 50.0 }
+
+simulation:
+  model_type: spice_primitive
+  netlist: "C{label} {p} {n} {capacitance}"

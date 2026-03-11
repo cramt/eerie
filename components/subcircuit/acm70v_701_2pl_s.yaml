@@ -1,0 +1,53 @@
+id: acm70v_701_2pl_s
+name: ACM70V_701_2PL_s
+description: 'SPICE subcircuit: ACM70V_701_2PL_s'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: n1
+  name: n1
+  position:
+    x: -16.0
+    y: -20.0
+  direction: left
+  pin_type: passive
+- id: n2
+  name: n2
+  position:
+    x: -16.0
+    y: -15.555555
+  direction: left
+  pin_type: passive
+- id: n3
+  name: n3
+  position:
+    x: -16.0
+    y: -11.111111
+  direction: left
+  pin_type: passive
+- id: n4
+  name: n4
+  position:
+    x: -16.0
+    y: -6.666667
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -20.0
+    width: 32.0
+    height: 40.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -20.0
+    width: 24.0
+    height: 40.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {n1} {n2} {n3} {n4} ACM70V_701_2PL_s
+  model_name: ACM70V_701_2PL_s

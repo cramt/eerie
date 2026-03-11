@@ -1,0 +1,193 @@
+id: 74f835
+name: 74F835
+description: 'SPICE subcircuit: 74F835'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: d0a
+  name: D0A
+  position:
+    x: -16.0
+    y: -120.0
+  direction: left
+  pin_type: passive
+- id: d0b
+  name: D0B
+  position:
+    x: -16.0
+    y: -119.54631
+  direction: left
+  pin_type: passive
+- id: d1a
+  name: D1A
+  position:
+    x: -16.0
+    y: -119.09263
+  direction: left
+  pin_type: passive
+- id: d1b
+  name: D1B
+  position:
+    x: -16.0
+    y: -118.63894
+  direction: left
+  pin_type: passive
+- id: d2a
+  name: D2A
+  position:
+    x: -16.0
+    y: -118.18526
+  direction: left
+  pin_type: passive
+- id: d2b
+  name: D2B
+  position:
+    x: -16.0
+    y: -117.73157
+  direction: left
+  pin_type: passive
+- id: d3a
+  name: D3A
+  position:
+    x: -16.0
+    y: -117.277885
+  direction: left
+  pin_type: passive
+- id: d3b
+  name: D3B
+  position:
+    x: -16.0
+    y: -116.824196
+  direction: left
+  pin_type: passive
+- id: d4a
+  name: D4A
+  position:
+    x: -16.0
+    y: -116.370514
+  direction: left
+  pin_type: passive
+- id: d4b
+  name: D4B
+  position:
+    x: -16.0
+    y: -115.916824
+  direction: left
+  pin_type: passive
+- id: d5a
+  name: D5A
+  position:
+    x: -16.0
+    y: -115.463135
+  direction: left
+  pin_type: passive
+- id: d5b
+  name: D5B
+  position:
+    x: -16.0
+    y: -115.00945
+  direction: left
+  pin_type: passive
+- id: d6a
+  name: D6A
+  position:
+    x: -16.0
+    y: -114.55576
+  direction: left
+  pin_type: passive
+- id: d6b
+  name: D6B
+  position:
+    x: -16.0
+    y: -114.10208
+  direction: left
+  pin_type: passive
+- id: d7a
+  name: D7A
+  position:
+    x: -16.0
+    y: -113.64839
+  direction: left
+  pin_type: passive
+- id: d7b
+  name: D7B
+  position:
+    x: -16.0
+    y: -113.19471
+  direction: left
+  pin_type: passive
+- id: le
+  name: LE
+  position:
+    x: -16.0
+    y: -112.74102
+  direction: left
+  pin_type: passive
+- id: sabar_b
+  name: SABAR/B
+  position:
+    x: -16.0
+    y: -112.28734
+  direction: left
+  pin_type: passive
+- id: pebar
+  name: PEBAR
+  position:
+    x: -16.0
+    y: -111.83365
+  direction: left
+  pin_type: passive
+- id: ds
+  name: DS
+  position:
+    x: -16.0
+    y: -111.37996
+  direction: left
+  pin_type: passive
+- id: cp
+  name: CP
+  position:
+    x: -16.0
+    y: -110.92628
+  direction: left
+  pin_type: passive
+- id: q7
+  name: Q7
+  position:
+    x: -16.0
+    y: -110.47259
+  direction: left
+  pin_type: passive
+- id: optional_
+  name: 'OPTIONAL:'
+  position:
+    x: -16.0
+    y: -110.018906
+  direction: left
+  pin_type: passive
+- id: dpwr_
+  name: DPWR=
+  position:
+    x: -16.0
+    y: -109.565216
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -120.0
+    width: 32.0
+    height: 240.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -120.0
+    width: 24.0
+    height: 240.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {D0A} {D0B} {D1A} {D1B} {D2A} {D2B} {D3A} {D3B} {D4A} {D4B} {D5A} {D5B} {D6A} {D6B} {D7A} {D7B} {LE} {SABAR/B} {PEBAR} {DS} {CP} {Q7} {OPTIONAL:} {DPWR=} 74F835
+  model_name: 74F835

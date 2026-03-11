@@ -1,0 +1,88 @@
+id: '74390'
+name: '74390'
+description: 'SPICE subcircuit: 74390'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: 1cka
+  name: 1CKA
+  position:
+    x: -16.0
+    y: -45.0
+  direction: left
+  pin_type: passive
+- id: 1ckb
+  name: 1CKB
+  position:
+    x: -16.0
+    y: -43.59375
+  direction: left
+  pin_type: passive
+- id: 1clr
+  name: 1CLR
+  position:
+    x: -16.0
+    y: -42.1875
+  direction: left
+  pin_type: passive
+- id: 1qa
+  name: 1QA
+  position:
+    x: -16.0
+    y: -40.78125
+  direction: left
+  pin_type: passive
+- id: 1qb
+  name: 1QB
+  position:
+    x: -16.0
+    y: -39.375
+  direction: left
+  pin_type: passive
+- id: 1qc
+  name: 1QC
+  position:
+    x: -16.0
+    y: -37.96875
+  direction: left
+  pin_type: passive
+- id: 1qd
+  name: 1QD
+  position:
+    x: -16.0
+    y: -36.5625
+  direction: left
+  pin_type: passive
+- id: optional_
+  name: 'optional:'
+  position:
+    x: -16.0
+    y: -35.15625
+  direction: left
+  pin_type: passive
+- id: dpwr_
+  name: DPWR=
+  position:
+    x: -16.0
+    y: -33.75
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -45.0
+    width: 32.0
+    height: 90.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -45.0
+    width: 24.0
+    height: 90.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {1CKA} {1CKB} {1CLR} {1QA} {1QB} {1QC} {1QD} {optional:} {DPWR=} 74390
+  model_name: '74390'

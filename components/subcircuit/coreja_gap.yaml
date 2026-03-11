@@ -1,0 +1,32 @@
+id: coreja_gap
+name: CoreJA_GAP
+description: 'SPICE subcircuit: CoreJA_GAP'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: '100'
+  name: '100'
+  position:
+    x: -16.0
+    y: -5.0
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -10.0
+    width: 32.0
+    height: 20.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -10.0
+    width: 24.0
+    height: 20.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {100} CoreJA_GAP
+  model_name: CoreJA_GAP

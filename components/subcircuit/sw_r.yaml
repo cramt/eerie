@@ -1,0 +1,67 @@
+id: sw_r
+name: SW_R
+description: 'SPICE subcircuit: SW_R'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: '1'
+  name: '1'
+  position:
+    x: -16.0
+    y: -30.0
+  direction: left
+  pin_type: passive
+- id: '2'
+  name: '2'
+  position:
+    x: -16.0
+    y: -27.6
+  direction: left
+  pin_type: passive
+- id: p
+  name: p
+  position:
+    x: -16.0
+    y: -25.2
+  direction: left
+  pin_type: passive
+- id: status_0
+  name: status=0
+  position:
+    x: -16.0
+    y: -22.8
+  direction: left
+  pin_type: passive
+- id: ron_1m
+  name: ron=1m
+  position:
+    x: -16.0
+    y: -20.4
+  direction: left
+  pin_type: passive
+- id: roff_1t
+  name: roff=1T
+  position:
+    x: -16.0
+    y: -18.0
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -30.0
+    width: 32.0
+    height: 60.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -30.0
+    width: 24.0
+    height: 60.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {1} {2} {p} {status=0} {ron=1m} {roff=1T} SW_R
+  model_name: SW_R

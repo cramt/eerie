@@ -1,0 +1,172 @@
+id: lt64100
+name: LT64100
+description: 'SPICE subcircuit: LT64100'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: '3'
+  name: '3'
+  position:
+    x: -16.0
+    y: -105.0
+  direction: left
+  pin_type: passive
+- id: '2'
+  name: '2'
+  position:
+    x: -16.0
+    y: -104.475
+  direction: left
+  pin_type: passive
+- id: '1'
+  name: '1'
+  position:
+    x: -16.0
+    y: -103.95
+  direction: left
+  pin_type: passive
+- id: '33'
+  name: '33'
+  position:
+    x: -16.0
+    y: -103.425
+  direction: left
+  pin_type: passive
+- id: '28'
+  name: '28'
+  position:
+    x: -16.0
+    y: -102.9
+  direction: left
+  pin_type: passive
+- id: '10'
+  name: '10'
+  position:
+    x: -16.0
+    y: -102.375
+  direction: left
+  pin_type: passive
+- id: '4'
+  name: '4'
+  position:
+    x: -16.0
+    y: -101.85
+  direction: left
+  pin_type: passive
+- id: '6'
+  name: '6'
+  position:
+    x: -16.0
+    y: -101.325
+  direction: left
+  pin_type: passive
+- id: '14'
+  name: '14'
+  position:
+    x: -16.0
+    y: -100.8
+  direction: left
+  pin_type: passive
+- id: '29'
+  name: '29'
+  position:
+    x: -16.0
+    y: -100.275
+  direction: left
+  pin_type: passive
+- id: '12'
+  name: '12'
+  position:
+    x: -16.0
+    y: -99.75
+  direction: left
+  pin_type: passive
+- id: '5'
+  name: '5'
+  position:
+    x: -16.0
+    y: -99.225
+  direction: left
+  pin_type: passive
+- id: '22'
+  name: '22'
+  position:
+    x: -16.0
+    y: -98.7
+  direction: left
+  pin_type: passive
+- id: '24'
+  name: '24'
+  position:
+    x: -16.0
+    y: -98.175
+  direction: left
+  pin_type: passive
+- id: '30'
+  name: '30'
+  position:
+    x: -16.0
+    y: -97.65
+  direction: left
+  pin_type: passive
+- id: '13'
+  name: '13'
+  position:
+    x: -16.0
+    y: -97.125
+  direction: left
+  pin_type: passive
+- id: '8'
+  name: '8'
+  position:
+    x: -16.0
+    y: -96.6
+  direction: left
+  pin_type: passive
+- id: '31'
+  name: '31'
+  position:
+    x: -16.0
+    y: -96.075
+  direction: left
+  pin_type: passive
+- id: '32'
+  name: '32'
+  position:
+    x: -16.0
+    y: -95.55
+  direction: left
+  pin_type: passive
+- id: '26'
+  name: '26'
+  position:
+    x: -16.0
+    y: -95.025
+  direction: left
+  pin_type: passive
+- id: '17'
+  name: '17'
+  position:
+    x: -16.0
+    y: -94.5
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -105.0
+    width: 32.0
+    height: 210.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -105.0
+    width: 24.0
+    height: 210.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {3} {2} {1} {33} {28} {10} {4} {6} {14} {29} {12} {5} {22} {24} {30} {13} {8} {31} {32} {26} {17} LT64100
+  model_name: LT64100

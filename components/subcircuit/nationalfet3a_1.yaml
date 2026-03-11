@@ -1,0 +1,53 @@
+id: nationalfet3a_1
+name: NATIONALFET3A_1
+description: 'SPICE subcircuit: NATIONALFET3A_1'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: '10'
+  name: '10'
+  position:
+    x: -16.0
+    y: -20.0
+  direction: left
+  pin_type: passive
+- id: '20'
+  name: '20'
+  position:
+    x: -16.0
+    y: -15.555555
+  direction: left
+  pin_type: passive
+- id: '40'
+  name: '40'
+  position:
+    x: -16.0
+    y: -11.111111
+  direction: left
+  pin_type: passive
+- id: '4'
+  name: '4'
+  position:
+    x: -16.0
+    y: -6.666667
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -20.0
+    width: 32.0
+    height: 40.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -20.0
+    width: 24.0
+    height: 40.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {10} {20} {40} {4} NATIONALFET3A_1
+  model_name: NATIONALFET3A_1

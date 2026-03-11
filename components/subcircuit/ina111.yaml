@@ -1,0 +1,81 @@
+id: ina111
+name: INA111
+description: 'SPICE subcircuit: INA111'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: '1'
+  name: '1'
+  position:
+    x: -16.0
+    y: -40.0
+  direction: left
+  pin_type: passive
+- id: '2'
+  name: '2'
+  position:
+    x: -16.0
+    y: -38.367348
+  direction: left
+  pin_type: passive
+- id: '3'
+  name: '3'
+  position:
+    x: -16.0
+    y: -36.734695
+  direction: left
+  pin_type: passive
+- id: '4'
+  name: '4'
+  position:
+    x: -16.0
+    y: -35.10204
+  direction: left
+  pin_type: passive
+- id: '5'
+  name: '5'
+  position:
+    x: -16.0
+    y: -33.469387
+  direction: left
+  pin_type: passive
+- id: '8'
+  name: '8'
+  position:
+    x: -16.0
+    y: -31.836735
+  direction: left
+  pin_type: passive
+- id: '9'
+  name: '9'
+  position:
+    x: -16.0
+    y: -30.204082
+  direction: left
+  pin_type: passive
+- id: '10'
+  name: '10'
+  position:
+    x: -16.0
+    y: -28.571428
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -40.0
+    width: 32.0
+    height: 80.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -40.0
+    width: 24.0
+    height: 80.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {1} {2} {3} {4} {5} {8} {9} {10} INA111
+  model_name: INA111

@@ -1,0 +1,130 @@
+id: halo12v20w2
+name: HALO12V20W2
+description: 'SPICE subcircuit: HALO12V20W2'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: '1'
+  name: '1'
+  position:
+    x: -16.0
+    y: -75.0
+  direction: left
+  pin_type: passive
+- id: '2'
+  name: '2'
+  position:
+    x: -16.0
+    y: -74.234695
+  direction: left
+  pin_type: passive
+- id: '80'
+  name: '80'
+  position:
+    x: -16.0
+    y: -73.46939
+  direction: left
+  pin_type: passive
+- id: '70'
+  name: '70'
+  position:
+    x: -16.0
+    y: -72.70408
+  direction: left
+  pin_type: passive
+- id: unom__unom_
+  name: UNOM={UNOM}
+  position:
+    x: -16.0
+    y: -71.938774
+  direction: left
+  pin_type: passive
+- id: pnom__pnom_
+  name: PNOM={PNOM}
+  position:
+    x: -16.0
+    y: -71.17347
+  direction: left
+  pin_type: passive
+- id: r25__r25_
+  name: R25={R25}
+  position:
+    x: -16.0
+    y: -70.408165
+  direction: left
+  pin_type: passive
+- id: t25__t25_
+  name: T25={T25}
+  position:
+    x: -16.0
+    y: -69.64286
+  direction: left
+  pin_type: passive
+- id: lefcy__lefcy_
+  name: LEFCY={LEFCY}
+  position:
+    x: -16.0
+    y: -68.87755
+  direction: left
+  pin_type: passive
+- id: tfil__tfil_
+  name: TFIL={TFIL}
+  position:
+    x: -16.0
+    y: -68.11224
+  direction: left
+  pin_type: passive
+- id: tau1__tau1_
+  name: TAU1={TAU1}
+  position:
+    x: -16.0
+    y: -67.34694
+  direction: left
+  pin_type: passive
+- id: tbulb__tbulb_
+  name: TBULB={TBULB}
+  position:
+    x: -16.0
+    y: -66.581635
+  direction: left
+  pin_type: passive
+- id: tau2__tau2_
+  name: TAU2={TAU2}
+  position:
+    x: -16.0
+    y: -65.81632
+  direction: left
+  pin_type: passive
+- id: tsock__tsock_
+  name: TSOCK={TSOCK}
+  position:
+    x: -16.0
+    y: -65.05102
+  direction: left
+  pin_type: passive
+- id: tau3__tau3_
+  name: TAU3={TAU3}
+  position:
+    x: -16.0
+    y: -64.28571
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -75.0
+    width: 32.0
+    height: 150.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -75.0
+    width: 24.0
+    height: 150.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {1} {2} {80} {70} {UNOM={UNOM}} {PNOM={PNOM}} {R25={R25}} {T25={T25}} {LEFCY={LEFCY}} {TFIL={TFIL}} {TAU1={TAU1}} {TBULB={TBULB}} {TAU2={TAU2}} {TSOCK={TSOCK}} {TAU3={TAU3}} HALO12V20W2
+  model_name: HALO12V20W2

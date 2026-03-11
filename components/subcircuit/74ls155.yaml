@@ -1,0 +1,137 @@
+id: 74ls155
+name: 74LS155
+description: 'SPICE subcircuit: 74LS155'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: a1
+  name: A1
+  position:
+    x: -16.0
+    y: -80.0
+  direction: left
+  pin_type: passive
+- id: a0
+  name: A0
+  position:
+    x: -16.0
+    y: -79.28889
+  direction: left
+  pin_type: passive
+- id: ea
+  name: EA
+  position:
+    x: -16.0
+    y: -78.577774
+  direction: left
+  pin_type: passive
+- id: eabar
+  name: EABAR
+  position:
+    x: -16.0
+    y: -77.86667
+  direction: left
+  pin_type: passive
+- id: eb1bar
+  name: EB1BAR
+  position:
+    x: -16.0
+    y: -77.155556
+  direction: left
+  pin_type: passive
+- id: eb2bar
+  name: EB2BAR
+  position:
+    x: -16.0
+    y: -76.44444
+  direction: left
+  pin_type: passive
+- id: o0abar
+  name: O0ABAR
+  position:
+    x: -16.0
+    y: -75.73333
+  direction: left
+  pin_type: passive
+- id: o1abar
+  name: O1ABAR
+  position:
+    x: -16.0
+    y: -75.022224
+  direction: left
+  pin_type: passive
+- id: o2abar
+  name: O2ABAR
+  position:
+    x: -16.0
+    y: -74.31111
+  direction: left
+  pin_type: passive
+- id: o3abar
+  name: O3ABAR
+  position:
+    x: -16.0
+    y: -73.6
+  direction: left
+  pin_type: passive
+- id: o0bbar
+  name: O0BBAR
+  position:
+    x: -16.0
+    y: -72.888885
+  direction: left
+  pin_type: passive
+- id: o1bbar
+  name: O1BBAR
+  position:
+    x: -16.0
+    y: -72.17778
+  direction: left
+  pin_type: passive
+- id: o2bbar
+  name: O2BBAR
+  position:
+    x: -16.0
+    y: -71.46667
+  direction: left
+  pin_type: passive
+- id: o3bbar
+  name: O3BBAR
+  position:
+    x: -16.0
+    y: -70.755554
+  direction: left
+  pin_type: passive
+- id: optional_
+  name: 'OPTIONAL:'
+  position:
+    x: -16.0
+    y: -70.04445
+  direction: left
+  pin_type: passive
+- id: dpwr_
+  name: DPWR=
+  position:
+    x: -16.0
+    y: -69.333336
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -80.0
+    width: 32.0
+    height: 160.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -80.0
+    width: 24.0
+    height: 160.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {A1} {A0} {EA} {EABAR} {EB1BAR} {EB2BAR} {O0ABAR} {O1ABAR} {O2ABAR} {O3ABAR} {O0BBAR} {O1BBAR} {O2BBAR} {O3BBAR} {OPTIONAL:} {DPWR=} 74LS155
+  model_name: 74LS155

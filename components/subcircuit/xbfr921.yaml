@@ -1,0 +1,39 @@
+id: xbfr921
+name: XBFR921
+description: 'SPICE subcircuit: XBFR921'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: '2'
+  name: '2'
+  position:
+    x: -16.0
+    y: -10.0
+  direction: left
+  pin_type: passive
+- id: '3'
+  name: '3'
+  position:
+    x: -16.0
+    y: 10.0
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -10.0
+    width: 32.0
+    height: 20.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -10.0
+    width: 24.0
+    height: 20.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {2} {3} XBFR921
+  model_name: XBFR921

@@ -1,0 +1,102 @@
+id: 74ls278
+name: 74LS278
+description: 'SPICE subcircuit: 74LS278'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: po
+  name: po
+  position:
+    x: -16.0
+    y: -55.0
+  direction: left
+  pin_type: passive
+- id: strb
+  name: strb
+  position:
+    x: -16.0
+    y: -53.9
+  direction: left
+  pin_type: passive
+- id: d1
+  name: d1
+  position:
+    x: -16.0
+    y: -52.8
+  direction: left
+  pin_type: passive
+- id: d2
+  name: d2
+  position:
+    x: -16.0
+    y: -51.7
+  direction: left
+  pin_type: passive
+- id: d3
+  name: d3
+  position:
+    x: -16.0
+    y: -50.6
+  direction: left
+  pin_type: passive
+- id: d4
+  name: d4
+  position:
+    x: -16.0
+    y: -49.5
+  direction: left
+  pin_type: passive
+- id: y1
+  name: y1
+  position:
+    x: -16.0
+    y: -48.4
+  direction: left
+  pin_type: passive
+- id: y2
+  name: y2
+  position:
+    x: -16.0
+    y: -47.3
+  direction: left
+  pin_type: passive
+- id: y3
+  name: y3
+  position:
+    x: -16.0
+    y: -46.2
+  direction: left
+  pin_type: passive
+- id: y4
+  name: y4
+  position:
+    x: -16.0
+    y: -45.1
+  direction: left
+  pin_type: passive
+- id: p1
+  name: p1
+  position:
+    x: -16.0
+    y: -44.0
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -55.0
+    width: 32.0
+    height: 110.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -55.0
+    width: 24.0
+    height: 110.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {po} {strb} {d1} {d2} {d3} {d4} {y1} {y2} {y3} {y4} {p1} 74LS278
+  model_name: 74LS278

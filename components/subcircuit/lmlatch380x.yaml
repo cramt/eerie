@@ -1,0 +1,53 @@
+id: lmlatch380x
+name: LMlatch380x
+description: 'SPICE subcircuit: LMlatch380x'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: set
+  name: set
+  position:
+    x: -16.0
+    y: -20.0
+  direction: left
+  pin_type: passive
+- id: reset
+  name: reset
+  position:
+    x: -16.0
+    y: -15.555555
+  direction: left
+  pin_type: passive
+- id: q
+  name: Q
+  position:
+    x: -16.0
+    y: -11.111111
+  direction: left
+  pin_type: passive
+- id: qbar
+  name: Qbar
+  position:
+    x: -16.0
+    y: -6.666667
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -20.0
+    width: 32.0
+    height: 40.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -20.0
+    width: 24.0
+    height: 40.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {set} {reset} {Q} {Qbar} LMlatch380x
+  model_name: LMlatch380x

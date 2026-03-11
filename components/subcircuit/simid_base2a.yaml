@@ -1,0 +1,39 @@
+id: simid_base2a
+name: SIMID_BASE2A
+description: 'SPICE subcircuit: SIMID_BASE2A'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: a
+  name: A
+  position:
+    x: -16.0
+    y: -10.0
+  direction: left
+  pin_type: passive
+- id: b
+  name: B
+  position:
+    x: -16.0
+    y: 10.0
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -10.0
+    width: 32.0
+    height: 20.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -10.0
+    width: 24.0
+    height: 20.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {A} {B} SIMID_BASE2A
+  model_name: SIMID_BASE2A

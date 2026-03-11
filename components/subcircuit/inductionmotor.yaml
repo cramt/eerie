@@ -1,0 +1,74 @@
+id: inductionmotor
+name: InductionMotor
+description: 'SPICE subcircuit: InductionMotor'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: u
+  name: U
+  position:
+    x: -16.0
+    y: -35.0
+  direction: left
+  pin_type: passive
+- id: v
+  name: V
+  position:
+    x: -16.0
+    y: -33.055557
+  direction: left
+  pin_type: passive
+- id: w
+  name: W
+  position:
+    x: -16.0
+    y: -31.11111
+  direction: left
+  pin_type: passive
+- id: m_
+  name: m+
+  position:
+    x: -16.0
+    y: -29.166666
+  direction: left
+  pin_type: passive
+- id: m_
+  name: m-
+  position:
+    x: -16.0
+    y: -27.222221
+  direction: left
+  pin_type: passive
+- id: fa2
+  name: fa2
+  position:
+    x: -16.0
+    y: -25.277779
+  direction: left
+  pin_type: passive
+- id: fb2
+  name: fb2
+  position:
+    x: -16.0
+    y: -23.333332
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -35.0
+    width: 32.0
+    height: 70.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -35.0
+    width: 24.0
+    height: 70.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {U} {V} {W} {m+} {m-} {fa2} {fb2} InductionMotor
+  model_name: InductionMotor

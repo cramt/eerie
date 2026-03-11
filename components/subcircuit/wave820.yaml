@@ -1,0 +1,53 @@
+id: wave820
+name: WAVE820
+description: 'SPICE subcircuit: WAVE820'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: '2'
+  name: '2'
+  position:
+    x: -16.0
+    y: -20.0
+  direction: left
+  pin_type: passive
+- id: _a_0_01243e18
+  name: '{A=0.01243E18'
+  position:
+    x: -16.0
+    y: -15.555555
+  direction: left
+  pin_type: passive
+- id: t1_3_991u
+  name: T1=3.991U
+  position:
+    x: -16.0
+    y: -11.111111
+  direction: left
+  pin_type: passive
+- id: ip_1000_
+  name: IP=1000}
+  position:
+    x: -16.0
+    y: -6.666667
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -20.0
+    width: 32.0
+    height: 40.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -20.0
+    width: 24.0
+    height: 40.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {2} {{A=0.01243E18} {T1=3.991U} {IP=1000}} WAVE820
+  model_name: WAVE820

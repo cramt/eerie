@@ -1,0 +1,53 @@
+id: newdt
+name: NEWDT
+description: 'SPICE subcircuit: NEWDT'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: clk
+  name: CLK
+  position:
+    x: -16.0
+    y: -20.0
+  direction: left
+  pin_type: passive
+- id: gu
+  name: GU
+  position:
+    x: -16.0
+    y: -15.555555
+  direction: left
+  pin_type: passive
+- id: su
+  name: SU
+  position:
+    x: -16.0
+    y: -11.111111
+  direction: left
+  pin_type: passive
+- id: ql
+  name: QL
+  position:
+    x: -16.0
+    y: -6.666667
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -20.0
+    width: 32.0
+    height: 40.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -20.0
+    width: 24.0
+    height: 40.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {CLK} {GU} {SU} {QL} NEWDT
+  model_name: NEWDT

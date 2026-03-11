@@ -1,0 +1,193 @@
+id: '74172'
+name: '74172'
+description: 'SPICE subcircuit: 74172'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: 1w0
+  name: 1W0
+  position:
+    x: -16.0
+    y: -120.0
+  direction: left
+  pin_type: passive
+- id: 1w1
+  name: 1W1
+  position:
+    x: -16.0
+    y: -119.54631
+  direction: left
+  pin_type: passive
+- id: 1w2
+  name: 1W2
+  position:
+    x: -16.0
+    y: -119.09263
+  direction: left
+  pin_type: passive
+- id: 1r0
+  name: 1R0
+  position:
+    x: -16.0
+    y: -118.63894
+  direction: left
+  pin_type: passive
+- id: 1r1
+  name: 1R1
+  position:
+    x: -16.0
+    y: -118.18526
+  direction: left
+  pin_type: passive
+- id: 1r2
+  name: 1R2
+  position:
+    x: -16.0
+    y: -117.73157
+  direction: left
+  pin_type: passive
+- id: 1gwbar
+  name: 1GWBAR
+  position:
+    x: -16.0
+    y: -117.277885
+  direction: left
+  pin_type: passive
+- id: 1grbar
+  name: 1GRBAR
+  position:
+    x: -16.0
+    y: -116.824196
+  direction: left
+  pin_type: passive
+- id: 2w_r0
+  name: 2W/R0
+  position:
+    x: -16.0
+    y: -116.370514
+  direction: left
+  pin_type: passive
+- id: 2w_r1
+  name: 2W/R1
+  position:
+    x: -16.0
+    y: -115.916824
+  direction: left
+  pin_type: passive
+- id: 2w_r2
+  name: 2W/R2
+  position:
+    x: -16.0
+    y: -115.463135
+  direction: left
+  pin_type: passive
+- id: 2gwbar
+  name: 2GWBAR
+  position:
+    x: -16.0
+    y: -115.00945
+  direction: left
+  pin_type: passive
+- id: 2grbar
+  name: 2GRBAR
+  position:
+    x: -16.0
+    y: -114.55576
+  direction: left
+  pin_type: passive
+- id: clk
+  name: CLK
+  position:
+    x: -16.0
+    y: -114.10208
+  direction: left
+  pin_type: passive
+- id: 1da
+  name: 1DA
+  position:
+    x: -16.0
+    y: -113.64839
+  direction: left
+  pin_type: passive
+- id: 2da
+  name: 2DA
+  position:
+    x: -16.0
+    y: -113.19471
+  direction: left
+  pin_type: passive
+- id: 1db
+  name: 1DB
+  position:
+    x: -16.0
+    y: -112.74102
+  direction: left
+  pin_type: passive
+- id: 2db
+  name: 2DB
+  position:
+    x: -16.0
+    y: -112.28734
+  direction: left
+  pin_type: passive
+- id: 1qa
+  name: 1QA
+  position:
+    x: -16.0
+    y: -111.83365
+  direction: left
+  pin_type: passive
+- id: 2qa
+  name: 2QA
+  position:
+    x: -16.0
+    y: -111.37996
+  direction: left
+  pin_type: passive
+- id: 1qb
+  name: 1QB
+  position:
+    x: -16.0
+    y: -110.92628
+  direction: left
+  pin_type: passive
+- id: 2qb
+  name: 2QB
+  position:
+    x: -16.0
+    y: -110.47259
+  direction: left
+  pin_type: passive
+- id: optional_
+  name: 'optional:'
+  position:
+    x: -16.0
+    y: -110.018906
+  direction: left
+  pin_type: passive
+- id: dpwr_
+  name: DPWR=
+  position:
+    x: -16.0
+    y: -109.565216
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -120.0
+    width: 32.0
+    height: 240.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -120.0
+    width: 24.0
+    height: 240.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {1W0} {1W1} {1W2} {1R0} {1R1} {1R2} {1GWBAR} {1GRBAR} {2W/R0} {2W/R1} {2W/R2} {2GWBAR} {2GRBAR} {CLK} {1DA} {2DA} {1DB} {2DB} {1QA} {2QA} {1QB} {2QB} {optional:} {DPWR=} 74172
+  model_name: '74172'

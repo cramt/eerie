@@ -1,0 +1,67 @@
+id: dctransformer
+name: DCTransformer
+description: 'SPICE subcircuit: DCTransformer'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: n1_
+  name: n1+
+  position:
+    x: -16.0
+    y: -30.0
+  direction: left
+  pin_type: passive
+- id: n1_
+  name: n1-
+  position:
+    x: -16.0
+    y: -27.6
+  direction: left
+  pin_type: passive
+- id: n2_
+  name: n2+
+  position:
+    x: -16.0
+    y: -25.2
+  direction: left
+  pin_type: passive
+- id: n2_
+  name: n2-
+  position:
+    x: -16.0
+    y: -22.8
+  direction: left
+  pin_type: passive
+- id: nc_
+  name: nc+
+  position:
+    x: -16.0
+    y: -20.4
+  direction: left
+  pin_type: passive
+- id: nc_
+  name: nc-
+  position:
+    x: -16.0
+    y: -18.0
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -30.0
+    width: 32.0
+    height: 60.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -30.0
+    width: 24.0
+    height: 60.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {n1+} {n1-} {n2+} {n2-} {nc+} {nc-} DCTransformer
+  model_name: DCTransformer

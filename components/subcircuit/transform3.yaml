@@ -1,0 +1,123 @@
+id: transform3
+name: transform3
+description: 'SPICE subcircuit: transform3'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: '1'
+  name: '1'
+  position:
+    x: -16.0
+    y: -70.0
+  direction: left
+  pin_type: passive
+- id: '2'
+  name: '2'
+  position:
+    x: -16.0
+    y: -69.1716
+  direction: left
+  pin_type: passive
+- id: '3'
+  name: '3'
+  position:
+    x: -16.0
+    y: -68.34319
+  direction: left
+  pin_type: passive
+- id: '4'
+  name: '4'
+  position:
+    x: -16.0
+    y: -67.51479
+  direction: left
+  pin_type: passive
+- id: '5'
+  name: '5'
+  position:
+    x: -16.0
+    y: -66.68639
+  direction: left
+  pin_type: passive
+- id: '6'
+  name: '6'
+  position:
+    x: -16.0
+    y: -65.85799
+  direction: left
+  pin_type: passive
+- id: n1_100
+  name: n1=100
+  position:
+    x: -16.0
+    y: -65.02959
+  direction: left
+  pin_type: passive
+- id: n2_100
+  name: n2=100
+  position:
+    x: -16.0
+    y: -64.20119
+  direction: left
+  pin_type: passive
+- id: n3_100
+  name: n3=100
+  position:
+    x: -16.0
+    y: -63.37278
+  direction: left
+  pin_type: passive
+- id: al_1u
+  name: Al=1u
+  position:
+    x: -16.0
+    y: -62.54438
+  direction: left
+  pin_type: passive
+- id: r1_1m
+  name: r1=1m
+  position:
+    x: -16.0
+    y: -61.715977
+  direction: left
+  pin_type: passive
+- id: r2_1m
+  name: r2=1m
+  position:
+    x: -16.0
+    y: -60.887573
+  direction: left
+  pin_type: passive
+- id: r3_1m
+  name: r3=1m
+  position:
+    x: -16.0
+    y: -60.059174
+  direction: left
+  pin_type: passive
+- id: k_1
+  name: k=1
+  position:
+    x: -16.0
+    y: -59.23077
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -70.0
+    width: 32.0
+    height: 140.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -70.0
+    width: 24.0
+    height: 140.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {1} {2} {3} {4} {5} {6} {n1=100} {n2=100} {n3=100} {Al=1u} {r1=1m} {r2=1m} {r3=1m} {k=1} transform3
+  model_name: transform3

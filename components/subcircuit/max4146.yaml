@@ -1,0 +1,88 @@
+id: max4146
+name: MAX4146
+description: 'SPICE subcircuit: MAX4146'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: '501'
+  name: '501'
+  position:
+    x: -16.0
+    y: -45.0
+  direction: left
+  pin_type: passive
+- id: '201'
+  name: '201'
+  position:
+    x: -16.0
+    y: -43.59375
+  direction: left
+  pin_type: passive
+- id: '99'
+  name: '99'
+  position:
+    x: -16.0
+    y: -42.1875
+  direction: left
+  pin_type: passive
+- id: '50'
+  name: '50'
+  position:
+    x: -16.0
+    y: -40.78125
+  direction: left
+  pin_type: passive
+- id: '3021'
+  name: '3021'
+  position:
+    x: -16.0
+    y: -39.375
+  direction: left
+  pin_type: passive
+- id: '3020'
+  name: '3020'
+  position:
+    x: -16.0
+    y: -37.96875
+  direction: left
+  pin_type: passive
+- id: '3041'
+  name: '3041'
+  position:
+    x: -16.0
+    y: -36.5625
+  direction: left
+  pin_type: passive
+- id: '301'
+  name: '301'
+  position:
+    x: -16.0
+    y: -35.15625
+  direction: left
+  pin_type: passive
+- id: '1'
+  name: '1'
+  position:
+    x: -16.0
+    y: -33.75
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -45.0
+    width: 32.0
+    height: 90.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -45.0
+    width: 24.0
+    height: 90.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {501} {201} {99} {50} {3021} {3020} {3041} {301} {1} MAX4146
+  model_name: MAX4146

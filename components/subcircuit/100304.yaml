@@ -1,0 +1,186 @@
+id: '100304'
+name: '100304'
+description: 'SPICE subcircuit: 100304'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: d1a
+  name: D1A
+  position:
+    x: -16.0
+    y: -115.0
+  direction: left
+  pin_type: passive
+- id: d2a
+  name: D2A
+  position:
+    x: -16.0
+    y: -114.524796
+  direction: left
+  pin_type: passive
+- id: d1b
+  name: D1B
+  position:
+    x: -16.0
+    y: -114.04958
+  direction: left
+  pin_type: passive
+- id: d2b
+  name: D2B
+  position:
+    x: -16.0
+    y: -113.57438
+  direction: left
+  pin_type: passive
+- id: d1c
+  name: D1C
+  position:
+    x: -16.0
+    y: -113.099174
+  direction: left
+  pin_type: passive
+- id: d2c
+  name: D2C
+  position:
+    x: -16.0
+    y: -112.62397
+  direction: left
+  pin_type: passive
+- id: d1d
+  name: D1D
+  position:
+    x: -16.0
+    y: -112.14876
+  direction: left
+  pin_type: passive
+- id: d2d
+  name: D2D
+  position:
+    x: -16.0
+    y: -111.67355
+  direction: left
+  pin_type: passive
+- id: d1e
+  name: D1E
+  position:
+    x: -16.0
+    y: -111.19835
+  direction: left
+  pin_type: passive
+- id: d2e
+  name: D2E
+  position:
+    x: -16.0
+    y: -110.72314
+  direction: left
+  pin_type: passive
+- id: f
+  name: F
+  position:
+    x: -16.0
+    y: -110.24793
+  direction: left
+  pin_type: passive
+- id: oa
+  name: OA
+  position:
+    x: -16.0
+    y: -109.77273
+  direction: left
+  pin_type: passive
+- id: oabar
+  name: OABAR
+  position:
+    x: -16.0
+    y: -109.29752
+  direction: left
+  pin_type: passive
+- id: ob
+  name: OB
+  position:
+    x: -16.0
+    y: -108.82231
+  direction: left
+  pin_type: passive
+- id: obbar
+  name: OBBAR
+  position:
+    x: -16.0
+    y: -108.34711
+  direction: left
+  pin_type: passive
+- id: oc
+  name: OC
+  position:
+    x: -16.0
+    y: -107.8719
+  direction: left
+  pin_type: passive
+- id: ocbar
+  name: OCBAR
+  position:
+    x: -16.0
+    y: -107.39669
+  direction: left
+  pin_type: passive
+- id: od
+  name: OD
+  position:
+    x: -16.0
+    y: -106.921486
+  direction: left
+  pin_type: passive
+- id: odbar
+  name: ODBAR
+  position:
+    x: -16.0
+    y: -106.44628
+  direction: left
+  pin_type: passive
+- id: oe
+  name: OE
+  position:
+    x: -16.0
+    y: -105.97108
+  direction: left
+  pin_type: passive
+- id: oebar
+  name: OEBAR
+  position:
+    x: -16.0
+    y: -105.495865
+  direction: left
+  pin_type: passive
+- id: optional_
+  name: 'optional:'
+  position:
+    x: -16.0
+    y: -105.02066
+  direction: left
+  pin_type: passive
+- id: vee_
+  name: VEE=
+  position:
+    x: -16.0
+    y: -104.545456
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -115.0
+    width: 32.0
+    height: 230.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -115.0
+    width: 24.0
+    height: 230.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {D1A} {D2A} {D1B} {D2B} {D1C} {D2C} {D1D} {D2D} {D1E} {D2E} {F} {OA} {OABAR} {OB} {OBBAR} {OC} {OCBAR} {OD} {ODBAR} {OE} {OEBAR} {optional:} {VEE=} 100304
+  model_name: '100304'

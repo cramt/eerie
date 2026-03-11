@@ -1,0 +1,102 @@
+/* ═══════════════════════════════════════════════════════════
+   EERIE — Global tokens & reset
+   Default values = Neon theme (fallback before JS hydrates)
+   ═══════════════════════════════════════════════════════════ */
+
+:root {
+  --bg-app:       #0a0a0e;
+  --bg-panel:     #101018;
+  --bg-toolbar:   #121220;
+  --bg-hover:     #1c1c30;
+  --bg-canvas:    #06060a;
+  --bg-input:     #0e0e18;
+
+  --border:       #2a2a44;
+  --border-focus: #e040fb;
+
+  --text-primary:   #e8e0f0;
+  --text-secondary: #8878aa;
+  --text-muted:     #44405a;
+
+  --accent:       #e040fb;
+  --accent-hover: #f06aff;
+  --accent-dim:   #2a1040;
+
+  --danger:  #ff3366;
+  --warning: #ffaa22;
+  --success: #00ffaa;
+
+  --font-mono: 'JetBrains Mono', 'Cascadia Code', monospace;
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+
+  --status-height: 28px;
+  --toolbar-height: 48px;
+  --panel-width: 240px;
+  --props-width: 280px;
+}
+
+/* ── Reset ─────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body, #root {
+  height: 100%;
+  overflow: hidden;
+  background: var(--bg-app);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: 14px;
+  -webkit-font-smoothing: antialiased;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  background: none;
+  color: inherit;
+  font: inherit;
+}
+
+input, select, textarea {
+  font: inherit;
+  color: inherit;
+  background: var(--bg-input, var(--bg-app));
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 4px 8px;
+  outline: none;
+}
+
+input:focus, select:focus {
+  border-color: var(--border-focus);
+}
+
+/* ── Layout ─────────────────────────────────────────────── */
+.app-layout {
+  display: grid;
+  grid-template-rows: var(--toolbar-height) 1fr auto var(--status-height);
+  grid-template-columns: var(--panel-width) 1fr var(--props-width);
+  grid-template-areas:
+    "toolbar toolbar toolbar"
+    "panel   canvas  props"
+    "panel   plot    props"
+    "status  status  status";
+  height: 100vh;
+  width: 100vw;
+  position: relative;
+}
+
+.toolbar-area  { grid-area: toolbar; }
+.panel-area    { grid-area: panel; }
+.canvas-area   { grid-area: canvas; overflow: hidden; }
+.plot-area     { grid-area: plot; overflow: hidden; }
+.props-area    { grid-area: props; }
+.status-area   { grid-area: status; }
+
+/* ── Scrollbar ──────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }

@@ -1,0 +1,53 @@
+id: h80l2x17_ha
+name: H80L2X17_HA
+description: 'SPICE subcircuit: H80L2X17_HA'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: '106'
+  name: '106'
+  position:
+    x: -16.0
+    y: -20.0
+  direction: left
+  pin_type: passive
+- id: '104'
+  name: '104'
+  position:
+    x: -16.0
+    y: -15.555555
+  direction: left
+  pin_type: passive
+- id: '103'
+  name: '103'
+  position:
+    x: -16.0
+    y: -11.111111
+  direction: left
+  pin_type: passive
+- id: '110'
+  name: '110'
+  position:
+    x: -16.0
+    y: -6.666667
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -20.0
+    width: 32.0
+    height: 40.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -20.0
+    width: 24.0
+    height: 40.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {106} {104} {103} {110} H80L2X17_HA
+  model_name: H80L2X17_HA

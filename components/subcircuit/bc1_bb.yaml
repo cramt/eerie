@@ -1,0 +1,53 @@
+id: bc1_bb
+name: BC1_BB
+description: 'SPICE subcircuit: BC1_BB'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: '4'
+  name: '4'
+  position:
+    x: -16.0
+    y: -20.0
+  direction: left
+  pin_type: passive
+- id: '7'
+  name: '7'
+  position:
+    x: -16.0
+    y: -15.555555
+  direction: left
+  pin_type: passive
+- id: '131'
+  name: '131'
+  position:
+    x: -16.0
+    y: -11.111111
+  direction: left
+  pin_type: passive
+- id: '141'
+  name: '141'
+  position:
+    x: -16.0
+    y: -6.666667
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -20.0
+    width: 32.0
+    height: 40.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -20.0
+    width: 24.0
+    height: 40.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {4} {7} {131} {141} BC1_BB
+  model_name: BC1_BB

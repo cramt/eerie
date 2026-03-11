@@ -1,0 +1,95 @@
+id: capc0g
+name: CAPC0G
+description: 'SPICE subcircuit: CAPC0G'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: '4'
+  name: '4'
+  position:
+    x: -16.0
+    y: -50.0
+  direction: left
+  pin_type: passive
+- id: '5'
+  name: '5'
+  position:
+    x: -16.0
+    y: -48.76543
+  direction: left
+  pin_type: passive
+- id: _ttest_27
+  name: '{TTest=27'
+  position:
+    x: -16.0
+    y: -47.530865
+  direction: left
+  pin_type: passive
+- id: cnom__1u
+  name: Cnom=.1U
+  position:
+    x: -16.0
+    y: -46.296295
+  direction: left
+  pin_type: passive
+- id: rnom__067
+  name: Rnom=.067
+  position:
+    x: -16.0
+    y: -45.06173
+  direction: left
+  pin_type: passive
+- id: fres_5meg
+  name: Fres=5MEG
+  position:
+    x: -16.0
+    y: -43.82716
+  direction: left
+  pin_type: passive
+- id: vb_0
+  name: VB=0
+  position:
+    x: -16.0
+    y: -42.59259
+  direction: left
+  pin_type: passive
+- id: vnom_30
+  name: Vnom=30
+  position:
+    x: -16.0
+    y: -41.358025
+  direction: left
+  pin_type: passive
+- id: cp_1p
+  name: CP=1P
+  position:
+    x: -16.0
+    y: -40.123455
+  direction: left
+  pin_type: passive
+- id: esl_2n_
+  name: Esl=2n}
+  position:
+    x: -16.0
+    y: -38.88889
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -50.0
+    width: 32.0
+    height: 100.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -50.0
+    width: 24.0
+    height: 100.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {4} {5} {{TTest=27} {Cnom=.1U} {Rnom=.067} {Fres=5MEG} {VB=0} {Vnom=30} {CP=1P} {Esl=2n}} CAPC0G
+  model_name: CAPC0G

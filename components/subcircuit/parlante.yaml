@@ -1,0 +1,39 @@
+id: parlante
+name: parlante
+description: 'SPICE subcircuit: parlante'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: sp1
+  name: SP1
+  position:
+    x: -16.0
+    y: -10.0
+  direction: left
+  pin_type: passive
+- id: sp2
+  name: SP2
+  position:
+    x: -16.0
+    y: 10.0
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -10.0
+    width: 32.0
+    height: 20.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -10.0
+    width: 24.0
+    height: 20.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {SP1} {SP2} parlante
+  model_name: parlante

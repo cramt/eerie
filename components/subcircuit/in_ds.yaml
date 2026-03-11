@@ -1,0 +1,46 @@
+id: in_ds
+name: IN_DS
+description: 'SPICE subcircuit: IN_DS'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: '9902'
+  name: '9902'
+  position:
+    x: -16.0
+    y: -15.0
+  direction: left
+  pin_type: passive
+- id: '9901'
+  name: '9901'
+  position:
+    x: -16.0
+    y: -7.5
+  direction: left
+  pin_type: passive
+- id: '9904'
+  name: '9904'
+  position:
+    x: -16.0
+    y: 0.0
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -15.0
+    width: 32.0
+    height: 30.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -15.0
+    width: 24.0
+    height: 30.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {9902} {9901} {9904} IN_DS
+  model_name: IN_DS

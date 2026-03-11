@@ -1,0 +1,123 @@
+.panel {
+  border-top: 1px solid var(--border);
+  background: var(--bg-panel);
+  max-height: 380px;
+  overflow: auto;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 12px;
+  border-bottom: 1px solid var(--border);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.content {
+  padding: 8px;
+}
+
+.plotContainer {
+  display: flex;
+  gap: 8px;
+}
+
+.legend {
+  min-width: 160px;
+  max-width: 180px;
+  max-height: 280px;
+  overflow-y: auto;
+  font-size: 11px;
+  padding: 4px 0;
+}
+
+.legendHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2px 4px;
+  margin-bottom: 4px;
+}
+
+.plotName {
+  font-weight: 600;
+  color: var(--text-secondary);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.legendActions {
+  display: flex;
+  gap: 4px;
+}
+
+.legendBtn {
+  font-size: 10px;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 1px 4px;
+  border-radius: 2px;
+}
+
+.legendBtn:hover {
+  color: var(--text-primary);
+  background: var(--bg-hover);
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 4px;
+  cursor: pointer;
+  border-radius: 2px;
+}
+
+.legendItem:hover {
+  background: var(--bg-hover);
+}
+
+.legendItem input[type="checkbox"] {
+  width: 12px;
+  height: 12px;
+  accent-color: var(--accent);
+}
+
+.legendColor {
+  width: 10px;
+  height: 3px;
+  border-radius: 1px;
+  flex-shrink: 0;
+}
+
+.legendLabel {
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.chart {
+  flex: 1;
+  min-width: 0;
+}
+
+/* uPlot dark theme overrides */
+.chart :global(.u-wrap) {
+  background: var(--bg-canvas, #06060a);
+  border-radius: var(--radius-sm);
+}
+
+.chart :global(.u-select) {
+  background: rgba(224, 64, 251, 0.1);
+}
+
+.chart :global(.u-cursor-x),
+.chart :global(.u-cursor-y) {
+  border-color: rgba(136, 120, 170, 0.3) !important;
+}

@@ -1,0 +1,123 @@
+id: 54ls157
+name: 54LS157
+description: 'SPICE subcircuit: 54LS157'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: strb
+  name: strb
+  position:
+    x: -16.0
+    y: -70.0
+  direction: left
+  pin_type: passive
+- id: selectab
+  name: selectab
+  position:
+    x: -16.0
+    y: -69.1716
+  direction: left
+  pin_type: passive
+- id: 1a
+  name: 1a
+  position:
+    x: -16.0
+    y: -68.34319
+  direction: left
+  pin_type: passive
+- id: 1b
+  name: 1b
+  position:
+    x: -16.0
+    y: -67.51479
+  direction: left
+  pin_type: passive
+- id: 1y
+  name: 1y
+  position:
+    x: -16.0
+    y: -66.68639
+  direction: left
+  pin_type: passive
+- id: 2a
+  name: 2a
+  position:
+    x: -16.0
+    y: -65.85799
+  direction: left
+  pin_type: passive
+- id: 2b
+  name: 2b
+  position:
+    x: -16.0
+    y: -65.02959
+  direction: left
+  pin_type: passive
+- id: 2y
+  name: 2y
+  position:
+    x: -16.0
+    y: -64.20119
+  direction: left
+  pin_type: passive
+- id: 3a
+  name: 3a
+  position:
+    x: -16.0
+    y: -63.37278
+  direction: left
+  pin_type: passive
+- id: 3b
+  name: 3b
+  position:
+    x: -16.0
+    y: -62.54438
+  direction: left
+  pin_type: passive
+- id: 3y
+  name: 3y
+  position:
+    x: -16.0
+    y: -61.715977
+  direction: left
+  pin_type: passive
+- id: 4a
+  name: 4a
+  position:
+    x: -16.0
+    y: -60.887573
+  direction: left
+  pin_type: passive
+- id: 4b
+  name: 4b
+  position:
+    x: -16.0
+    y: -60.059174
+  direction: left
+  pin_type: passive
+- id: 4y
+  name: 4y
+  position:
+    x: -16.0
+    y: -59.23077
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -70.0
+    width: 32.0
+    height: 140.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -70.0
+    width: 24.0
+    height: 140.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {strb} {selectab} {1a} {1b} {1y} {2a} {2b} {2y} {3a} {3b} {3y} {4a} {4b} {4y} 54LS157
+  model_name: 54LS157

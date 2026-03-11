@@ -1,0 +1,179 @@
+id: '74181'
+name: '74181'
+description: 'SPICE subcircuit: 74181'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: a0
+  name: a0
+  position:
+    x: -16.0
+    y: -110.0
+  direction: left
+  pin_type: passive
+- id: a1
+  name: a1
+  position:
+    x: -16.0
+    y: -109.50114
+  direction: left
+  pin_type: passive
+- id: a2
+  name: a2
+  position:
+    x: -16.0
+    y: -109.002266
+  direction: left
+  pin_type: passive
+- id: a3
+  name: a3
+  position:
+    x: -16.0
+    y: -108.5034
+  direction: left
+  pin_type: passive
+- id: b0
+  name: b0
+  position:
+    x: -16.0
+    y: -108.00453
+  direction: left
+  pin_type: passive
+- id: b1
+  name: b1
+  position:
+    x: -16.0
+    y: -107.50567
+  direction: left
+  pin_type: passive
+- id: b2
+  name: b2
+  position:
+    x: -16.0
+    y: -107.006805
+  direction: left
+  pin_type: passive
+- id: b3
+  name: b3
+  position:
+    x: -16.0
+    y: -106.507935
+  direction: left
+  pin_type: passive
+- id: s0
+  name: s0
+  position:
+    x: -16.0
+    y: -106.00907
+  direction: left
+  pin_type: passive
+- id: s1
+  name: s1
+  position:
+    x: -16.0
+    y: -105.5102
+  direction: left
+  pin_type: passive
+- id: s2
+  name: s2
+  position:
+    x: -16.0
+    y: -105.01134
+  direction: left
+  pin_type: passive
+- id: s3
+  name: s3
+  position:
+    x: -16.0
+    y: -104.512474
+  direction: left
+  pin_type: passive
+- id: cnb
+  name: cnb
+  position:
+    x: -16.0
+    y: -104.0136
+  direction: left
+  pin_type: passive
+- id: m
+  name: m
+  position:
+    x: -16.0
+    y: -103.51474
+  direction: left
+  pin_type: passive
+- id: f0
+  name: f0
+  position:
+    x: -16.0
+    y: -103.01587
+  direction: left
+  pin_type: passive
+- id: f1
+  name: f1
+  position:
+    x: -16.0
+    y: -102.517006
+  direction: left
+  pin_type: passive
+- id: f2
+  name: f2
+  position:
+    x: -16.0
+    y: -102.01814
+  direction: left
+  pin_type: passive
+- id: f3
+  name: f3
+  position:
+    x: -16.0
+    y: -101.51927
+  direction: left
+  pin_type: passive
+- id: aeqb
+  name: aeqb
+  position:
+    x: -16.0
+    y: -101.02041
+  direction: left
+  pin_type: passive
+- id: cn4b
+  name: cn4b
+  position:
+    x: -16.0
+    y: -100.521545
+  direction: left
+  pin_type: passive
+- id: x
+  name: x
+  position:
+    x: -16.0
+    y: -100.022675
+  direction: left
+  pin_type: passive
+- id: y
+  name: y
+  position:
+    x: -16.0
+    y: -99.52381
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -110.0
+    width: 32.0
+    height: 220.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -110.0
+    width: 24.0
+    height: 220.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {a0} {a1} {a2} {a3} {b0} {b1} {b2} {b3} {s0} {s1} {s2} {s3} {cnb} {m} {f0} {f1} {f2} {f3} {aeqb} {cn4b} {x} {y} 74181
+  model_name: '74181'

@@ -1,0 +1,39 @@
+id: sm6t7v5a
+name: SM6T7V5A
+description: 'SPICE subcircuit: SM6T7V5A'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: anode
+  name: Anode
+  position:
+    x: -16.0
+    y: -10.0
+  direction: left
+  pin_type: passive
+- id: cathode
+  name: Cathode
+  position:
+    x: -16.0
+    y: 10.0
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -10.0
+    width: 32.0
+    height: 20.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -10.0
+    width: 24.0
+    height: 20.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {Anode} {Cathode} SM6T7V5A
+  model_name: SM6T7V5A

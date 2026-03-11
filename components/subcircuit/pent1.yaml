@@ -1,0 +1,200 @@
+id: pent1
+name: PENT1
+description: 'SPICE subcircuit: PENT1'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: a
+  name: A
+  position:
+    x: -16.0
+    y: -125.0
+  direction: left
+  pin_type: passive
+- id: g2
+  name: G2
+  position:
+    x: -16.0
+    y: -124.56597
+  direction: left
+  pin_type: passive
+- id: g1
+  name: G1
+  position:
+    x: -16.0
+    y: -124.13194
+  direction: left
+  pin_type: passive
+- id: c
+  name: C
+  position:
+    x: -16.0
+    y: -123.697914
+  direction: left
+  pin_type: passive
+- id: isat
+  name: ISAT
+  position:
+    x: -16.0
+    y: -123.263885
+  direction: left
+  pin_type: passive
+- id: _sfs____
+  name: '{SFS=???'
+  position:
+    x: -16.0
+    y: -122.829865
+  direction: left
+  pin_type: passive
+- id: vbig____
+  name: VBIG=???
+  position:
+    x: -16.0
+    y: -122.395836
+  direction: left
+  pin_type: passive
+- id: vbia____
+  name: VBIA=???
+  position:
+    x: -16.0
+    y: -121.96181
+  direction: left
+  pin_type: passive
+- id: mug2____
+  name: MUG2=???
+  position:
+    x: -16.0
+    y: -121.52778
+  direction: left
+  pin_type: passive
+- id: mua____
+  name: MUA=???
+  position:
+    x: -16.0
+    y: -121.09375
+  direction: left
+  pin_type: passive
+- id: rmu____
+  name: RMU=???
+  position:
+    x: -16.0
+    y: -120.65972
+  direction: left
+  pin_type: passive
+- id: vmu____
+  name: VMU=???
+  position:
+    x: -16.0
+    y: -120.22569
+  direction: left
+  pin_type: passive
+- id: sfmu____
+  name: SFMU=???
+  position:
+    x: -16.0
+    y: -119.791664
+  direction: left
+  pin_type: passive
+- id: k____
+  name: K=???
+  position:
+    x: -16.0
+    y: -119.357635
+  direction: left
+  pin_type: passive
+- id: rk____
+  name: RK=???
+  position:
+    x: -16.0
+    y: -118.923615
+  direction: left
+  pin_type: passive
+- id: vk____
+  name: VK=???
+  position:
+    x: -16.0
+    y: -118.489586
+  direction: left
+  pin_type: passive
+- id: sfk____
+  name: SFK=???
+  position:
+    x: -16.0
+    y: -118.05556
+  direction: left
+  pin_type: passive
+- id: sigma1____
+  name: SIGMA1=???
+  position:
+    x: -16.0
+    y: -117.62153
+  direction: left
+  pin_type: passive
+- id: alpha1____
+  name: ALPHA1=???
+  position:
+    x: -16.0
+    y: -117.1875
+  direction: left
+  pin_type: passive
+- id: sfg1____
+  name: SFG1=???
+  position:
+    x: -16.0
+    y: -116.75347
+  direction: left
+  pin_type: passive
+- id: sigma2____
+  name: SIGMA2=???
+  position:
+    x: -16.0
+    y: -116.31944
+  direction: left
+  pin_type: passive
+- id: alpha2____
+  name: ALPHA2=???
+  position:
+    x: -16.0
+    y: -115.885414
+  direction: left
+  pin_type: passive
+- id: sfg2____
+  name: SFG2=???
+  position:
+    x: -16.0
+    y: -115.451385
+  direction: left
+  pin_type: passive
+- id: vccr____
+  name: VCCR=???
+  position:
+    x: -16.0
+    y: -115.017365
+  direction: left
+  pin_type: passive
+- id: sfvc_____
+  name: SFVC=???}
+  position:
+    x: -16.0
+    y: -114.583336
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -125.0
+    width: 32.0
+    height: 250.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -125.0
+    width: 24.0
+    height: 250.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {A} {G2} {G1} {C} {ISAT} {{SFS=???} {VBIG=???} {VBIA=???} {MUG2=???} {MUA=???} {RMU=???} {VMU=???} {SFMU=???} {K=???} {RK=???} {VK=???} {SFK=???} {SIGMA1=???} {ALPHA1=???} {SFG1=???} {SIGMA2=???} {ALPHA2=???} {SFG2=???} {VCCR=???} {SFVC=???}} PENT1
+  model_name: PENT1

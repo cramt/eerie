@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>io.github.cramt.Eerie</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-3.0-or-later</project_license>
+  <name>Eerie</name>
+  <summary>Circuit design and simulation tool</summary>
+  <description>
+    <p>
+      Eerie is a modern, open-source circuit design and simulation tool.
+      It provides schematic capture, SPICE simulation powered by ngspice,
+      and a comprehensive component library.
+    </p>
+    <p>
+      Features include:
+    </p>
+    <ul>
+      <li>Schematic editor with intuitive controls</li>
+      <li>SPICE simulation via ngspice</li>
+      <li>Large built-in component library</li>
+      <li>XSPICE code model support</li>
+    </ul>
+  </description>
+  <launchable type="desktop-id">io.github.cramt.Eerie.desktop</launchable>
+  <url type="homepage">https://github.com/cramt/eerie</url>
+  <url type="bugtracker">https://github.com/cramt/eerie/issues</url>
+  <url type="vcs-browser">https://github.com/cramt/eerie</url>
+  <developer id="io.github.cramt">
+    <name>cramt</name>
+  </developer>
+  <provides>
+    <binary>eerie</binary>
+  </provides>
+  <content_rating type="oars-1.1"/>
+</component>

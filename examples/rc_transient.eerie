@@ -1,0 +1,117 @@
+name: RC Transient
+components:
+  - id: V1
+    type_id: dc_voltage
+    label: V1
+    position:
+      x: 0
+      y: 0
+    properties:
+      voltage: 5
+      source_type: Pulse
+      v1: 0
+      v2: 5
+      td: 0
+      tr: 0.000001
+      tf: 0.000001
+      pw: 0.0005
+      per: 0.001
+  - id: R1
+    type_id: resistor
+    label: R1
+    position:
+      x: 4
+      y: -3
+    rotation: 90
+    properties:
+      resistance: 1000
+  - id: C1
+    type_id: capacitor
+    label: C1
+    position:
+      x: 4
+      y: 3
+    rotation: 90
+    properties:
+      capacitance: 0.000001
+  - id: GND1
+    type_id: ground
+    position:
+      x: 0
+      y: 6
+    properties: {}
+nets:
+  - id: VIN
+    segments:
+      - start: &a1
+          x: 0
+          y: -6
+        end: &a2
+          x: 4
+          y: -6
+      - start: *a1
+        end:
+          x: 0
+          y: -2
+      - start: *a2
+        end:
+          x: 4
+          y: -5
+    pins:
+      - component_id: V1
+        pin_id: p
+      - component_id: R1
+        pin_id: p
+    labels:
+      - name: VIN
+        position:
+          x: 2
+          y: -7
+  - id: VOUT
+    segments:
+      - start:
+          x: 4
+          y: -1
+        end:
+          x: 4
+          y: 1
+    pins:
+      - component_id: R1
+        pin_id: n
+      - component_id: C1
+        pin_id: p
+    labels:
+      - name: VOUT
+        position:
+          x: 6
+          y: 0
+  - id: GND
+    segments:
+      - start:
+          x: 0
+          y: 5
+        end:
+          x: 4
+          y: 5
+    pins:
+      - component_id: V1
+        pin_id: n
+      - component_id: C1
+        pin_id: n
+      - component_id: GND1
+        pin_id: p
+    labels: []
+  - id: d6739544-26b9-4afd-bb85-6873641adde0
+    segments:
+      - start:
+          x: 0
+          y: 2
+        end:
+          x: 0
+          y: 5
+    pins:
+      - component_id: V1
+        pin_id: n
+      - component_id: GND1
+        pin_id: p
+    labels: []

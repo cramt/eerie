@@ -1,0 +1,102 @@
+id: ina115e
+name: INA115E
+description: 'SPICE subcircuit: INA115E'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: '5'
+  name: '5'
+  position:
+    x: -16.0
+    y: -55.0
+  direction: left
+  pin_type: passive
+- id: '4'
+  name: '4'
+  position:
+    x: -16.0
+    y: -53.9
+  direction: left
+  pin_type: passive
+- id: '13'
+  name: '13'
+  position:
+    x: -16.0
+    y: -52.8
+  direction: left
+  pin_type: passive
+- id: '7'
+  name: '7'
+  position:
+    x: -16.0
+    y: -51.7
+  direction: left
+  pin_type: passive
+- id: '11'
+  name: '11'
+  position:
+    x: -16.0
+    y: -50.6
+  direction: left
+  pin_type: passive
+- id: '12'
+  name: '12'
+  position:
+    x: -16.0
+    y: -49.5
+  direction: left
+  pin_type: passive
+- id: '10'
+  name: '10'
+  position:
+    x: -16.0
+    y: -48.4
+  direction: left
+  pin_type: passive
+- id: '3'
+  name: '3'
+  position:
+    x: -16.0
+    y: -47.3
+  direction: left
+  pin_type: passive
+- id: '14'
+  name: '14'
+  position:
+    x: -16.0
+    y: -46.2
+  direction: left
+  pin_type: passive
+- id: '2'
+  name: '2'
+  position:
+    x: -16.0
+    y: -45.1
+  direction: left
+  pin_type: passive
+- id: '15'
+  name: '15'
+  position:
+    x: -16.0
+    y: -44.0
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -55.0
+    width: 32.0
+    height: 110.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -55.0
+    width: 24.0
+    height: 110.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {5} {4} {13} {7} {11} {12} {10} {3} {14} {2} {15} INA115E
+  model_name: INA115E

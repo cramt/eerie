@@ -1,0 +1,67 @@
+id: tsv630
+name: TSV630
+description: 'SPICE subcircuit: TSV630'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: vm
+  name: VM
+  position:
+    x: -16.0
+    y: -30.0
+  direction: left
+  pin_type: passive
+- id: vp
+  name: VP
+  position:
+    x: -16.0
+    y: -27.6
+  direction: left
+  pin_type: passive
+- id: vs
+  name: VS
+  position:
+    x: -16.0
+    y: -25.2
+  direction: left
+  pin_type: passive
+- id: vccp
+  name: VCCP
+  position:
+    x: -16.0
+    y: -22.8
+  direction: left
+  pin_type: passive
+- id: vccn
+  name: VCCN
+  position:
+    x: -16.0
+    y: -20.4
+  direction: left
+  pin_type: passive
+- id: stb
+  name: STB
+  position:
+    x: -16.0
+    y: -18.0
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -30.0
+    width: 32.0
+    height: 60.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -30.0
+    width: 24.0
+    height: 60.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {VM} {VP} {VS} {VCCP} {VCCN} {STB} TSV630
+  model_name: TSV630

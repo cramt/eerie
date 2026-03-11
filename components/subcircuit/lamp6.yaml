@@ -1,0 +1,123 @@
+id: lamp6
+name: lamp6
+description: 'SPICE subcircuit: lamp6'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: '1'
+  name: '1'
+  position:
+    x: -16.0
+    y: -70.0
+  direction: left
+  pin_type: passive
+- id: '2'
+  name: '2'
+  position:
+    x: -16.0
+    y: -69.1716
+  direction: left
+  pin_type: passive
+- id: res
+  name: res
+  position:
+    x: -16.0
+    y: -68.34319
+  direction: left
+  pin_type: passive
+- id: ptot
+  name: ptot
+  position:
+    x: -16.0
+    y: -67.51479
+  direction: left
+  pin_type: passive
+- id: poptavg
+  name: poptavg
+  position:
+    x: -16.0
+    y: -66.68639
+  direction: left
+  pin_type: passive
+- id: tfil1
+  name: tfil1
+  position:
+    x: -16.0
+    y: -65.85799
+  direction: left
+  pin_type: passive
+- id: tbulb
+  name: tbulb
+  position:
+    x: -16.0
+    y: -65.02959
+  direction: left
+  pin_type: passive
+- id: tsock
+  name: tsock
+  position:
+    x: -16.0
+    y: -64.20119
+  direction: left
+  pin_type: passive
+- id: unom__unom_
+  name: UNOM={UNOM}
+  position:
+    x: -16.0
+    y: -63.37278
+  direction: left
+  pin_type: passive
+- id: pnom__pnom_
+  name: PNOM={PNOM}
+  position:
+    x: -16.0
+    y: -62.54438
+  direction: left
+  pin_type: passive
+- id: rcold__rcold_
+  name: RCOLD={RCOLD}
+  position:
+    x: -16.0
+    y: -61.715977
+  direction: left
+  pin_type: passive
+- id: tcold__tcold_
+  name: TCOLD={TCOLD}
+  position:
+    x: -16.0
+    y: -60.887573
+  direction: left
+  pin_type: passive
+- id: tau__tau_
+  name: TAU={TAU}
+  position:
+    x: -16.0
+    y: -60.059174
+  direction: left
+  pin_type: passive
+- id: tamb__tamb_
+  name: TAMB={TAMB}
+  position:
+    x: -16.0
+    y: -59.23077
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -70.0
+    width: 32.0
+    height: 140.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -70.0
+    width: 24.0
+    height: 140.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {1} {2} {res} {ptot} {poptavg} {tfil1} {tbulb} {tsock} {UNOM={UNOM}} {PNOM={PNOM}} {RCOLD={RCOLD}} {TCOLD={TCOLD}} {TAU={TAU}} {TAMB={TAMB}} lamp6
+  model_name: lamp6

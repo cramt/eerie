@@ -1,0 +1,46 @@
+id: gndfloat
+name: GNDFLOAT
+description: 'SPICE subcircuit: GNDFLOAT'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: '1'
+  name: '1'
+  position:
+    x: -16.0
+    y: -15.0
+  direction: left
+  pin_type: passive
+- id: cp_1pf
+  name: Cp=1pF
+  position:
+    x: -16.0
+    y: -7.5
+  direction: left
+  pin_type: passive
+- id: rp_1g
+  name: Rp=1G
+  position:
+    x: -16.0
+    y: 0.0
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -15.0
+    width: 32.0
+    height: 30.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -15.0
+    width: 24.0
+    height: 30.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {1} {Cp=1pF} {Rp=1G} GNDFLOAT
+  model_name: GNDFLOAT

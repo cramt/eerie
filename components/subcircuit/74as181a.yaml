@@ -1,0 +1,193 @@
+id: 74as181a
+name: 74AS181A
+description: 'SPICE subcircuit: 74AS181A'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: a0bar
+  name: A0BAR
+  position:
+    x: -16.0
+    y: -120.0
+  direction: left
+  pin_type: passive
+- id: a1bar
+  name: A1BAR
+  position:
+    x: -16.0
+    y: -119.54631
+  direction: left
+  pin_type: passive
+- id: a2bar
+  name: A2BAR
+  position:
+    x: -16.0
+    y: -119.09263
+  direction: left
+  pin_type: passive
+- id: a3bar
+  name: A3BAR
+  position:
+    x: -16.0
+    y: -118.63894
+  direction: left
+  pin_type: passive
+- id: b0bar
+  name: B0BAR
+  position:
+    x: -16.0
+    y: -118.18526
+  direction: left
+  pin_type: passive
+- id: b1bar
+  name: B1BAR
+  position:
+    x: -16.0
+    y: -117.73157
+  direction: left
+  pin_type: passive
+- id: b2bar
+  name: B2BAR
+  position:
+    x: -16.0
+    y: -117.277885
+  direction: left
+  pin_type: passive
+- id: b3bar
+  name: B3BAR
+  position:
+    x: -16.0
+    y: -116.824196
+  direction: left
+  pin_type: passive
+- id: s0
+  name: S0
+  position:
+    x: -16.0
+    y: -116.370514
+  direction: left
+  pin_type: passive
+- id: s1
+  name: S1
+  position:
+    x: -16.0
+    y: -115.916824
+  direction: left
+  pin_type: passive
+- id: s2
+  name: S2
+  position:
+    x: -16.0
+    y: -115.463135
+  direction: left
+  pin_type: passive
+- id: s3
+  name: S3
+  position:
+    x: -16.0
+    y: -115.00945
+  direction: left
+  pin_type: passive
+- id: cn
+  name: CN
+  position:
+    x: -16.0
+    y: -114.55576
+  direction: left
+  pin_type: passive
+- id: m
+  name: M
+  position:
+    x: -16.0
+    y: -114.10208
+  direction: left
+  pin_type: passive
+- id: f0bar
+  name: F0BAR
+  position:
+    x: -16.0
+    y: -113.64839
+  direction: left
+  pin_type: passive
+- id: f1bar
+  name: F1BAR
+  position:
+    x: -16.0
+    y: -113.19471
+  direction: left
+  pin_type: passive
+- id: f2bar
+  name: F2BAR
+  position:
+    x: -16.0
+    y: -112.74102
+  direction: left
+  pin_type: passive
+- id: f3bar
+  name: F3BAR
+  position:
+    x: -16.0
+    y: -112.28734
+  direction: left
+  pin_type: passive
+- id: gbar
+  name: GBAR
+  position:
+    x: -16.0
+    y: -111.83365
+  direction: left
+  pin_type: passive
+- id: cn4
+  name: CN4
+  position:
+    x: -16.0
+    y: -111.37996
+  direction: left
+  pin_type: passive
+- id: pbar
+  name: PBAR
+  position:
+    x: -16.0
+    y: -110.92628
+  direction: left
+  pin_type: passive
+- id: aequalb
+  name: AEQUALB
+  position:
+    x: -16.0
+    y: -110.47259
+  direction: left
+  pin_type: passive
+- id: optional_
+  name: 'optional:'
+  position:
+    x: -16.0
+    y: -110.018906
+  direction: left
+  pin_type: passive
+- id: dpwr_
+  name: DPWR=
+  position:
+    x: -16.0
+    y: -109.565216
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -120.0
+    width: 32.0
+    height: 240.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -120.0
+    width: 24.0
+    height: 240.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {A0BAR} {A1BAR} {A2BAR} {A3BAR} {B0BAR} {B1BAR} {B2BAR} {B3BAR} {S0} {S1} {S2} {S3} {CN} {M} {F0BAR} {F1BAR} {F2BAR} {F3BAR} {GBAR} {CN4} {PBAR} {AEQUALB} {optional:} {DPWR=} 74AS181A
+  model_name: 74AS181A

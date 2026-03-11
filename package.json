@@ -1,0 +1,50 @@
+{
+  "name": "eerie",
+  "version": "0.1.0",
+  "description": "Circuit design and simulation - like LTSpice but open and hackable",
+  "license": "GPL-3.0",
+  "packageManager": "pnpm@10.28.0",
+  "type": "module",
+  "scripts": {
+    "dev:native": "VITE_MODE=native vite",
+    "dev:wasm": "wasm-pack build eerie-wasm --dev --target web --out-dir pkg && VITE_MODE=wasm vite",
+    "build:native": "pnpm codegen && VITE_MODE=native vite build",
+    "build:wasm": "pnpm codegen && wasm-pack build eerie-wasm --target web --out-dir pkg && VITE_MODE=wasm vite build",
+    "preview": "vite preview",
+    "codegen": "cargo run -p eerie-codegen",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "lint": "eslint src"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@types/node": "^25.3.5",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^5.1.4",
+    "babel-plugin-react-compiler": "^1.0.0",
+    "eslint": "^10.0.3",
+    "eslint-plugin-react-compiler": "19.1.0-rc.2",
+    "eslint-plugin-react-hooks": "^7.0.1",
+    "jiti": "^2.6.1",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.56.1",
+    "vite": "^7.3.1"
+  },
+  "dependencies": {
+    "@bearcove/roam-core": "^7.3.0",
+    "@bearcove/roam-inprocess": "7.3.0",
+    "@bearcove/roam-postcard": "^7.3.0",
+    "@bearcove/roam-wire": "^7.3.0",
+    "@bearcove/roam-ws": "7.3.0",
+    "eerie-wasm": "workspace:*",
+    "konva": "^10.2.0",
+    "neverthrow": "^8.2.0",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "react-konva": "^19.2.3",
+    "uplot": "^1.6.32",
+    "yaml": "^2.8.2",
+    "zustand": "^5.0.11"
+  }
+}

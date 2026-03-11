@@ -1,0 +1,39 @@
+id: mmz1608f121bta00_s
+name: MMZ1608F121BTA00_s
+description: 'SPICE subcircuit: MMZ1608F121BTA00_s'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: n1
+  name: n1
+  position:
+    x: -16.0
+    y: -10.0
+  direction: left
+  pin_type: passive
+- id: n2
+  name: n2
+  position:
+    x: -16.0
+    y: 10.0
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -10.0
+    width: 32.0
+    height: 20.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -10.0
+    width: 24.0
+    height: 20.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {n1} {n2} MMZ1608F121BTA00_s
+  model_name: MMZ1608F121BTA00_s

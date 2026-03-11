@@ -1,0 +1,200 @@
+id: adg406b
+name: ADG406B
+description: 'SPICE subcircuit: ADG406B'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: '19'
+  name: '19'
+  position:
+    x: -16.0
+    y: -125.0
+  direction: left
+  pin_type: passive
+- id: '20'
+  name: '20'
+  position:
+    x: -16.0
+    y: -124.56597
+  direction: left
+  pin_type: passive
+- id: '21'
+  name: '21'
+  position:
+    x: -16.0
+    y: -124.13194
+  direction: left
+  pin_type: passive
+- id: '22'
+  name: '22'
+  position:
+    x: -16.0
+    y: -123.697914
+  direction: left
+  pin_type: passive
+- id: '23'
+  name: '23'
+  position:
+    x: -16.0
+    y: -123.263885
+  direction: left
+  pin_type: passive
+- id: '24'
+  name: '24'
+  position:
+    x: -16.0
+    y: -122.829865
+  direction: left
+  pin_type: passive
+- id: '25'
+  name: '25'
+  position:
+    x: -16.0
+    y: -122.395836
+  direction: left
+  pin_type: passive
+- id: '26'
+  name: '26'
+  position:
+    x: -16.0
+    y: -121.96181
+  direction: left
+  pin_type: passive
+- id: '11'
+  name: '11'
+  position:
+    x: -16.0
+    y: -121.52778
+  direction: left
+  pin_type: passive
+- id: '10'
+  name: '10'
+  position:
+    x: -16.0
+    y: -121.09375
+  direction: left
+  pin_type: passive
+- id: '9'
+  name: '9'
+  position:
+    x: -16.0
+    y: -120.65972
+  direction: left
+  pin_type: passive
+- id: '8'
+  name: '8'
+  position:
+    x: -16.0
+    y: -120.22569
+  direction: left
+  pin_type: passive
+- id: '7'
+  name: '7'
+  position:
+    x: -16.0
+    y: -119.791664
+  direction: left
+  pin_type: passive
+- id: '6'
+  name: '6'
+  position:
+    x: -16.0
+    y: -119.357635
+  direction: left
+  pin_type: passive
+- id: '5'
+  name: '5'
+  position:
+    x: -16.0
+    y: -118.923615
+  direction: left
+  pin_type: passive
+- id: '4'
+  name: '4'
+  position:
+    x: -16.0
+    y: -118.489586
+  direction: left
+  pin_type: passive
+- id: '14'
+  name: '14'
+  position:
+    x: -16.0
+    y: -118.05556
+  direction: left
+  pin_type: passive
+- id: '15'
+  name: '15'
+  position:
+    x: -16.0
+    y: -117.62153
+  direction: left
+  pin_type: passive
+- id: '16'
+  name: '16'
+  position:
+    x: -16.0
+    y: -117.1875
+  direction: left
+  pin_type: passive
+- id: '17'
+  name: '17'
+  position:
+    x: -16.0
+    y: -116.75347
+  direction: left
+  pin_type: passive
+- id: '18'
+  name: '18'
+  position:
+    x: -16.0
+    y: -116.31944
+  direction: left
+  pin_type: passive
+- id: '28'
+  name: '28'
+  position:
+    x: -16.0
+    y: -115.885414
+  direction: left
+  pin_type: passive
+- id: '1'
+  name: '1'
+  position:
+    x: -16.0
+    y: -115.451385
+  direction: left
+  pin_type: passive
+- id: '12'
+  name: '12'
+  position:
+    x: -16.0
+    y: -115.017365
+  direction: left
+  pin_type: passive
+- id: '27'
+  name: '27'
+  position:
+    x: -16.0
+    y: -114.583336
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -125.0
+    width: 32.0
+    height: 250.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -125.0
+    width: 24.0
+    height: 250.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {19} {20} {21} {22} {23} {24} {25} {26} {11} {10} {9} {8} {7} {6} {5} {4} {14} {15} {16} {17} {18} {28} {1} {12} {27} ADG406B
+  model_name: ADG406B

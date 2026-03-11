@@ -1,0 +1,46 @@
+id: photodiod2
+name: photodiod2
+description: 'SPICE subcircuit: photodiod2'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: p
+  name: p
+  position:
+    x: -16.0
+    y: -15.0
+  direction: left
+  pin_type: passive
+- id: dm
+  name: dm
+  position:
+    x: -16.0
+    y: -7.5
+  direction: left
+  pin_type: passive
+- id: dp
+  name: dp
+  position:
+    x: -16.0
+    y: 0.0
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -15.0
+    width: 32.0
+    height: 30.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -15.0
+    width: 24.0
+    height: 30.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {p} {dm} {dp} photodiod2
+  model_name: photodiod2

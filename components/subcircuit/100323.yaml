@@ -1,0 +1,151 @@
+id: '100323'
+name: '100323'
+description: 'SPICE subcircuit: 100323'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: d1
+  name: D1
+  position:
+    x: -16.0
+    y: -90.0
+  direction: left
+  pin_type: passive
+- id: d2
+  name: D2
+  position:
+    x: -16.0
+    y: -89.37716
+  direction: left
+  pin_type: passive
+- id: d3
+  name: D3
+  position:
+    x: -16.0
+    y: -88.754326
+  direction: left
+  pin_type: passive
+- id: d4
+  name: D4
+  position:
+    x: -16.0
+    y: -88.131485
+  direction: left
+  pin_type: passive
+- id: d5
+  name: D5
+  position:
+    x: -16.0
+    y: -87.50865
+  direction: left
+  pin_type: passive
+- id: d6
+  name: D6
+  position:
+    x: -16.0
+    y: -86.88581
+  direction: left
+  pin_type: passive
+- id: e
+  name: E
+  position:
+    x: -16.0
+    y: -86.26298
+  direction: left
+  pin_type: passive
+- id: de1
+  name: DE1
+  position:
+    x: -16.0
+    y: -85.64014
+  direction: left
+  pin_type: passive
+- id: de2
+  name: DE2
+  position:
+    x: -16.0
+    y: -85.0173
+  direction: left
+  pin_type: passive
+- id: de3
+  name: DE3
+  position:
+    x: -16.0
+    y: -84.39446
+  direction: left
+  pin_type: passive
+- id: o1
+  name: O1
+  position:
+    x: -16.0
+    y: -83.77163
+  direction: left
+  pin_type: passive
+- id: o2
+  name: O2
+  position:
+    x: -16.0
+    y: -83.14879
+  direction: left
+  pin_type: passive
+- id: o3
+  name: O3
+  position:
+    x: -16.0
+    y: -82.525955
+  direction: left
+  pin_type: passive
+- id: o4
+  name: O4
+  position:
+    x: -16.0
+    y: -81.903114
+  direction: left
+  pin_type: passive
+- id: o5
+  name: O5
+  position:
+    x: -16.0
+    y: -81.28027
+  direction: left
+  pin_type: passive
+- id: o6
+  name: O6
+  position:
+    x: -16.0
+    y: -80.65744
+  direction: left
+  pin_type: passive
+- id: optional_
+  name: 'optional:'
+  position:
+    x: -16.0
+    y: -80.0346
+  direction: left
+  pin_type: passive
+- id: vee_
+  name: VEE=
+  position:
+    x: -16.0
+    y: -79.411766
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -90.0
+    width: 32.0
+    height: 180.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -90.0
+    width: 24.0
+    height: 180.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {D1} {D2} {D3} {D4} {D5} {D6} {E} {DE1} {DE2} {DE3} {O1} {O2} {O3} {O4} {O5} {O6} {optional:} {VEE=} 100323
+  model_name: '100323'

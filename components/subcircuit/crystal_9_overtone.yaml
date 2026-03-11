@@ -1,0 +1,130 @@
+id: crystal_9_overtone
+name: CRYSTAL_9_OVERTONE
+description: 'SPICE subcircuit: CRYSTAL_9_OVERTONE'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: '1'
+  name: '1'
+  position:
+    x: -16.0
+    y: -75.0
+  direction: left
+  pin_type: passive
+- id: '2'
+  name: '2'
+  position:
+    x: -16.0
+    y: -74.234695
+  direction: left
+  pin_type: passive
+- id: freq_10meg
+  name: Freq=10Meg
+  position:
+    x: -16.0
+    y: -73.46939
+  direction: left
+  pin_type: passive
+- id: c0_3p
+  name: C0=3p
+  position:
+    x: -16.0
+    y: -72.70408
+  direction: left
+  pin_type: passive
+- id: k_300
+  name: K=300
+  position:
+    x: -16.0
+    y: -71.938774
+  direction: left
+  pin_type: passive
+- id: rm1_20
+  name: Rm1=20
+  position:
+    x: -16.0
+    y: -71.17347
+  direction: left
+  pin_type: passive
+- id: rm3_50
+  name: rm3=50
+  position:
+    x: -16.0
+    y: -70.408165
+  direction: left
+  pin_type: passive
+- id: rm5_100
+  name: rm5=100
+  position:
+    x: -16.0
+    y: -69.64286
+  direction: left
+  pin_type: passive
+- id: rm7_150
+  name: rm7=150
+  position:
+    x: -16.0
+    y: -68.87755
+  direction: left
+  pin_type: passive
+- id: rm9_200
+  name: rm9=200
+  position:
+    x: -16.0
+    y: -68.11224
+  direction: left
+  pin_type: passive
+- id: ic1_100u
+  name: ic1=100u
+  position:
+    x: -16.0
+    y: -67.34694
+  direction: left
+  pin_type: passive
+- id: ic3_100u
+  name: ic3=100u
+  position:
+    x: -16.0
+    y: -66.581635
+  direction: left
+  pin_type: passive
+- id: ic5_100u
+  name: ic5=100u
+  position:
+    x: -16.0
+    y: -65.81632
+  direction: left
+  pin_type: passive
+- id: ic7_100u
+  name: ic7=100u
+  position:
+    x: -16.0
+    y: -65.05102
+  direction: left
+  pin_type: passive
+- id: ic9_100u
+  name: ic9=100u
+  position:
+    x: -16.0
+    y: -64.28571
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -75.0
+    width: 32.0
+    height: 150.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -75.0
+    width: 24.0
+    height: 150.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {1} {2} {Freq=10Meg} {C0=3p} {K=300} {Rm1=20} {rm3=50} {rm5=100} {rm7=150} {rm9=200} {ic1=100u} {ic3=100u} {ic5=100u} {ic7=100u} {ic9=100u} CRYSTAL_9_OVERTONE
+  model_name: CRYSTAL_9_OVERTONE

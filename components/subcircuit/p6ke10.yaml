@@ -1,0 +1,39 @@
+id: p6ke10
+name: p6ke10
+description: 'SPICE subcircuit: p6ke10'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: '9'
+  name: '9'
+  position:
+    x: -16.0
+    y: -10.0
+  direction: left
+  pin_type: passive
+- id: '2'
+  name: '2'
+  position:
+    x: -16.0
+    y: 10.0
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -10.0
+    width: 32.0
+    height: 20.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -10.0
+    width: 24.0
+    height: 20.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {9} {2} p6ke10
+  model_name: p6ke10

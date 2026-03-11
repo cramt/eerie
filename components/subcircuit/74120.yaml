@@ -1,0 +1,88 @@
+id: '74120'
+name: '74120'
+description: 'SPICE subcircuit: 74120'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: 1rbar
+  name: 1RBAR
+  position:
+    x: -16.0
+    y: -45.0
+  direction: left
+  pin_type: passive
+- id: 1s1bar
+  name: 1S1BAR
+  position:
+    x: -16.0
+    y: -43.59375
+  direction: left
+  pin_type: passive
+- id: 1s2bar
+  name: 1S2BAR
+  position:
+    x: -16.0
+    y: -42.1875
+  direction: left
+  pin_type: passive
+- id: 1c
+  name: 1C
+  position:
+    x: -16.0
+    y: -40.78125
+  direction: left
+  pin_type: passive
+- id: 1mbar
+  name: 1MBAR
+  position:
+    x: -16.0
+    y: -39.375
+  direction: left
+  pin_type: passive
+- id: 1y
+  name: 1Y
+  position:
+    x: -16.0
+    y: -37.96875
+  direction: left
+  pin_type: passive
+- id: 1ybar
+  name: 1YBAR
+  position:
+    x: -16.0
+    y: -36.5625
+  direction: left
+  pin_type: passive
+- id: optional_
+  name: 'optional:'
+  position:
+    x: -16.0
+    y: -35.15625
+  direction: left
+  pin_type: passive
+- id: dpwr_
+  name: DPWR=
+  position:
+    x: -16.0
+    y: -33.75
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -45.0
+    width: 32.0
+    height: 90.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -45.0
+    width: 24.0
+    height: 90.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {1RBAR} {1S1BAR} {1S2BAR} {1C} {1MBAR} {1Y} {1YBAR} {optional:} {DPWR=} 74120
+  model_name: '74120'

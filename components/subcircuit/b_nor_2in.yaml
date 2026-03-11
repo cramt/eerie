@@ -1,0 +1,53 @@
+id: b_nor_2in
+name: B_NOR-2IN
+description: 'SPICE subcircuit: B_NOR-2IN'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: a
+  name: A
+  position:
+    x: -16.0
+    y: -20.0
+  direction: left
+  pin_type: passive
+- id: b
+  name: B
+  position:
+    x: -16.0
+    y: -15.555555
+  direction: left
+  pin_type: passive
+- id: y
+  name: Y
+  position:
+    x: -16.0
+    y: -11.111111
+  direction: left
+  pin_type: passive
+- id: vn
+  name: VN
+  position:
+    x: -16.0
+    y: -6.666667
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -20.0
+    width: 32.0
+    height: 40.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -20.0
+    width: 24.0
+    height: 40.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {A} {B} {Y} {VN} B_NOR-2IN
+  model_name: B_NOR-2IN

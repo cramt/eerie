@@ -1,0 +1,84 @@
+id: mc10h105
+name: MC10H105
+description: 'SPICE subcircuit: MC10H105'
+category: semiconductor
+subcategory: opamps
+keywords:
+- spice
+- subckt
+pins:
+- id: a0in
+  name: IN+
+  position:
+    x: -16.0
+    y: -6.0
+  direction: left
+  pin_type: input
+- id: a1in
+  name: IN-
+  position:
+    x: -16.0
+    y: 6.0
+  direction: left
+  pin_type: input
+- id: b0in
+  name: V+
+  position:
+    x: 0.0
+    y: -14.0
+  direction: up
+  pin_type: power
+- id: b1in
+  name: V-
+  position:
+    x: 0.0
+    y: 14.0
+  direction: down
+  pin_type: power
+- id: b2in
+  name: OUT
+  position:
+    x: 20.0
+    y: 0.0
+  direction: right
+  pin_type: output
+symbol:
+  bounds:
+    x: -12.0
+    y: -12.0
+    width: 28.0
+    height: 24.0
+  graphics:
+  - kind: polyline
+    points:
+    - x: -12.0
+      y: -12.0
+    - x: 16.0
+      y: 0.0
+    - x: -12.0
+      y: 12.0
+    - x: -12.0
+      y: -12.0
+    stroke_width: 1.5
+  - kind: line
+    x1: -16.0
+    y1: -6.0
+    x2: -12.0
+    y2: -6.0
+    stroke_width: 1.5
+  - kind: line
+    x1: -16.0
+    y1: 6.0
+    x2: -12.0
+    y2: 6.0
+    stroke_width: 1.5
+  - kind: line
+    x1: 16.0
+    y1: 0.0
+    x2: 20.0
+    y2: 0.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {a0in} {a1in} {b0in} {b1in} {b2in} MC10H105
+  model_name: MC10H105

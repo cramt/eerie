@@ -1,0 +1,130 @@
+id: '10161'
+name: '10161'
+description: 'SPICE subcircuit: 10161'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: e0bar
+  name: E0BAR
+  position:
+    x: -16.0
+    y: -75.0
+  direction: left
+  pin_type: passive
+- id: e1bar
+  name: E1BAR
+  position:
+    x: -16.0
+    y: -74.234695
+  direction: left
+  pin_type: passive
+- id: a
+  name: A
+  position:
+    x: -16.0
+    y: -73.46939
+  direction: left
+  pin_type: passive
+- id: b
+  name: B
+  position:
+    x: -16.0
+    y: -72.70408
+  direction: left
+  pin_type: passive
+- id: c
+  name: C
+  position:
+    x: -16.0
+    y: -71.938774
+  direction: left
+  pin_type: passive
+- id: q0
+  name: Q0
+  position:
+    x: -16.0
+    y: -71.17347
+  direction: left
+  pin_type: passive
+- id: q1
+  name: Q1
+  position:
+    x: -16.0
+    y: -70.408165
+  direction: left
+  pin_type: passive
+- id: q2
+  name: Q2
+  position:
+    x: -16.0
+    y: -69.64286
+  direction: left
+  pin_type: passive
+- id: q3
+  name: Q3
+  position:
+    x: -16.0
+    y: -68.87755
+  direction: left
+  pin_type: passive
+- id: q4
+  name: Q4
+  position:
+    x: -16.0
+    y: -68.11224
+  direction: left
+  pin_type: passive
+- id: q5
+  name: Q5
+  position:
+    x: -16.0
+    y: -67.34694
+  direction: left
+  pin_type: passive
+- id: q6
+  name: Q6
+  position:
+    x: -16.0
+    y: -66.581635
+  direction: left
+  pin_type: passive
+- id: q7
+  name: Q7
+  position:
+    x: -16.0
+    y: -65.81632
+  direction: left
+  pin_type: passive
+- id: optional_
+  name: 'optional:'
+  position:
+    x: -16.0
+    y: -65.05102
+  direction: left
+  pin_type: passive
+- id: vee_
+  name: VEE=
+  position:
+    x: -16.0
+    y: -64.28571
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -75.0
+    width: 32.0
+    height: 150.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -75.0
+    width: 24.0
+    height: 150.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {E0BAR} {E1BAR} {A} {B} {C} {Q0} {Q1} {Q2} {Q3} {Q4} {Q5} {Q6} {Q7} {optional:} {VEE=} 10161
+  model_name: '10161'

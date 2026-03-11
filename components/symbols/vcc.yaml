@@ -1,0 +1,39 @@
+id: vcc
+name: VCC
+description: Positive supply voltage symbol (net label shorthand)
+category: symbol
+keywords: [VCC, VDD, supply, power, 3.3V, 5V]
+
+pins:
+  - id: p
+    name: VCC
+    position: { x: 0, y: 0 }
+    direction: down
+    pin_type: power
+
+symbol:
+  bounds: { x: -6, y: -10, width: 12, height: 10 }
+  graphics:
+    - kind: line
+      x1: 0.0
+      y1: 0.0
+      x2: 0.0
+      y2: -6.0
+      stroke_width: 1.5
+    - kind: polyline
+      points:
+        - { x: -6.0, y: -6.0 }
+        - { x: 6.0,  y: -6.0 }
+        - { x: 0.0,  y: -10.0 }
+        - { x: -6.0, y: -6.0 }
+      stroke_width: 1.5
+      filled: true
+
+properties:
+  - id: net_name
+    label: Net Name
+    property_type: string
+    default: { String: "VCC" }
+
+simulation:
+  model_type: ideal

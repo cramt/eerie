@@ -1,0 +1,123 @@
+id: 74ls114a
+name: 74LS114A
+description: 'SPICE subcircuit: 74LS114A'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: clrbar
+  name: CLRBAR
+  position:
+    x: -16.0
+    y: -70.0
+  direction: left
+  pin_type: passive
+- id: clk
+  name: CLK
+  position:
+    x: -16.0
+    y: -69.1716
+  direction: left
+  pin_type: passive
+- id: 1prebar
+  name: 1PREBAR
+  position:
+    x: -16.0
+    y: -68.34319
+  direction: left
+  pin_type: passive
+- id: 1j
+  name: 1J
+  position:
+    x: -16.0
+    y: -67.51479
+  direction: left
+  pin_type: passive
+- id: 1k
+  name: 1K
+  position:
+    x: -16.0
+    y: -66.68639
+  direction: left
+  pin_type: passive
+- id: 2prebar
+  name: 2PREBAR
+  position:
+    x: -16.0
+    y: -65.85799
+  direction: left
+  pin_type: passive
+- id: 2j
+  name: 2J
+  position:
+    x: -16.0
+    y: -65.02959
+  direction: left
+  pin_type: passive
+- id: 2k
+  name: 2K
+  position:
+    x: -16.0
+    y: -64.20119
+  direction: left
+  pin_type: passive
+- id: 1q
+  name: 1Q
+  position:
+    x: -16.0
+    y: -63.37278
+  direction: left
+  pin_type: passive
+- id: 1qbar
+  name: 1QBAR
+  position:
+    x: -16.0
+    y: -62.54438
+  direction: left
+  pin_type: passive
+- id: 2q
+  name: 2Q
+  position:
+    x: -16.0
+    y: -61.715977
+  direction: left
+  pin_type: passive
+- id: 2qbar
+  name: 2QBAR
+  position:
+    x: -16.0
+    y: -60.887573
+  direction: left
+  pin_type: passive
+- id: optional_
+  name: 'optional:'
+  position:
+    x: -16.0
+    y: -60.059174
+  direction: left
+  pin_type: passive
+- id: dpwr_
+  name: DPWR=
+  position:
+    x: -16.0
+    y: -59.23077
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -70.0
+    width: 32.0
+    height: 140.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -70.0
+    width: 24.0
+    height: 140.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {CLRBAR} {CLK} {1PREBAR} {1J} {1K} {2PREBAR} {2J} {2K} {1Q} {1QBAR} {2Q} {2QBAR} {optional:} {DPWR=} 74LS114A
+  model_name: 74LS114A

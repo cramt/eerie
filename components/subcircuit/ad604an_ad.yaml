@@ -1,0 +1,102 @@
+id: ad604an_ad
+name: ad604an_AD
+description: 'SPICE subcircuit: ad604an_AD'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: '251'
+  name: '251'
+  position:
+    x: -16.0
+    y: -55.0
+  direction: left
+  pin_type: passive
+- id: '254'
+  name: '254'
+  position:
+    x: -16.0
+    y: -53.9
+  direction: left
+  pin_type: passive
+- id: '253'
+  name: '253'
+  position:
+    x: -16.0
+    y: -52.8
+  direction: left
+  pin_type: passive
+- id: '1'
+  name: '1'
+  position:
+    x: -16.0
+    y: -51.7
+  direction: left
+  pin_type: passive
+- id: '150'
+  name: '150'
+  position:
+    x: -16.0
+    y: -50.6
+  direction: left
+  pin_type: passive
+- id: '256'
+  name: '256'
+  position:
+    x: -16.0
+    y: -49.5
+  direction: left
+  pin_type: passive
+- id: '101'
+  name: '101'
+  position:
+    x: -16.0
+    y: -48.4
+  direction: left
+  pin_type: passive
+- id: '102'
+  name: '102'
+  position:
+    x: -16.0
+    y: -47.3
+  direction: left
+  pin_type: passive
+- id: '30'
+  name: '30'
+  position:
+    x: -16.0
+    y: -46.2
+  direction: left
+  pin_type: passive
+- id: '99'
+  name: '99'
+  position:
+    x: -16.0
+    y: -45.1
+  direction: left
+  pin_type: passive
+- id: '50'
+  name: '50'
+  position:
+    x: -16.0
+    y: -44.0
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -55.0
+    width: 32.0
+    height: 110.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -55.0
+    width: 24.0
+    height: 110.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {251} {254} {253} {1} {150} {256} {101} {102} {30} {99} {50} ad604an_AD
+  model_name: ad604an_AD

@@ -1,0 +1,81 @@
+id: mc33370ac_mc
+name: MC33370AC_MC
+description: 'SPICE subcircuit: MC33370AC_MC'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: '11'
+  name: '11'
+  position:
+    x: -16.0
+    y: -40.0
+  direction: left
+  pin_type: passive
+- id: '21'
+  name: '21'
+  position:
+    x: -16.0
+    y: -38.367348
+  direction: left
+  pin_type: passive
+- id: '31'
+  name: '31'
+  position:
+    x: -16.0
+    y: -36.734695
+  direction: left
+  pin_type: passive
+- id: '41'
+  name: '41'
+  position:
+    x: -16.0
+    y: -35.10204
+  direction: left
+  pin_type: passive
+- id: '51'
+  name: '51'
+  position:
+    x: -16.0
+    y: -33.469387
+  direction: left
+  pin_type: passive
+- id: '61'
+  name: '61'
+  position:
+    x: -16.0
+    y: -31.836735
+  direction: left
+  pin_type: passive
+- id: '81'
+  name: '81'
+  position:
+    x: -16.0
+    y: -30.204082
+  direction: left
+  pin_type: passive
+- id: '77'
+  name: '77'
+  position:
+    x: -16.0
+    y: -28.571428
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -40.0
+    width: 32.0
+    height: 80.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -40.0
+    width: 24.0
+    height: 80.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {11} {21} {31} {41} {51} {61} {81} {77} MC33370AC_MC
+  model_name: MC33370AC_MC

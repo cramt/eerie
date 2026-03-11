@@ -1,0 +1,39 @@
+id: div_2_fc
+name: DIV_2_FC
+description: 'SPICE subcircuit: DIV_2_FC'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: c
+  name: c
+  position:
+    x: -16.0
+    y: -10.0
+  direction: left
+  pin_type: passive
+- id: q
+  name: Q
+  position:
+    x: -16.0
+    y: 10.0
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -10.0
+    width: 32.0
+    height: 20.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -10.0
+    width: 24.0
+    height: 20.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {c} {Q} DIV_2_FC
+  model_name: DIV_2_FC

@@ -1,0 +1,102 @@
+id: 74als467a
+name: 74ALS467A
+description: 'SPICE subcircuit: 74ALS467A'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: 1gbar
+  name: 1GBAR
+  position:
+    x: -16.0
+    y: -55.0
+  direction: left
+  pin_type: passive
+- id: 1a1
+  name: 1A1
+  position:
+    x: -16.0
+    y: -53.9
+  direction: left
+  pin_type: passive
+- id: 1a2
+  name: 1A2
+  position:
+    x: -16.0
+    y: -52.8
+  direction: left
+  pin_type: passive
+- id: 1a3
+  name: 1A3
+  position:
+    x: -16.0
+    y: -51.7
+  direction: left
+  pin_type: passive
+- id: 1a4
+  name: 1A4
+  position:
+    x: -16.0
+    y: -50.6
+  direction: left
+  pin_type: passive
+- id: 1y1
+  name: 1Y1
+  position:
+    x: -16.0
+    y: -49.5
+  direction: left
+  pin_type: passive
+- id: 1y2
+  name: 1Y2
+  position:
+    x: -16.0
+    y: -48.4
+  direction: left
+  pin_type: passive
+- id: 1y3
+  name: 1Y3
+  position:
+    x: -16.0
+    y: -47.3
+  direction: left
+  pin_type: passive
+- id: 1y4
+  name: 1Y4
+  position:
+    x: -16.0
+    y: -46.2
+  direction: left
+  pin_type: passive
+- id: optional_
+  name: 'optional:'
+  position:
+    x: -16.0
+    y: -45.1
+  direction: left
+  pin_type: passive
+- id: dpwr_
+  name: DPWR=
+  position:
+    x: -16.0
+    y: -44.0
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -55.0
+    width: 32.0
+    height: 110.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -55.0
+    width: 24.0
+    height: 110.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {1GBAR} {1A1} {1A2} {1A3} {1A4} {1Y1} {1Y2} {1Y3} {1Y4} {optional:} {DPWR=} 74ALS467A
+  model_name: 74ALS467A

@@ -1,0 +1,137 @@
+id: 74hct366
+name: 74HCT366
+description: 'SPICE subcircuit: 74HCT366'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: oe1bar
+  name: OE1BAR
+  position:
+    x: -16.0
+    y: -80.0
+  direction: left
+  pin_type: passive
+- id: oe2bar
+  name: OE2BAR
+  position:
+    x: -16.0
+    y: -79.28889
+  direction: left
+  pin_type: passive
+- id: 1a
+  name: 1A
+  position:
+    x: -16.0
+    y: -78.577774
+  direction: left
+  pin_type: passive
+- id: 2a
+  name: 2A
+  position:
+    x: -16.0
+    y: -77.86667
+  direction: left
+  pin_type: passive
+- id: 3a
+  name: 3A
+  position:
+    x: -16.0
+    y: -77.155556
+  direction: left
+  pin_type: passive
+- id: 4a
+  name: 4A
+  position:
+    x: -16.0
+    y: -76.44444
+  direction: left
+  pin_type: passive
+- id: 5a
+  name: 5A
+  position:
+    x: -16.0
+    y: -75.73333
+  direction: left
+  pin_type: passive
+- id: 6a
+  name: 6A
+  position:
+    x: -16.0
+    y: -75.022224
+  direction: left
+  pin_type: passive
+- id: 1ybar
+  name: 1YBAR
+  position:
+    x: -16.0
+    y: -74.31111
+  direction: left
+  pin_type: passive
+- id: 2ybar
+  name: 2YBAR
+  position:
+    x: -16.0
+    y: -73.6
+  direction: left
+  pin_type: passive
+- id: 3ybar
+  name: 3YBAR
+  position:
+    x: -16.0
+    y: -72.888885
+  direction: left
+  pin_type: passive
+- id: 4ybar
+  name: 4YBAR
+  position:
+    x: -16.0
+    y: -72.17778
+  direction: left
+  pin_type: passive
+- id: 5ybar
+  name: 5YBAR
+  position:
+    x: -16.0
+    y: -71.46667
+  direction: left
+  pin_type: passive
+- id: 6ybar
+  name: 6YBAR
+  position:
+    x: -16.0
+    y: -70.755554
+  direction: left
+  pin_type: passive
+- id: optional_
+  name: 'OPTIONAL:'
+  position:
+    x: -16.0
+    y: -70.04445
+  direction: left
+  pin_type: passive
+- id: dpwr_
+  name: DPWR=
+  position:
+    x: -16.0
+    y: -69.333336
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -80.0
+    width: 32.0
+    height: 160.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -80.0
+    width: 24.0
+    height: 160.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {OE1BAR} {OE2BAR} {1A} {2A} {3A} {4A} {5A} {6A} {1YBAR} {2YBAR} {3YBAR} {4YBAR} {5YBAR} {6YBAR} {OPTIONAL:} {DPWR=} 74HCT366
+  model_name: 74HCT366

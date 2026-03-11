@@ -1,0 +1,116 @@
+id: iso121x_bb
+name: ISO121X_BB
+description: 'SPICE subcircuit: ISO121X_BB'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: '3'
+  name: '3'
+  position:
+    x: -16.0
+    y: -65.0
+  direction: left
+  pin_type: passive
+- id: '4'
+  name: '4'
+  position:
+    x: -16.0
+    y: -64.09722
+  direction: left
+  pin_type: passive
+- id: '17'
+  name: '17'
+  position:
+    x: -16.0
+    y: -63.194443
+  direction: left
+  pin_type: passive
+- id: '18'
+  name: '18'
+  position:
+    x: -16.0
+    y: -62.291668
+  direction: left
+  pin_type: passive
+- id: '19'
+  name: '19'
+  position:
+    x: -16.0
+    y: -61.38889
+  direction: left
+  pin_type: passive
+- id: '20'
+  name: '20'
+  position:
+    x: -16.0
+    y: -60.48611
+  direction: left
+  pin_type: passive
+- id: '21'
+  name: '21'
+  position:
+    x: -16.0
+    y: -59.583332
+  direction: left
+  pin_type: passive
+- id: '22'
+  name: '22'
+  position:
+    x: -16.0
+    y: -58.680557
+  direction: left
+  pin_type: passive
+- id: '23'
+  name: '23'
+  position:
+    x: -16.0
+    y: -57.77778
+  direction: left
+  pin_type: passive
+- id: '24'
+  name: '24'
+  position:
+    x: -16.0
+    y: -56.875
+  direction: left
+  pin_type: passive
+- id: '37'
+  name: '37'
+  position:
+    x: -16.0
+    y: -55.97222
+  direction: left
+  pin_type: passive
+- id: '39'
+  name: '39'
+  position:
+    x: -16.0
+    y: -55.069443
+  direction: left
+  pin_type: passive
+- id: '40'
+  name: '40'
+  position:
+    x: -16.0
+    y: -54.166668
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -65.0
+    width: 32.0
+    height: 130.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -65.0
+    width: 24.0
+    height: 130.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {3} {4} {17} {18} {19} {20} {21} {22} {23} {24} {37} {39} {40} ISO121X_BB
+  model_name: ISO121X_BB

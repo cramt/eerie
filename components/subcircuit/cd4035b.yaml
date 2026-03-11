@@ -1,0 +1,137 @@
+id: cd4035b
+name: CD4035B
+description: 'SPICE subcircuit: CD4035B'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: pi1
+  name: PI1
+  position:
+    x: -16.0
+    y: -80.0
+  direction: left
+  pin_type: passive
+- id: pi2
+  name: PI2
+  position:
+    x: -16.0
+    y: -79.28889
+  direction: left
+  pin_type: passive
+- id: pi3
+  name: PI3
+  position:
+    x: -16.0
+    y: -78.577774
+  direction: left
+  pin_type: passive
+- id: pi4
+  name: PI4
+  position:
+    x: -16.0
+    y: -77.86667
+  direction: left
+  pin_type: passive
+- id: q1_q1bar
+  name: Q1/Q1BAR
+  position:
+    x: -16.0
+    y: -77.155556
+  direction: left
+  pin_type: passive
+- id: q2_q2bar
+  name: Q2/Q2BAR
+  position:
+    x: -16.0
+    y: -76.44444
+  direction: left
+  pin_type: passive
+- id: q3_q3bar
+  name: Q3/Q3BAR
+  position:
+    x: -16.0
+    y: -75.73333
+  direction: left
+  pin_type: passive
+- id: q4_q4bar
+  name: Q4/Q4BAR
+  position:
+    x: -16.0
+    y: -75.022224
+  direction: left
+  pin_type: passive
+- id: p_s
+  name: P/S
+  position:
+    x: -16.0
+    y: -74.31111
+  direction: left
+  pin_type: passive
+- id: clk
+  name: CLK
+  position:
+    x: -16.0
+    y: -73.6
+  direction: left
+  pin_type: passive
+- id: reset
+  name: RESET
+  position:
+    x: -16.0
+    y: -72.888885
+  direction: left
+  pin_type: passive
+- id: j
+  name: J
+  position:
+    x: -16.0
+    y: -72.17778
+  direction: left
+  pin_type: passive
+- id: kbar
+  name: KBAR
+  position:
+    x: -16.0
+    y: -71.46667
+  direction: left
+  pin_type: passive
+- id: t_c
+  name: T/C
+  position:
+    x: -16.0
+    y: -70.755554
+  direction: left
+  pin_type: passive
+- id: optional_
+  name: 'OPTIONAL:'
+  position:
+    x: -16.0
+    y: -70.04445
+  direction: left
+  pin_type: passive
+- id: vdd_
+  name: VDD=
+  position:
+    x: -16.0
+    y: -69.333336
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -80.0
+    width: 32.0
+    height: 160.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -80.0
+    width: 24.0
+    height: 160.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {PI1} {PI2} {PI3} {PI4} {Q1/Q1BAR} {Q2/Q2BAR} {Q3/Q3BAR} {Q4/Q4BAR} {P/S} {CLK} {RESET} {J} {KBAR} {T/C} {OPTIONAL:} {VDD=} CD4035B
+  model_name: CD4035B

@@ -1,0 +1,23 @@
+[package]
+name = "eerie-wasm"
+version = "0.1.0"
+edition = "2024"
+description = "WASM bridge: runs thevenin circuit simulation in the browser"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+eerie-rpc      = { path = "../eerie-rpc" }
+thevenin-types = { git = "https://github.com/cramt/thevenin", branch = "ralph/simulation-engine" }
+thevenin       = { git = "https://github.com/cramt/thevenin", branch = "ralph/simulation-engine" }
+roam           = { workspace = true }
+roam-inprocess = { workspace = true }
+wasm-bindgen   = "0.2"
+wasm-bindgen-futures = "0.4"
+
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+getrandom = { version = "0.3", features = ["wasm_js"] }
+
+[dev-dependencies]
+wasm-bindgen-test = "0.3"

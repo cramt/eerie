@@ -1,0 +1,130 @@
+id: '10172'
+name: '10172'
+description: 'SPICE subcircuit: 10172'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: ebar
+  name: EBAR
+  position:
+    x: -16.0
+    y: -75.0
+  direction: left
+  pin_type: passive
+- id: e0bar
+  name: E0BAR
+  position:
+    x: -16.0
+    y: -74.234695
+  direction: left
+  pin_type: passive
+- id: e1bar
+  name: E1BAR
+  position:
+    x: -16.0
+    y: -73.46939
+  direction: left
+  pin_type: passive
+- id: a
+  name: A
+  position:
+    x: -16.0
+    y: -72.70408
+  direction: left
+  pin_type: passive
+- id: b
+  name: B
+  position:
+    x: -16.0
+    y: -71.938774
+  direction: left
+  pin_type: passive
+- id: q00
+  name: Q00
+  position:
+    x: -16.0
+    y: -71.17347
+  direction: left
+  pin_type: passive
+- id: q01
+  name: Q01
+  position:
+    x: -16.0
+    y: -70.408165
+  direction: left
+  pin_type: passive
+- id: q02
+  name: Q02
+  position:
+    x: -16.0
+    y: -69.64286
+  direction: left
+  pin_type: passive
+- id: q03
+  name: Q03
+  position:
+    x: -16.0
+    y: -68.87755
+  direction: left
+  pin_type: passive
+- id: q10
+  name: Q10
+  position:
+    x: -16.0
+    y: -68.11224
+  direction: left
+  pin_type: passive
+- id: q11
+  name: Q11
+  position:
+    x: -16.0
+    y: -67.34694
+  direction: left
+  pin_type: passive
+- id: q12
+  name: Q12
+  position:
+    x: -16.0
+    y: -66.581635
+  direction: left
+  pin_type: passive
+- id: q13
+  name: Q13
+  position:
+    x: -16.0
+    y: -65.81632
+  direction: left
+  pin_type: passive
+- id: optional_
+  name: 'optional:'
+  position:
+    x: -16.0
+    y: -65.05102
+  direction: left
+  pin_type: passive
+- id: vee_
+  name: VEE=
+  position:
+    x: -16.0
+    y: -64.28571
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -75.0
+    width: 32.0
+    height: 150.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -75.0
+    width: 24.0
+    height: 150.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {EBAR} {E0BAR} {E1BAR} {A} {B} {Q00} {Q01} {Q02} {Q03} {Q10} {Q11} {Q12} {Q13} {optional:} {VEE=} 10172
+  model_name: '10172'

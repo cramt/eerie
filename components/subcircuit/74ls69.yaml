@@ -1,0 +1,130 @@
+id: 74ls69
+name: 74LS69
+description: 'SPICE subcircuit: 74LS69'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: 1clka
+  name: 1CLKA
+  position:
+    x: -16.0
+    y: -75.0
+  direction: left
+  pin_type: passive
+- id: 1clrbar
+  name: 1CLRBAR
+  position:
+    x: -16.0
+    y: -74.234695
+  direction: left
+  pin_type: passive
+- id: 1clkb
+  name: 1CLKB
+  position:
+    x: -16.0
+    y: -73.46939
+  direction: left
+  pin_type: passive
+- id: 2clrbar
+  name: 2CLRBAR
+  position:
+    x: -16.0
+    y: -72.70408
+  direction: left
+  pin_type: passive
+- id: 2clk
+  name: 2CLK
+  position:
+    x: -16.0
+    y: -71.938774
+  direction: left
+  pin_type: passive
+- id: 1qa
+  name: 1QA
+  position:
+    x: -16.0
+    y: -71.17347
+  direction: left
+  pin_type: passive
+- id: 1qb
+  name: 1QB
+  position:
+    x: -16.0
+    y: -70.408165
+  direction: left
+  pin_type: passive
+- id: 1qc
+  name: 1QC
+  position:
+    x: -16.0
+    y: -69.64286
+  direction: left
+  pin_type: passive
+- id: 1qd
+  name: 1QD
+  position:
+    x: -16.0
+    y: -68.87755
+  direction: left
+  pin_type: passive
+- id: 2qa
+  name: 2QA
+  position:
+    x: -16.0
+    y: -68.11224
+  direction: left
+  pin_type: passive
+- id: 2qb
+  name: 2QB
+  position:
+    x: -16.0
+    y: -67.34694
+  direction: left
+  pin_type: passive
+- id: 2qc
+  name: 2QC
+  position:
+    x: -16.0
+    y: -66.581635
+  direction: left
+  pin_type: passive
+- id: 2qd
+  name: 2QD
+  position:
+    x: -16.0
+    y: -65.81632
+  direction: left
+  pin_type: passive
+- id: optional_
+  name: 'optional:'
+  position:
+    x: -16.0
+    y: -65.05102
+  direction: left
+  pin_type: passive
+- id: dpwr_
+  name: DPWR=
+  position:
+    x: -16.0
+    y: -64.28571
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -75.0
+    width: 32.0
+    height: 150.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -75.0
+    width: 24.0
+    height: 150.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {1CLKA} {1CLRBAR} {1CLKB} {2CLRBAR} {2CLK} {1QA} {1QB} {1QC} {1QD} {2QA} {2QB} {2QC} {2QD} {optional:} {DPWR=} 74LS69
+  model_name: 74LS69

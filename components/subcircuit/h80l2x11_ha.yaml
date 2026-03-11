@@ -1,0 +1,81 @@
+id: h80l2x11_ha
+name: H80L2X11_HA
+description: 'SPICE subcircuit: H80L2X11_HA'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: '114'
+  name: '114'
+  position:
+    x: -16.0
+    y: -40.0
+  direction: left
+  pin_type: passive
+- id: '106'
+  name: '106'
+  position:
+    x: -16.0
+    y: -38.367348
+  direction: left
+  pin_type: passive
+- id: '104'
+  name: '104'
+  position:
+    x: -16.0
+    y: -36.734695
+  direction: left
+  pin_type: passive
+- id: '111'
+  name: '111'
+  position:
+    x: -16.0
+    y: -35.10204
+  direction: left
+  pin_type: passive
+- id: '110'
+  name: '110'
+  position:
+    x: -16.0
+    y: -33.469387
+  direction: left
+  pin_type: passive
+- id: '103'
+  name: '103'
+  position:
+    x: -16.0
+    y: -31.836735
+  direction: left
+  pin_type: passive
+- id: '102'
+  name: '102'
+  position:
+    x: -16.0
+    y: -30.204082
+  direction: left
+  pin_type: passive
+- id: '105'
+  name: '105'
+  position:
+    x: -16.0
+    y: -28.571428
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -40.0
+    width: 32.0
+    height: 80.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -40.0
+    width: 24.0
+    height: 80.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {114} {106} {104} {111} {110} {103} {102} {105} H80L2X11_HA
+  model_name: H80L2X11_HA

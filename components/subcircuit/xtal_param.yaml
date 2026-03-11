@@ -1,0 +1,88 @@
+id: xtal_param
+name: XTAL_param
+description: 'SPICE subcircuit: XTAL_param'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: '1'
+  name: '1'
+  position:
+    x: -16.0
+    y: -45.0
+  direction: left
+  pin_type: passive
+- id: '2'
+  name: '2'
+  position:
+    x: -16.0
+    y: -43.59375
+  direction: left
+  pin_type: passive
+- id: freq_1meg
+  name: FREQ=1Meg
+  position:
+    x: -16.0
+    y: -42.1875
+  direction: left
+  pin_type: passive
+- id: rser_750
+  name: Rser=750
+  position:
+    x: -16.0
+    y: -40.78125
+  direction: left
+  pin_type: passive
+- id: cpar_13pf
+  name: Cpar=13pf
+  position:
+    x: -16.0
+    y: -39.375
+  direction: left
+  pin_type: passive
+- id: q_1000
+  name: Q=1000
+  position:
+    x: -16.0
+    y: -37.96875
+  direction: left
+  pin_type: passive
+- id: rpar_1e24
+  name: Rpar=1e24
+  position:
+    x: -16.0
+    y: -36.5625
+  direction: left
+  pin_type: passive
+- id: ic_l_current_0_5m
+  name: IC_L_current=0.5m
+  position:
+    x: -16.0
+    y: -35.15625
+  direction: left
+  pin_type: passive
+- id: ic__c_volt_0
+  name: IC__C_Volt=0
+  position:
+    x: -16.0
+    y: -33.75
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -45.0
+    width: 32.0
+    height: 90.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -45.0
+    width: 24.0
+    height: 90.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {1} {2} {FREQ=1Meg} {Rser=750} {Cpar=13pf} {Q=1000} {Rpar=1e24} {IC_L_current=0.5m} {IC__C_Volt=0} XTAL_param
+  model_name: XTAL_param

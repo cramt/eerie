@@ -1,0 +1,21 @@
+[workspace]
+members = [
+    "eerie-core",
+    "eerie-codegen",
+    "eerie-wasm",
+    "eerie-rpc",
+    "eerie-daemon",
+]
+resolver = "2"
+
+[workspace.dependencies]
+uuid        = { version = "1", features = ["v4"] }
+thiserror   = "2"
+nalgebra    = "0.34"
+log         = "0.4"
+facet       = "0.44.1"
+facet-json  = "0.44.1"
+facet-yaml  = "0.44.1"
+roam           = { git = "https://github.com/bearcove/roam" }
+roam-codegen   = { git = "https://github.com/bearcove/roam" }
+roam-inprocess = { git = "https://github.com/bearcove/roam" }

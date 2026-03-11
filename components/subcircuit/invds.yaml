@@ -1,0 +1,53 @@
+id: invds
+name: INVDS
+description: 'SPICE subcircuit: INVDS'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: '9902'
+  name: '9902'
+  position:
+    x: -16.0
+    y: -20.0
+  direction: left
+  pin_type: passive
+- id: '9903'
+  name: '9903'
+  position:
+    x: -16.0
+    y: -15.555555
+  direction: left
+  pin_type: passive
+- id: '9901'
+  name: '9901'
+  position:
+    x: -16.0
+    y: -11.111111
+  direction: left
+  pin_type: passive
+- id: '9904'
+  name: '9904'
+  position:
+    x: -16.0
+    y: -6.666667
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -20.0
+    width: 32.0
+    height: 40.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -20.0
+    width: 24.0
+    height: 40.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {9902} {9903} {9901} {9904} INVDS
+  model_name: INVDS

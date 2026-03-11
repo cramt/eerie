@@ -1,0 +1,95 @@
+id: lm5113_trans
+name: LM5113_TRANS
+description: 'SPICE subcircuit: LM5113_TRANS'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: hoh
+  name: HOH
+  position:
+    x: -16.0
+    y: -50.0
+  direction: left
+  pin_type: passive
+- id: hol
+  name: HOL
+  position:
+    x: -16.0
+    y: -48.76543
+  direction: left
+  pin_type: passive
+- id: hb
+  name: HB
+  position:
+    x: -16.0
+    y: -47.530865
+  direction: left
+  pin_type: passive
+- id: hi
+  name: HI
+  position:
+    x: -16.0
+    y: -46.296295
+  direction: left
+  pin_type: passive
+- id: hs
+  name: HS
+  position:
+    x: -16.0
+    y: -45.06173
+  direction: left
+  pin_type: passive
+- id: li
+  name: LI
+  position:
+    x: -16.0
+    y: -43.82716
+  direction: left
+  pin_type: passive
+- id: loh
+  name: LOH
+  position:
+    x: -16.0
+    y: -42.59259
+  direction: left
+  pin_type: passive
+- id: lol
+  name: LOL
+  position:
+    x: -16.0
+    y: -41.358025
+  direction: left
+  pin_type: passive
+- id: vdd
+  name: VDD
+  position:
+    x: -16.0
+    y: -40.123455
+  direction: left
+  pin_type: passive
+- id: vss
+  name: VSS
+  position:
+    x: -16.0
+    y: -38.88889
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -50.0
+    width: 32.0
+    height: 100.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -50.0
+    width: 24.0
+    height: 100.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {HOH} {HOL} {HB} {HI} {HS} {LI} {LOH} {LOL} {VDD} {VSS} LM5113_TRANS
+  model_name: LM5113_TRANS

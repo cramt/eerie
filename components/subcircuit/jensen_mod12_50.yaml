@@ -1,0 +1,39 @@
+id: jensen_mod12_50
+name: Jensen_Mod12-50
+description: 'SPICE subcircuit: Jensen_Mod12-50'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: p
+  name: P
+  position:
+    x: -16.0
+    y: -10.0
+  direction: left
+  pin_type: passive
+- id: n
+  name: N
+  position:
+    x: -16.0
+    y: 10.0
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -10.0
+    width: 32.0
+    height: 20.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -10.0
+    width: 24.0
+    height: 20.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {P} {N} Jensen_Mod12-50
+  model_name: Jensen_Mod12-50

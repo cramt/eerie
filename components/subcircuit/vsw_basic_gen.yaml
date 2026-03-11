@@ -1,0 +1,53 @@
+id: vsw_basic_gen
+name: VSW_BASIC_GEN
+description: 'SPICE subcircuit: VSW_BASIC_GEN'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: nd1
+  name: ND1
+  position:
+    x: -16.0
+    y: -20.0
+  direction: left
+  pin_type: passive
+- id: nd2
+  name: ND2
+  position:
+    x: -16.0
+    y: -15.555555
+  direction: left
+  pin_type: passive
+- id: cn_
+  name: CN+
+  position:
+    x: -16.0
+    y: -11.111111
+  direction: left
+  pin_type: passive
+- id: cn_
+  name: CN-
+  position:
+    x: -16.0
+    y: -6.666667
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -20.0
+    width: 32.0
+    height: 40.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -20.0
+    width: 24.0
+    height: 40.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {ND1} {ND2} {CN+} {CN-} VSW_BASIC_GEN
+  model_name: VSW_BASIC_GEN

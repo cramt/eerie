@@ -1,0 +1,46 @@
+id: zvp2106g_zx
+name: ZVP2106G_ZX
+description: 'SPICE subcircuit: ZVP2106G_ZX'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: '3'
+  name: '3'
+  position:
+    x: -16.0
+    y: -15.0
+  direction: left
+  pin_type: passive
+- id: '4'
+  name: '4'
+  position:
+    x: -16.0
+    y: -7.5
+  direction: left
+  pin_type: passive
+- id: '5'
+  name: '5'
+  position:
+    x: -16.0
+    y: 0.0
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -15.0
+    width: 32.0
+    height: 30.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -15.0
+    width: 24.0
+    height: 30.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {3} {4} {5} ZVP2106G_ZX
+  model_name: ZVP2106G_ZX

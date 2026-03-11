@@ -1,0 +1,46 @@
+id: ltc1798_25
+name: LTC1798-25
+description: 'SPICE subcircuit: LTC1798-25'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: '104'
+  name: '104'
+  position:
+    x: -16.0
+    y: -15.0
+  direction: left
+  pin_type: passive
+- id: '103'
+  name: '103'
+  position:
+    x: -16.0
+    y: -7.5
+  direction: left
+  pin_type: passive
+- id: '6'
+  name: '6'
+  position:
+    x: -16.0
+    y: 0.0
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -15.0
+    width: 32.0
+    height: 30.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -15.0
+    width: 24.0
+    height: 30.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {104} {103} {6} LTC1798-25
+  model_name: LTC1798-25

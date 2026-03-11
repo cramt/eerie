@@ -1,0 +1,67 @@
+id: outckts
+name: OUTCKTS
+description: 'SPICE subcircuit: OUTCKTS'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: '9903'
+  name: '9903'
+  position:
+    x: -16.0
+    y: -30.0
+  direction: left
+  pin_type: passive
+- id: '9911'
+  name: '9911'
+  position:
+    x: -16.0
+    y: -27.6
+  direction: left
+  pin_type: passive
+- id: '9906'
+  name: '9906'
+  position:
+    x: -16.0
+    y: -25.2
+  direction: left
+  pin_type: passive
+- id: '9901'
+  name: '9901'
+  position:
+    x: -16.0
+    y: -22.8
+  direction: left
+  pin_type: passive
+- id: '9904'
+  name: '9904'
+  position:
+    x: -16.0
+    y: -20.4
+  direction: left
+  pin_type: passive
+- id: '9917'
+  name: '9917'
+  position:
+    x: -16.0
+    y: -18.0
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -30.0
+    width: 32.0
+    height: 60.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -30.0
+    width: 24.0
+    height: 60.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {9903} {9911} {9906} {9901} {9904} {9917} OUTCKTS
+  model_name: OUTCKTS

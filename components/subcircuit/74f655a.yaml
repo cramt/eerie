@@ -1,0 +1,193 @@
+id: 74f655a
+name: 74F655A
+description: 'SPICE subcircuit: 74F655A'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: oe0bar
+  name: OE0BAR
+  position:
+    x: -16.0
+    y: -120.0
+  direction: left
+  pin_type: passive
+- id: oe1bar
+  name: OE1BAR
+  position:
+    x: -16.0
+    y: -119.54631
+  direction: left
+  pin_type: passive
+- id: oe2bar
+  name: OE2BAR
+  position:
+    x: -16.0
+    y: -119.09263
+  direction: left
+  pin_type: passive
+- id: pi
+  name: PI
+  position:
+    x: -16.0
+    y: -118.63894
+  direction: left
+  pin_type: passive
+- id: d0
+  name: D0
+  position:
+    x: -16.0
+    y: -118.18526
+  direction: left
+  pin_type: passive
+- id: d1
+  name: D1
+  position:
+    x: -16.0
+    y: -117.73157
+  direction: left
+  pin_type: passive
+- id: d2
+  name: D2
+  position:
+    x: -16.0
+    y: -117.277885
+  direction: left
+  pin_type: passive
+- id: d3
+  name: D3
+  position:
+    x: -16.0
+    y: -116.824196
+  direction: left
+  pin_type: passive
+- id: d4
+  name: D4
+  position:
+    x: -16.0
+    y: -116.370514
+  direction: left
+  pin_type: passive
+- id: d5
+  name: D5
+  position:
+    x: -16.0
+    y: -115.916824
+  direction: left
+  pin_type: passive
+- id: d6
+  name: D6
+  position:
+    x: -16.0
+    y: -115.463135
+  direction: left
+  pin_type: passive
+- id: d7
+  name: D7
+  position:
+    x: -16.0
+    y: -115.00945
+  direction: left
+  pin_type: passive
+- id: q0bar
+  name: Q0BAR
+  position:
+    x: -16.0
+    y: -114.55576
+  direction: left
+  pin_type: passive
+- id: q1bar
+  name: Q1BAR
+  position:
+    x: -16.0
+    y: -114.10208
+  direction: left
+  pin_type: passive
+- id: q2bar
+  name: Q2BAR
+  position:
+    x: -16.0
+    y: -113.64839
+  direction: left
+  pin_type: passive
+- id: q3bar
+  name: Q3BAR
+  position:
+    x: -16.0
+    y: -113.19471
+  direction: left
+  pin_type: passive
+- id: q4bar
+  name: Q4BAR
+  position:
+    x: -16.0
+    y: -112.74102
+  direction: left
+  pin_type: passive
+- id: q5bar
+  name: Q5BAR
+  position:
+    x: -16.0
+    y: -112.28734
+  direction: left
+  pin_type: passive
+- id: q6bar
+  name: Q6BAR
+  position:
+    x: -16.0
+    y: -111.83365
+  direction: left
+  pin_type: passive
+- id: q7bar
+  name: Q7BAR
+  position:
+    x: -16.0
+    y: -111.37996
+  direction: left
+  pin_type: passive
+- id: even
+  name: EVEN
+  position:
+    x: -16.0
+    y: -110.92628
+  direction: left
+  pin_type: passive
+- id: odd
+  name: ODD
+  position:
+    x: -16.0
+    y: -110.47259
+  direction: left
+  pin_type: passive
+- id: optional_
+  name: 'OPTIONAL:'
+  position:
+    x: -16.0
+    y: -110.018906
+  direction: left
+  pin_type: passive
+- id: dpwr_
+  name: DPWR=
+  position:
+    x: -16.0
+    y: -109.565216
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -120.0
+    width: 32.0
+    height: 240.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -120.0
+    width: 24.0
+    height: 240.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {OE0BAR} {OE1BAR} {OE2BAR} {PI} {D0} {D1} {D2} {D3} {D4} {D5} {D6} {D7} {Q0BAR} {Q1BAR} {Q2BAR} {Q3BAR} {Q4BAR} {Q5BAR} {Q6BAR} {Q7BAR} {EVEN} {ODD} {OPTIONAL:} {DPWR=} 74F655A
+  model_name: 74F655A

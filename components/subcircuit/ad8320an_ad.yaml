@@ -1,0 +1,151 @@
+id: ad8320an_ad
+name: ad8320an_AD
+description: 'SPICE subcircuit: ad8320an_AD'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: datenb
+  name: datenb
+  position:
+    x: -16.0
+    y: -90.0
+  direction: left
+  pin_type: passive
+- id: sel
+  name: sel
+  position:
+    x: -16.0
+    y: -89.37716
+  direction: left
+  pin_type: passive
+- id: clk
+  name: clk
+  position:
+    x: -16.0
+    y: -88.754326
+  direction: left
+  pin_type: passive
+- id: sdata
+  name: sdata
+  position:
+    x: -16.0
+    y: -88.131485
+  direction: left
+  pin_type: passive
+- id: '99'
+  name: '99'
+  position:
+    x: -16.0
+    y: -87.50865
+  direction: left
+  pin_type: passive
+- id: '7'
+  name: '7'
+  position:
+    x: -16.0
+    y: -86.88581
+  direction: left
+  pin_type: passive
+- id: '6'
+  name: '6'
+  position:
+    x: -16.0
+    y: -86.26298
+  direction: left
+  pin_type: passive
+- id: '97'
+  name: '97'
+  position:
+    x: -16.0
+    y: -85.64014
+  direction: left
+  pin_type: passive
+- id: pdb
+  name: pdb
+  position:
+    x: -16.0
+    y: -85.0173
+  direction: left
+  pin_type: passive
+- id: '98'
+  name: '98'
+  position:
+    x: -16.0
+    y: -84.39446
+  direction: left
+  pin_type: passive
+- id: y8
+  name: y8
+  position:
+    x: -16.0
+    y: -83.77163
+  direction: left
+  pin_type: passive
+- id: y7
+  name: y7
+  position:
+    x: -16.0
+    y: -83.14879
+  direction: left
+  pin_type: passive
+- id: y6
+  name: y6
+  position:
+    x: -16.0
+    y: -82.525955
+  direction: left
+  pin_type: passive
+- id: y5
+  name: y5
+  position:
+    x: -16.0
+    y: -81.903114
+  direction: left
+  pin_type: passive
+- id: y4
+  name: y4
+  position:
+    x: -16.0
+    y: -81.28027
+  direction: left
+  pin_type: passive
+- id: y3
+  name: y3
+  position:
+    x: -16.0
+    y: -80.65744
+  direction: left
+  pin_type: passive
+- id: y2
+  name: y2
+  position:
+    x: -16.0
+    y: -80.0346
+  direction: left
+  pin_type: passive
+- id: y1
+  name: y1
+  position:
+    x: -16.0
+    y: -79.411766
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -90.0
+    width: 32.0
+    height: 180.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -90.0
+    width: 24.0
+    height: 180.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {datenb} {sel} {clk} {sdata} {99} {7} {6} {97} {pdb} {98} {y8} {y7} {y6} {y5} {y4} {y3} {y2} {y1} ad8320an_AD
+  model_name: ad8320an_AD

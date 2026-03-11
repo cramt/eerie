@@ -1,0 +1,88 @@
+id: 74f112
+name: 74F112
+description: 'SPICE subcircuit: 74F112'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: 1prebar
+  name: 1PREBAR
+  position:
+    x: -16.0
+    y: -45.0
+  direction: left
+  pin_type: passive
+- id: 1clrbar
+  name: 1CLRBAR
+  position:
+    x: -16.0
+    y: -43.59375
+  direction: left
+  pin_type: passive
+- id: 1clk
+  name: 1CLK
+  position:
+    x: -16.0
+    y: -42.1875
+  direction: left
+  pin_type: passive
+- id: 1j
+  name: 1J
+  position:
+    x: -16.0
+    y: -40.78125
+  direction: left
+  pin_type: passive
+- id: 1k
+  name: 1K
+  position:
+    x: -16.0
+    y: -39.375
+  direction: left
+  pin_type: passive
+- id: 1q
+  name: 1Q
+  position:
+    x: -16.0
+    y: -37.96875
+  direction: left
+  pin_type: passive
+- id: 1qbar
+  name: 1QBAR
+  position:
+    x: -16.0
+    y: -36.5625
+  direction: left
+  pin_type: passive
+- id: optional_
+  name: 'optional:'
+  position:
+    x: -16.0
+    y: -35.15625
+  direction: left
+  pin_type: passive
+- id: dpwr_
+  name: DPWR=
+  position:
+    x: -16.0
+    y: -33.75
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -45.0
+    width: 32.0
+    height: 90.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -45.0
+    width: 24.0
+    height: 90.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {1PREBAR} {1CLRBAR} {1CLK} {1J} {1K} {1Q} {1QBAR} {optional:} {DPWR=} 74F112
+  model_name: 74F112

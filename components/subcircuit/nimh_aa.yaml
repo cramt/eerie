@@ -1,0 +1,53 @@
+id: nimh_aa
+name: NIMH_AA
+description: 'SPICE subcircuit: NIMH_AA'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: ext_
+  name: Ext+
+  position:
+    x: -16.0
+    y: -20.0
+  direction: left
+  pin_type: passive
+- id: ext_
+  name: Ext-
+  position:
+    x: -16.0
+    y: -15.555555
+  direction: left
+  pin_type: passive
+- id: soc
+  name: Soc
+  position:
+    x: -16.0
+    y: -11.111111
+  direction: left
+  pin_type: passive
+- id: rate_d
+  name: Rate_d
+  position:
+    x: -16.0
+    y: -6.666667
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -20.0
+    width: 32.0
+    height: 40.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -20.0
+    width: 24.0
+    height: 40.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {Ext+} {Ext-} {Soc} {Rate_d} NIMH_AA
+  model_name: NIMH_AA

@@ -1,0 +1,144 @@
+id: cd4022b
+name: CD4022B
+description: 'SPICE subcircuit: CD4022B'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: mr
+  name: MR
+  position:
+    x: -16.0
+    y: -85.0
+  direction: left
+  pin_type: passive
+- id: cp1
+  name: CP1
+  position:
+    x: -16.0
+    y: -84.33594
+  direction: left
+  pin_type: passive
+- id: cp0
+  name: CP0
+  position:
+    x: -16.0
+    y: -83.671875
+  direction: left
+  pin_type: passive
+- id: o0
+  name: O0
+  position:
+    x: -16.0
+    y: -83.00781
+  direction: left
+  pin_type: passive
+- id: o1
+  name: O1
+  position:
+    x: -16.0
+    y: -82.34375
+  direction: left
+  pin_type: passive
+- id: o2
+  name: O2
+  position:
+    x: -16.0
+    y: -81.67969
+  direction: left
+  pin_type: passive
+- id: o3
+  name: O3
+  position:
+    x: -16.0
+    y: -81.015625
+  direction: left
+  pin_type: passive
+- id: o4
+  name: O4
+  position:
+    x: -16.0
+    y: -80.35156
+  direction: left
+  pin_type: passive
+- id: o5
+  name: O5
+  position:
+    x: -16.0
+    y: -79.6875
+  direction: left
+  pin_type: passive
+- id: o6
+  name: O6
+  position:
+    x: -16.0
+    y: -79.02344
+  direction: left
+  pin_type: passive
+- id: o7
+  name: O7
+  position:
+    x: -16.0
+    y: -78.359375
+  direction: left
+  pin_type: passive
+- id: o47
+  name: O47
+  position:
+    x: -16.0
+    y: -77.69531
+  direction: left
+  pin_type: passive
+- id: vdd
+  name: VDD
+  position:
+    x: -16.0
+    y: -77.03125
+  direction: left
+  pin_type: passive
+- id: vgnd
+  name: VGND
+  position:
+    x: -16.0
+    y: -76.36719
+  direction: left
+  pin_type: passive
+- id: vdd1__vdd_
+  name: vdd1={vdd}
+  position:
+    x: -16.0
+    y: -75.703125
+  direction: left
+  pin_type: passive
+- id: speed_1
+  name: speed=1
+  position:
+    x: -16.0
+    y: -75.03906
+  direction: left
+  pin_type: passive
+- id: tripdt_5n
+  name: tripdt=5n
+  position:
+    x: -16.0
+    y: -74.375
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -85.0
+    width: 32.0
+    height: 170.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -85.0
+    width: 24.0
+    height: 170.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {MR} {CP1} {CP0} {O0} {O1} {O2} {O3} {O4} {O5} {O6} {O7} {O47} {VDD} {VGND} {vdd1={vdd}} {speed=1} {tripdt=5n} CD4022B
+  model_name: CD4022B

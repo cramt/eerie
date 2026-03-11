@@ -1,0 +1,179 @@
+id: 74ls687
+name: 74LS687
+description: 'SPICE subcircuit: 74LS687'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: q0
+  name: Q0
+  position:
+    x: -16.0
+    y: -110.0
+  direction: left
+  pin_type: passive
+- id: q1
+  name: Q1
+  position:
+    x: -16.0
+    y: -109.50114
+  direction: left
+  pin_type: passive
+- id: q2
+  name: Q2
+  position:
+    x: -16.0
+    y: -109.002266
+  direction: left
+  pin_type: passive
+- id: q3
+  name: Q3
+  position:
+    x: -16.0
+    y: -108.5034
+  direction: left
+  pin_type: passive
+- id: q4
+  name: Q4
+  position:
+    x: -16.0
+    y: -108.00453
+  direction: left
+  pin_type: passive
+- id: q5
+  name: Q5
+  position:
+    x: -16.0
+    y: -107.50567
+  direction: left
+  pin_type: passive
+- id: q6
+  name: Q6
+  position:
+    x: -16.0
+    y: -107.006805
+  direction: left
+  pin_type: passive
+- id: q7
+  name: Q7
+  position:
+    x: -16.0
+    y: -106.507935
+  direction: left
+  pin_type: passive
+- id: p0
+  name: P0
+  position:
+    x: -16.0
+    y: -106.00907
+  direction: left
+  pin_type: passive
+- id: p1
+  name: P1
+  position:
+    x: -16.0
+    y: -105.5102
+  direction: left
+  pin_type: passive
+- id: p2
+  name: P2
+  position:
+    x: -16.0
+    y: -105.01134
+  direction: left
+  pin_type: passive
+- id: p3
+  name: P3
+  position:
+    x: -16.0
+    y: -104.512474
+  direction: left
+  pin_type: passive
+- id: p4
+  name: P4
+  position:
+    x: -16.0
+    y: -104.0136
+  direction: left
+  pin_type: passive
+- id: p5
+  name: P5
+  position:
+    x: -16.0
+    y: -103.51474
+  direction: left
+  pin_type: passive
+- id: p6
+  name: P6
+  position:
+    x: -16.0
+    y: -103.01587
+  direction: left
+  pin_type: passive
+- id: p7
+  name: P7
+  position:
+    x: -16.0
+    y: -102.517006
+  direction: left
+  pin_type: passive
+- id: g1bar
+  name: G1BAR
+  position:
+    x: -16.0
+    y: -102.01814
+  direction: left
+  pin_type: passive
+- id: g2bar
+  name: G2BAR
+  position:
+    x: -16.0
+    y: -101.51927
+  direction: left
+  pin_type: passive
+- id: peqqbar
+  name: PEQQBAR
+  position:
+    x: -16.0
+    y: -101.02041
+  direction: left
+  pin_type: passive
+- id: pgtqbar
+  name: PGTQBAR
+  position:
+    x: -16.0
+    y: -100.521545
+  direction: left
+  pin_type: passive
+- id: optional_
+  name: 'optional:'
+  position:
+    x: -16.0
+    y: -100.022675
+  direction: left
+  pin_type: passive
+- id: dpwr_
+  name: DPWR=
+  position:
+    x: -16.0
+    y: -99.52381
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -110.0
+    width: 32.0
+    height: 220.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -110.0
+    width: 24.0
+    height: 220.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {Q0} {Q1} {Q2} {Q3} {Q4} {Q5} {Q6} {Q7} {P0} {P1} {P2} {P3} {P4} {P5} {P6} {P7} {G1BAR} {G2BAR} {PEQQBAR} {PGTQBAR} {optional:} {DPWR=} 74LS687
+  model_name: 74LS687

@@ -1,0 +1,109 @@
+id: ad624_ad
+name: AD624_AD
+description: 'SPICE subcircuit: AD624_AD'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: '5'
+  name: '5'
+  position:
+    x: -16.0
+    y: -60.0
+  direction: left
+  pin_type: passive
+- id: '1'
+  name: '1'
+  position:
+    x: -16.0
+    y: -59.008263
+  direction: left
+  pin_type: passive
+- id: '2'
+  name: '2'
+  position:
+    x: -16.0
+    y: -58.01653
+  direction: left
+  pin_type: passive
+- id: '50'
+  name: '50'
+  position:
+    x: -16.0
+    y: -57.02479
+  direction: left
+  pin_type: passive
+- id: '17'
+  name: '17'
+  position:
+    x: -16.0
+    y: -56.03306
+  direction: left
+  pin_type: passive
+- id: '32'
+  name: '32'
+  position:
+    x: -16.0
+    y: -55.04132
+  direction: left
+  pin_type: passive
+- id: '99'
+  name: '99'
+  position:
+    x: -16.0
+    y: -54.049587
+  direction: left
+  pin_type: passive
+- id: '8'
+  name: '8'
+  position:
+    x: -16.0
+    y: -53.057854
+  direction: left
+  pin_type: passive
+- id: '11'
+  name: '11'
+  position:
+    x: -16.0
+    y: -52.066116
+  direction: left
+  pin_type: passive
+- id: '42'
+  name: '42'
+  position:
+    x: -16.0
+    y: -51.07438
+  direction: left
+  pin_type: passive
+- id: '41'
+  name: '41'
+  position:
+    x: -16.0
+    y: -50.082645
+  direction: left
+  pin_type: passive
+- id: '40'
+  name: '40'
+  position:
+    x: -16.0
+    y: -49.090908
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -60.0
+    width: 32.0
+    height: 120.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -60.0
+    width: 24.0
+    height: 120.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {5} {1} {2} {50} {17} {32} {99} {8} {11} {42} {41} {40} AD624_AD
+  model_name: AD624_AD

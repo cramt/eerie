@@ -1,0 +1,137 @@
+id: uln2001
+name: ULN2001
+description: 'SPICE subcircuit: ULN2001'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: b_1_
+  name: B[1]
+  position:
+    x: -16.0
+    y: -80.0
+  direction: left
+  pin_type: passive
+- id: b_2_
+  name: B[2]
+  position:
+    x: -16.0
+    y: -79.28889
+  direction: left
+  pin_type: passive
+- id: b_3_
+  name: B[3]
+  position:
+    x: -16.0
+    y: -78.577774
+  direction: left
+  pin_type: passive
+- id: b_4_
+  name: B[4]
+  position:
+    x: -16.0
+    y: -77.86667
+  direction: left
+  pin_type: passive
+- id: b_5_
+  name: B[5]
+  position:
+    x: -16.0
+    y: -77.155556
+  direction: left
+  pin_type: passive
+- id: b_6_
+  name: B[6]
+  position:
+    x: -16.0
+    y: -76.44444
+  direction: left
+  pin_type: passive
+- id: b_7_
+  name: B[7]
+  position:
+    x: -16.0
+    y: -75.73333
+  direction: left
+  pin_type: passive
+- id: e
+  name: E
+  position:
+    x: -16.0
+    y: -75.022224
+  direction: left
+  pin_type: passive
+- id: com
+  name: COM
+  position:
+    x: -16.0
+    y: -74.31111
+  direction: left
+  pin_type: passive
+- id: c_7_
+  name: C[7]
+  position:
+    x: -16.0
+    y: -73.6
+  direction: left
+  pin_type: passive
+- id: c_6_
+  name: C[6]
+  position:
+    x: -16.0
+    y: -72.888885
+  direction: left
+  pin_type: passive
+- id: c_75
+  name: C[75
+  position:
+    x: -16.0
+    y: -72.17778
+  direction: left
+  pin_type: passive
+- id: c_4_
+  name: C[4]
+  position:
+    x: -16.0
+    y: -71.46667
+  direction: left
+  pin_type: passive
+- id: c_3_
+  name: C[3]
+  position:
+    x: -16.0
+    y: -70.755554
+  direction: left
+  pin_type: passive
+- id: c_2_
+  name: C[2]
+  position:
+    x: -16.0
+    y: -70.04445
+  direction: left
+  pin_type: passive
+- id: c_1_
+  name: C[1]
+  position:
+    x: -16.0
+    y: -69.333336
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -80.0
+    width: 32.0
+    height: 160.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -80.0
+    width: 24.0
+    height: 160.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {B[1]} {B[2]} {B[3]} {B[4]} {B[5]} {B[6]} {B[7]} {E} {COM} {C[7]} {C[6]} {C[75} {C[4]} {C[3]} {C[2]} {C[1]} ULN2001
+  model_name: ULN2001

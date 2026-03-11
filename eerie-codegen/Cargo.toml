@@ -1,0 +1,16 @@
+[package]
+name = "eerie-codegen"
+version = "0.1.0"
+edition = "2024"
+description = "Dev tool: generates TypeScript types from Rust types"
+
+[[bin]]
+name = "eerie-codegen"
+path = "src/main.rs"
+
+[dependencies]
+eerie-core        = { path = "../eerie-core" }
+eerie-rpc         = { path = "../eerie-rpc" }
+thevenin-types    = { git = "https://github.com/cramt/thevenin", branch = "ralph/simulation-engine" }
+facet-typescript  = "0.44.1"
+roam-codegen      = { workspace = true }

@@ -1,0 +1,95 @@
+id: slide_switch_stsss2231
+name: SLIDE_SWITCH_STSSS2231
+description: 'SPICE subcircuit: SLIDE_SWITCH_STSSS2231'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: com1
+  name: com1
+  position:
+    x: -16.0
+    y: -50.0
+  direction: left
+  pin_type: passive
+- id: n1
+  name: N1
+  position:
+    x: -16.0
+    y: -48.76543
+  direction: left
+  pin_type: passive
+- id: n2
+  name: N2
+  position:
+    x: -16.0
+    y: -47.530865
+  direction: left
+  pin_type: passive
+- id: n3
+  name: N3
+  position:
+    x: -16.0
+    y: -46.296295
+  direction: left
+  pin_type: passive
+- id: com2
+  name: com2
+  position:
+    x: -16.0
+    y: -45.06173
+  direction: left
+  pin_type: passive
+- id: n4
+  name: N4
+  position:
+    x: -16.0
+    y: -43.82716
+  direction: left
+  pin_type: passive
+- id: n5
+  name: N5
+  position:
+    x: -16.0
+    y: -42.59259
+  direction: left
+  pin_type: passive
+- id: n6
+  name: N6
+  position:
+    x: -16.0
+    y: -41.358025
+  direction: left
+  pin_type: passive
+- id: p
+  name: p
+  position:
+    x: -16.0
+    y: -40.123455
+  direction: left
+  pin_type: passive
+- id: status_1
+  name: status=1
+  position:
+    x: -16.0
+    y: -38.88889
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -50.0
+    width: 32.0
+    height: 100.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -50.0
+    width: 24.0
+    height: 100.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {com1} {N1} {N2} {N3} {com2} {N4} {N5} {N6} {p} {status=1} SLIDE_SWITCH_STSSS2231
+  model_name: SLIDE_SWITCH_STSSS2231

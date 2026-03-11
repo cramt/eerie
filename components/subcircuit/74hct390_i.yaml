@@ -1,0 +1,109 @@
+id: 74hct390_i
+name: 74HCT390_i
+description: 'SPICE subcircuit: 74HCT390_i'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: mr
+  name: MR
+  position:
+    x: -16.0
+    y: -60.0
+  direction: left
+  pin_type: passive
+- id: cp0
+  name: CP0
+  position:
+    x: -16.0
+    y: -59.008263
+  direction: left
+  pin_type: passive
+- id: cp1
+  name: CP1
+  position:
+    x: -16.0
+    y: -58.01653
+  direction: left
+  pin_type: passive
+- id: q0
+  name: Q0
+  position:
+    x: -16.0
+    y: -57.02479
+  direction: left
+  pin_type: passive
+- id: q1
+  name: Q1
+  position:
+    x: -16.0
+    y: -56.03306
+  direction: left
+  pin_type: passive
+- id: q2
+  name: Q2
+  position:
+    x: -16.0
+    y: -55.04132
+  direction: left
+  pin_type: passive
+- id: q3
+  name: Q3
+  position:
+    x: -16.0
+    y: -54.049587
+  direction: left
+  pin_type: passive
+- id: tripdt1__tripdt2_
+  name: tripdt1={tripdt2}
+  position:
+    x: -16.0
+    y: -53.057854
+  direction: left
+  pin_type: passive
+- id: td1b__td1a_
+  name: td1b={td1a}
+  position:
+    x: -16.0
+    y: -52.066116
+  direction: left
+  pin_type: passive
+- id: td2b__td2a_
+  name: td2b={td2a}
+  position:
+    x: -16.0
+    y: -51.07438
+  direction: left
+  pin_type: passive
+- id: td3b__td3a_
+  name: td3b={td3a}
+  position:
+    x: -16.0
+    y: -50.082645
+  direction: left
+  pin_type: passive
+- id: td4b__td4a_
+  name: td4b={td4a}
+  position:
+    x: -16.0
+    y: -49.090908
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -60.0
+    width: 32.0
+    height: 120.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -60.0
+    width: 24.0
+    height: 120.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {MR} {CP0} {CP1} {Q0} {Q1} {Q2} {Q3} {tripdt1={tripdt2}} {td1b={td1a}} {td2b={td2a}} {td3b={td3a}} {td4b={td4a}} 74HCT390_i
+  model_name: 74HCT390_i

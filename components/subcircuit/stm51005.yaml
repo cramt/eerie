@@ -1,0 +1,53 @@
+id: stm51005
+name: stm51005
+description: 'SPICE subcircuit: stm51005'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: pdc
+  name: PDC
+  position:
+    x: -16.0
+    y: -20.0
+  direction: left
+  pin_type: passive
+- id: pda
+  name: PDA
+  position:
+    x: -16.0
+    y: -15.555555
+  direction: left
+  pin_type: passive
+- id: ldc
+  name: LDC
+  position:
+    x: -16.0
+    y: -11.111111
+  direction: left
+  pin_type: passive
+- id: op
+  name: OP
+  position:
+    x: -16.0
+    y: -6.666667
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -20.0
+    width: 32.0
+    height: 40.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -20.0
+    width: 24.0
+    height: 40.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {PDC} {PDA} {LDC} {OP} stm51005
+  model_name: stm51005

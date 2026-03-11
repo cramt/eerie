@@ -1,0 +1,46 @@
+id: trimmer
+name: trimmer
+description: 'SPICE subcircuit: trimmer'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: t1
+  name: T1
+  position:
+    x: -16.0
+    y: -15.0
+  direction: left
+  pin_type: passive
+- id: t2
+  name: T2
+  position:
+    x: -16.0
+    y: -7.5
+  direction: left
+  pin_type: passive
+- id: wiper
+  name: WIPER
+  position:
+    x: -16.0
+    y: 0.0
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -15.0
+    width: 32.0
+    height: 30.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -15.0
+    width: 24.0
+    height: 30.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {T1} {T2} {WIPER} trimmer
+  model_name: trimmer

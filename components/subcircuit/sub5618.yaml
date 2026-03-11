@@ -1,0 +1,46 @@
+id: sub5618
+name: SUB5618
+description: 'SPICE subcircuit: SUB5618'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: '224'
+  name: '224'
+  position:
+    x: -16.0
+    y: -15.0
+  direction: left
+  pin_type: passive
+- id: '225'
+  name: '225'
+  position:
+    x: -16.0
+    y: -7.5
+  direction: left
+  pin_type: passive
+- id: '226'
+  name: '226'
+  position:
+    x: -16.0
+    y: 0.0
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -15.0
+    width: 32.0
+    height: 30.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -15.0
+    width: 24.0
+    height: 30.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {224} {225} {226} SUB5618
+  model_name: SUB5618

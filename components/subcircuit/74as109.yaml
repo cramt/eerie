@@ -1,0 +1,74 @@
+id: 74as109
+name: 74AS109
+description: 'SPICE subcircuit: 74AS109'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: clk
+  name: clk
+  position:
+    x: -16.0
+    y: -35.0
+  direction: left
+  pin_type: passive
+- id: prebar
+  name: prebar
+  position:
+    x: -16.0
+    y: -33.055557
+  direction: left
+  pin_type: passive
+- id: clrbar
+  name: clrbar
+  position:
+    x: -16.0
+    y: -31.11111
+  direction: left
+  pin_type: passive
+- id: j
+  name: j
+  position:
+    x: -16.0
+    y: -29.166666
+  direction: left
+  pin_type: passive
+- id: kbar
+  name: kbar
+  position:
+    x: -16.0
+    y: -27.222221
+  direction: left
+  pin_type: passive
+- id: q
+  name: q
+  position:
+    x: -16.0
+    y: -25.277779
+  direction: left
+  pin_type: passive
+- id: qbar
+  name: qbar
+  position:
+    x: -16.0
+    y: -23.333332
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -35.0
+    width: 32.0
+    height: 70.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -35.0
+    width: 24.0
+    height: 70.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {clk} {prebar} {clrbar} {j} {kbar} {q} {qbar} 74AS109
+  model_name: 74AS109

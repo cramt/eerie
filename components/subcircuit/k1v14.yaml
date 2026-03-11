@@ -1,0 +1,39 @@
+id: k1v14
+name: k1v14
+description: 'SPICE subcircuit: k1v14'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: mt2
+  name: MT2
+  position:
+    x: -16.0
+    y: -10.0
+  direction: left
+  pin_type: passive
+- id: mt1
+  name: MT1
+  position:
+    x: -16.0
+    y: 10.0
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -10.0
+    width: 32.0
+    height: 20.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -10.0
+    width: 24.0
+    height: 20.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {MT2} {MT1} k1v14
+  model_name: k1v14

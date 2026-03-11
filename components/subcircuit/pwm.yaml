@@ -1,0 +1,46 @@
+id: pwm
+name: PWM
+description: 'SPICE subcircuit: PWM'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: pwm_clk
+  name: PWM_CLK
+  position:
+    x: -16.0
+    y: -15.0
+  direction: left
+  pin_type: passive
+- id: reset
+  name: RESET
+  position:
+    x: -16.0
+    y: -7.5
+  direction: left
+  pin_type: passive
+- id: set
+  name: SET
+  position:
+    x: -16.0
+    y: 0.0
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -15.0
+    width: 32.0
+    height: 30.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -15.0
+    width: 24.0
+    height: 30.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {PWM_CLK} {RESET} {SET} PWM
+  model_name: PWM

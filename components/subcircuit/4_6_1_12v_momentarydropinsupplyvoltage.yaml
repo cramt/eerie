@@ -1,0 +1,39 @@
+id: 4_6_1_12v_momentarydropinsupplyvoltage
+name: 4-6-1_12V_MomentaryDropInSupplyVoltage
+description: 'SPICE subcircuit: 4-6-1_12V_MomentaryDropInSupplyVoltage'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: _
+  name: +
+  position:
+    x: -16.0
+    y: -10.0
+  direction: left
+  pin_type: passive
+- id: _
+  name: '-'
+  position:
+    x: -16.0
+    y: 10.0
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -10.0
+    width: 32.0
+    height: 20.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -10.0
+    width: 24.0
+    height: 20.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {+} {-} 4-6-1_12V_MomentaryDropInSupplyVoltage
+  model_name: 4-6-1_12V_MomentaryDropInSupplyVoltage

@@ -1,0 +1,88 @@
+id: autotransformer_v
+name: autotransformer_V
+description: 'SPICE subcircuit: autotransformer_V'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: a
+  name: a
+  position:
+    x: -16.0
+    y: -45.0
+  direction: left
+  pin_type: passive
+- id: b
+  name: b
+  position:
+    x: -16.0
+    y: -43.59375
+  direction: left
+  pin_type: passive
+- id: c
+  name: c
+  position:
+    x: -16.0
+    y: -42.1875
+  direction: left
+  pin_type: passive
+- id: v
+  name: v
+  position:
+    x: -16.0
+    y: -40.78125
+  direction: left
+  pin_type: passive
+- id: area_10e_4
+  name: Area=10e-4
+  position:
+    x: -16.0
+    y: -39.375
+  direction: left
+  pin_type: passive
+- id: len_300m
+  name: Len=300m
+  position:
+    x: -16.0
+    y: -37.96875
+  direction: left
+  pin_type: passive
+- id: n_1000
+  name: N=1000
+  position:
+    x: -16.0
+    y: -36.5625
+  direction: left
+  pin_type: passive
+- id: ur_1000
+  name: Ur=1000
+  position:
+    x: -16.0
+    y: -35.15625
+  direction: left
+  pin_type: passive
+- id: rs_1m
+  name: Rs=1m
+  position:
+    x: -16.0
+    y: -33.75
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -45.0
+    width: 32.0
+    height: 90.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -45.0
+    width: 24.0
+    height: 90.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {a} {b} {c} {v} {Area=10e-4} {Len=300m} {N=1000} {Ur=1000} {Rs=1m} autotransformer_V
+  model_name: autotransformer_V

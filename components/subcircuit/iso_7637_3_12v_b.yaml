@@ -1,0 +1,39 @@
+id: iso_7637_3_12v_b
+name: ISO_7637-3_12V_b
+description: 'SPICE subcircuit: ISO_7637-3_12V_b'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: p
+  name: P
+  position:
+    x: -16.0
+    y: -10.0
+  direction: left
+  pin_type: passive
+- id: m
+  name: M
+  position:
+    x: -16.0
+    y: 10.0
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -10.0
+    width: 32.0
+    height: 20.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -10.0
+    width: 24.0
+    height: 20.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {P} {M} ISO_7637-3_12V_b
+  model_name: ISO_7637-3_12V_b

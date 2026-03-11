@@ -1,0 +1,63 @@
+id: dc_current
+name: DC Current Source
+description: Ideal DC current source (conventional current from n to p)
+category: source
+subcategory: current
+keywords: [I, current, source, DC]
+
+pins:
+  - id: p
+    name: "+"
+    position: { x: 0, y: -12 }
+    direction: up
+    pin_type: power
+  - id: n
+    name: "-"
+    position: { x: 0, y: 12 }
+    direction: down
+    pin_type: power
+
+symbol:
+  bounds: { x: -8, y: -12, width: 16, height: 24 }
+  graphics:
+    - kind: circle
+      cx: 0.0
+      cy: 0.0
+      r: 8.0
+      stroke_width: 1.5
+    - kind: line
+      x1: 0.0
+      y1: -12.0
+      x2: 0.0
+      y2: -8.0
+      stroke_width: 1.5
+    - kind: line
+      x1: 0.0
+      y1: 8.0
+      x2: 0.0
+      y2: 12.0
+      stroke_width: 1.5
+    - kind: line
+      x1: 0.0
+      y1: -5.0
+      x2: 0.0
+      y2: 5.0
+      stroke_width: 1.5
+    - kind: polyline
+      points:
+        - { x: -3.0, y: -2.0 }
+        - { x: 0.0,  y: -5.0 }
+        - { x: 3.0,  y: -2.0 }
+      stroke_width: 1.5
+
+properties:
+  - id: current
+    label: Current
+    unit: A
+    property_type: float
+    default: { Float: 0.001 }
+    si_prefixes: true
+
+simulation:
+  model_type: spice_primitive
+  netlist: "I{label} {p} {n} DC {current}"

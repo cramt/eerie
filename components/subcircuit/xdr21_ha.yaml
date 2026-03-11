@@ -1,0 +1,67 @@
+id: xdr21_ha
+name: XDR21_HA
+description: 'SPICE subcircuit: XDR21_HA'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: '109'
+  name: '109'
+  position:
+    x: -16.0
+    y: -30.0
+  direction: left
+  pin_type: passive
+- id: '143'
+  name: '143'
+  position:
+    x: -16.0
+    y: -27.6
+  direction: left
+  pin_type: passive
+- id: '141'
+  name: '141'
+  position:
+    x: -16.0
+    y: -25.2
+  direction: left
+  pin_type: passive
+- id: '140'
+  name: '140'
+  position:
+    x: -16.0
+    y: -22.8
+  direction: left
+  pin_type: passive
+- id: '144'
+  name: '144'
+  position:
+    x: -16.0
+    y: -20.4
+  direction: left
+  pin_type: passive
+- id: '142'
+  name: '142'
+  position:
+    x: -16.0
+    y: -18.0
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -30.0
+    width: 32.0
+    height: 60.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -30.0
+    width: 24.0
+    height: 60.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {109} {143} {141} {140} {144} {142} XDR21_HA
+  model_name: XDR21_HA

@@ -1,0 +1,123 @@
+id: 74hc368
+name: 74HC368
+description: 'SPICE subcircuit: 74HC368'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: 1a1
+  name: 1a1
+  position:
+    x: -16.0
+    y: -70.0
+  direction: left
+  pin_type: passive
+- id: 1a2
+  name: 1a2
+  position:
+    x: -16.0
+    y: -69.1716
+  direction: left
+  pin_type: passive
+- id: 1a3
+  name: 1a3
+  position:
+    x: -16.0
+    y: -68.34319
+  direction: left
+  pin_type: passive
+- id: 1a4
+  name: 1a4
+  position:
+    x: -16.0
+    y: -67.51479
+  direction: left
+  pin_type: passive
+- id: 2a1
+  name: 2a1
+  position:
+    x: -16.0
+    y: -66.68639
+  direction: left
+  pin_type: passive
+- id: 2a2
+  name: 2a2
+  position:
+    x: -16.0
+    y: -65.85799
+  direction: left
+  pin_type: passive
+- id: g1b
+  name: g1b
+  position:
+    x: -16.0
+    y: -65.02959
+  direction: left
+  pin_type: passive
+- id: g2b
+  name: g2b
+  position:
+    x: -16.0
+    y: -64.20119
+  direction: left
+  pin_type: passive
+- id: 1y1
+  name: 1y1
+  position:
+    x: -16.0
+    y: -63.37278
+  direction: left
+  pin_type: passive
+- id: 1y2
+  name: 1y2
+  position:
+    x: -16.0
+    y: -62.54438
+  direction: left
+  pin_type: passive
+- id: 1y3
+  name: 1y3
+  position:
+    x: -16.0
+    y: -61.715977
+  direction: left
+  pin_type: passive
+- id: 1y4
+  name: 1y4
+  position:
+    x: -16.0
+    y: -60.887573
+  direction: left
+  pin_type: passive
+- id: 2y1
+  name: 2y1
+  position:
+    x: -16.0
+    y: -60.059174
+  direction: left
+  pin_type: passive
+- id: 2y2
+  name: 2y2
+  position:
+    x: -16.0
+    y: -59.23077
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -70.0
+    width: 32.0
+    height: 140.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -70.0
+    width: 24.0
+    height: 140.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {1a1} {1a2} {1a3} {1a4} {2a1} {2a2} {g1b} {g2b} {1y1} {1y2} {1y3} {1y4} {2y1} {2y2} 74HC368
+  model_name: 74HC368

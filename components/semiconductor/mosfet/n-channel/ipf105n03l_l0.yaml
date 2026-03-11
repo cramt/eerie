@@ -1,0 +1,100 @@
+id: ipf105n03l_l0
+name: IPF105N03L_L0
+description: 'SPICE subcircuit: IPF105N03L_L0'
+category: semiconductor
+subcategory: mosfet/n-channel
+keywords:
+- spice
+- subckt
+pins:
+- id: gate
+  name: Gate
+  position:
+    x: -10.0
+    y: 0.0
+  direction: left
+  pin_type: input
+- id: drain
+  name: Drain
+  position:
+    x: 10.0
+    y: -12.0
+  direction: up
+  pin_type: passive
+- id: source
+  name: Source
+  position:
+    x: 10.0
+    y: 12.0
+  direction: down
+  pin_type: passive
+symbol:
+  bounds:
+    x: -10.0
+    y: -12.0
+    width: 22.0
+    height: 24.0
+  graphics:
+  - kind: line
+    x1: -10.0
+    y1: 0.0
+    x2: -4.0
+    y2: 0.0
+    stroke_width: 1.5
+  - kind: line
+    x1: -4.0
+    y1: -8.0
+    x2: -4.0
+    y2: 8.0
+    stroke_width: 1.5
+  - kind: line
+    x1: -2.0
+    y1: -8.0
+    x2: -2.0
+    y2: -2.0
+    stroke_width: 1.5
+  - kind: line
+    x1: -2.0
+    y1: 2.0
+    x2: -2.0
+    y2: 8.0
+    stroke_width: 1.5
+  - kind: line
+    x1: -2.0
+    y1: -6.0
+    x2: 10.0
+    y2: -6.0
+    stroke_width: 1.5
+  - kind: line
+    x1: 10.0
+    y1: -12.0
+    x2: 10.0
+    y2: -6.0
+    stroke_width: 1.5
+  - kind: line
+    x1: -2.0
+    y1: 6.0
+    x2: 10.0
+    y2: 6.0
+    stroke_width: 1.5
+  - kind: line
+    x1: 10.0
+    y1: 6.0
+    x2: 10.0
+    y2: 12.0
+    stroke_width: 1.5
+  - kind: polyline
+    points:
+    - x: 5.0
+      y: 6.0
+    - x: 8.0
+      y: 3.0
+    - x: 8.0
+      y: 9.0
+    - x: 5.0
+      y: 6.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {drain} {gate} {source} IPF105N03L_L0
+  model_name: IPF105N03L_L0

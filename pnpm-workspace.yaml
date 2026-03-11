@@ -1,0 +1,4 @@
+packages:
+  - eerie-wasm/pkg
+onlyBuiltDependencies:
+  - esbuild

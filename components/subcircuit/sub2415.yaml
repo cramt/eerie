@@ -1,0 +1,46 @@
+id: sub2415
+name: SUB2415
+description: 'SPICE subcircuit: SUB2415'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: '213'
+  name: '213'
+  position:
+    x: -16.0
+    y: -15.0
+  direction: left
+  pin_type: passive
+- id: '214'
+  name: '214'
+  position:
+    x: -16.0
+    y: -7.5
+  direction: left
+  pin_type: passive
+- id: '215'
+  name: '215'
+  position:
+    x: -16.0
+    y: 0.0
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -15.0
+    width: 32.0
+    height: 30.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -15.0
+    width: 24.0
+    height: 30.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {213} {214} {215} SUB2415
+  model_name: SUB2415

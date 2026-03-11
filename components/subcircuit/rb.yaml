@@ -1,0 +1,39 @@
+id: rb
+name: Rb
+description: 'SPICE subcircuit: Rb'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: p
+  name: P
+  position:
+    x: -16.0
+    y: -10.0
+  direction: left
+  pin_type: passive
+- id: m
+  name: M
+  position:
+    x: -16.0
+    y: 10.0
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -10.0
+    width: 32.0
+    height: 20.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -10.0
+    width: 24.0
+    height: 20.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {P} {M} Rb
+  model_name: Rb

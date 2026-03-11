@@ -1,0 +1,123 @@
+id: 74als156
+name: 74ALS156
+description: 'SPICE subcircuit: 74ALS156'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: ia
+  name: ia
+  position:
+    x: -16.0
+    y: -70.0
+  direction: left
+  pin_type: passive
+- id: ib
+  name: ib
+  position:
+    x: -16.0
+    y: -69.1716
+  direction: left
+  pin_type: passive
+- id: 1gb
+  name: 1gb
+  position:
+    x: -16.0
+    y: -68.34319
+  direction: left
+  pin_type: passive
+- id: 2gb
+  name: 2gb
+  position:
+    x: -16.0
+    y: -67.51479
+  direction: left
+  pin_type: passive
+- id: 1c
+  name: 1c
+  position:
+    x: -16.0
+    y: -66.68639
+  direction: left
+  pin_type: passive
+- id: 2cb
+  name: 2cb
+  position:
+    x: -16.0
+    y: -65.85799
+  direction: left
+  pin_type: passive
+- id: o1y0
+  name: o1y0
+  position:
+    x: -16.0
+    y: -65.02959
+  direction: left
+  pin_type: passive
+- id: o1y1
+  name: o1y1
+  position:
+    x: -16.0
+    y: -64.20119
+  direction: left
+  pin_type: passive
+- id: o1y2
+  name: o1y2
+  position:
+    x: -16.0
+    y: -63.37278
+  direction: left
+  pin_type: passive
+- id: o1y3
+  name: o1y3
+  position:
+    x: -16.0
+    y: -62.54438
+  direction: left
+  pin_type: passive
+- id: o2y0
+  name: o2y0
+  position:
+    x: -16.0
+    y: -61.715977
+  direction: left
+  pin_type: passive
+- id: o2y1
+  name: o2y1
+  position:
+    x: -16.0
+    y: -60.887573
+  direction: left
+  pin_type: passive
+- id: o2y2
+  name: o2y2
+  position:
+    x: -16.0
+    y: -60.059174
+  direction: left
+  pin_type: passive
+- id: o2y3
+  name: o2y3
+  position:
+    x: -16.0
+    y: -59.23077
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -70.0
+    width: 32.0
+    height: 140.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -70.0
+    width: 24.0
+    height: 140.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {ia} {ib} {1gb} {2gb} {1c} {2cb} {o1y0} {o1y1} {o1y2} {o1y3} {o2y0} {o2y1} {o2y2} {o2y3} 74ALS156
+  model_name: 74ALS156

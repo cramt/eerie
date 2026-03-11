@@ -1,0 +1,74 @@
+id: 74ls123
+name: 74LS123
+description: 'SPICE subcircuit: 74LS123'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: clrbar
+  name: clrbar
+  position:
+    x: -16.0
+    y: -35.0
+  direction: left
+  pin_type: passive
+- id: a
+  name: a
+  position:
+    x: -16.0
+    y: -33.055557
+  direction: left
+  pin_type: passive
+- id: b
+  name: b
+  position:
+    x: -16.0
+    y: -31.11111
+  direction: left
+  pin_type: passive
+- id: cext
+  name: cext
+  position:
+    x: -16.0
+    y: -29.166666
+  direction: left
+  pin_type: passive
+- id: rext_cext
+  name: rext/cext
+  position:
+    x: -16.0
+    y: -27.222221
+  direction: left
+  pin_type: passive
+- id: q
+  name: q
+  position:
+    x: -16.0
+    y: -25.277779
+  direction: left
+  pin_type: passive
+- id: qbar
+  name: qbar
+  position:
+    x: -16.0
+    y: -23.333332
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -35.0
+    width: 32.0
+    height: 70.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -35.0
+    width: 24.0
+    height: 70.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {clrbar} {a} {b} {cext} {rext/cext} {q} {qbar} 74LS123
+  model_name: 74LS123

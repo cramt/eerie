@@ -1,0 +1,53 @@
+id: cmp1
+name: CMP1
+description: 'SPICE subcircuit: CMP1'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: '106'
+  name: '106'
+  position:
+    x: -16.0
+    y: -20.0
+  direction: left
+  pin_type: passive
+- id: '107'
+  name: '107'
+  position:
+    x: -16.0
+    y: -15.555555
+  direction: left
+  pin_type: passive
+- id: '108'
+  name: '108'
+  position:
+    x: -16.0
+    y: -11.111111
+  direction: left
+  pin_type: passive
+- id: '100'
+  name: '100'
+  position:
+    x: -16.0
+    y: -6.666667
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -20.0
+    width: 32.0
+    height: 40.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -20.0
+    width: 24.0
+    height: 40.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {106} {107} {108} {100} CMP1
+  model_name: CMP1

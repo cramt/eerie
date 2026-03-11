@@ -1,0 +1,53 @@
+id: psrr
+name: PSRR
+description: 'SPICE subcircuit: PSRR'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: vdd
+  name: VDD
+  position:
+    x: -16.0
+    y: -20.0
+  direction: left
+  pin_type: passive
+- id: vss
+  name: VSS
+  position:
+    x: -16.0
+    y: -15.555555
+  direction: left
+  pin_type: passive
+- id: a
+  name: A
+  position:
+    x: -16.0
+    y: -11.111111
+  direction: left
+  pin_type: passive
+- id: b
+  name: B
+  position:
+    x: -16.0
+    y: -6.666667
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -20.0
+    width: 32.0
+    height: 40.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -20.0
+    width: 24.0
+    height: 40.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {VDD} {VSS} {A} {B} PSRR
+  model_name: PSRR

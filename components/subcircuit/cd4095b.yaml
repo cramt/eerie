@@ -1,0 +1,116 @@
+id: cd4095b
+name: CD4095B
+description: 'SPICE subcircuit: CD4095B'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: j1
+  name: J1
+  position:
+    x: -16.0
+    y: -65.0
+  direction: left
+  pin_type: passive
+- id: j2
+  name: J2
+  position:
+    x: -16.0
+    y: -64.09722
+  direction: left
+  pin_type: passive
+- id: j3
+  name: J3
+  position:
+    x: -16.0
+    y: -63.194443
+  direction: left
+  pin_type: passive
+- id: k1
+  name: K1
+  position:
+    x: -16.0
+    y: -62.291668
+  direction: left
+  pin_type: passive
+- id: k2
+  name: K2
+  position:
+    x: -16.0
+    y: -61.38889
+  direction: left
+  pin_type: passive
+- id: k3
+  name: K3
+  position:
+    x: -16.0
+    y: -60.48611
+  direction: left
+  pin_type: passive
+- id: set
+  name: SET
+  position:
+    x: -16.0
+    y: -59.583332
+  direction: left
+  pin_type: passive
+- id: reset
+  name: RESET
+  position:
+    x: -16.0
+    y: -58.680557
+  direction: left
+  pin_type: passive
+- id: clock
+  name: CLOCK
+  position:
+    x: -16.0
+    y: -57.77778
+  direction: left
+  pin_type: passive
+- id: q
+  name: Q
+  position:
+    x: -16.0
+    y: -56.875
+  direction: left
+  pin_type: passive
+- id: qbar
+  name: QBAR
+  position:
+    x: -16.0
+    y: -55.97222
+  direction: left
+  pin_type: passive
+- id: optional_
+  name: 'OPTIONAL:'
+  position:
+    x: -16.0
+    y: -55.069443
+  direction: left
+  pin_type: passive
+- id: vdd_
+  name: VDD=
+  position:
+    x: -16.0
+    y: -54.166668
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -65.0
+    width: 32.0
+    height: 130.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -65.0
+    width: 24.0
+    height: 130.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {J1} {J2} {J3} {K1} {K2} {K3} {SET} {RESET} {CLOCK} {Q} {QBAR} {OPTIONAL:} {VDD=} CD4095B
+  model_name: CD4095B

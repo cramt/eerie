@@ -1,0 +1,122 @@
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 12px;
+  height: var(--toolbar-height, 40px);
+  background: var(--bg-toolbar);
+  border-bottom: 1px solid var(--border);
+  -webkit-app-region: drag;
+  user-select: none;
+}
+
+.logo {
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--accent);
+  letter-spacing: 0.06em;
+  -webkit-app-region: no-drag;
+  margin-right: 4px;
+}
+
+.tools {
+  display: flex;
+  gap: 2px;
+  -webkit-app-region: no-drag;
+}
+
+.toolBtn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  font-size: 12px;
+  transition: background 0.1s, color 0.1s;
+}
+
+.toolBtn:hover { background: var(--bg-hover); color: var(--text-primary); }
+
+.toolBtn.active {
+  background: var(--accent-dim);
+  color: var(--accent-hover);
+}
+
+.toolIcon { font-size: 14px; }
+.toolLabel { font-size: 12px; }
+
+.title {
+  flex: 1;
+  text-align: center;
+  font-size: 13px;
+  color: var(--text-secondary);
+  -webkit-app-region: drag;
+  font-family: var(--font-mono);
+}
+
+.actions {
+  display: flex;
+  gap: 6px;
+  -webkit-app-region: no-drag;
+}
+
+.btn {
+  padding: 3px 10px;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+}
+
+.btn:hover:not(:disabled) {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.btn:disabled { opacity: 0.4; cursor: default; }
+
+.simBtn {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.simBtn:hover:not(:disabled) {
+  background: var(--accent-dim);
+  color: var(--accent-hover);
+}
+
+.simBtnActive {
+  background: var(--accent-dim);
+  color: var(--accent-hover);
+}
+
+.themePicker {
+  display: flex;
+  gap: 2px;
+  -webkit-app-region: no-drag;
+  margin-left: 4px;
+}
+
+.themeBtn {
+  width: 22px;
+  height: 22px;
+  border-radius: var(--radius-sm);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+}
+
+.themeBtn:hover { color: var(--text-primary); border-color: var(--text-muted); }
+
+.themeActive {
+  background: var(--accent-dim);
+  color: var(--accent);
+  border-color: var(--accent);
+}
+

@@ -1,0 +1,116 @@
+id: 74als874b
+name: 74ALS874B
+description: 'SPICE subcircuit: 74ALS874B'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: 1ocbar
+  name: 1OCBAR
+  position:
+    x: -16.0
+    y: -65.0
+  direction: left
+  pin_type: passive
+- id: 1clk
+  name: 1CLK
+  position:
+    x: -16.0
+    y: -64.09722
+  direction: left
+  pin_type: passive
+- id: 1clrbar
+  name: 1CLRBAR
+  position:
+    x: -16.0
+    y: -63.194443
+  direction: left
+  pin_type: passive
+- id: 1d1
+  name: 1D1
+  position:
+    x: -16.0
+    y: -62.291668
+  direction: left
+  pin_type: passive
+- id: 1d2
+  name: 1D2
+  position:
+    x: -16.0
+    y: -61.38889
+  direction: left
+  pin_type: passive
+- id: 1d3
+  name: 1D3
+  position:
+    x: -16.0
+    y: -60.48611
+  direction: left
+  pin_type: passive
+- id: 1d4
+  name: 1D4
+  position:
+    x: -16.0
+    y: -59.583332
+  direction: left
+  pin_type: passive
+- id: 1q1
+  name: 1Q1
+  position:
+    x: -16.0
+    y: -58.680557
+  direction: left
+  pin_type: passive
+- id: 1q2
+  name: 1Q2
+  position:
+    x: -16.0
+    y: -57.77778
+  direction: left
+  pin_type: passive
+- id: 1q3
+  name: 1Q3
+  position:
+    x: -16.0
+    y: -56.875
+  direction: left
+  pin_type: passive
+- id: 1q4
+  name: 1Q4
+  position:
+    x: -16.0
+    y: -55.97222
+  direction: left
+  pin_type: passive
+- id: optional_
+  name: 'optional:'
+  position:
+    x: -16.0
+    y: -55.069443
+  direction: left
+  pin_type: passive
+- id: dpwr_
+  name: DPWR=
+  position:
+    x: -16.0
+    y: -54.166668
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -65.0
+    width: 32.0
+    height: 130.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -65.0
+    width: 24.0
+    height: 130.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {1OCBAR} {1CLK} {1CLRBAR} {1D1} {1D2} {1D3} {1D4} {1Q1} {1Q2} {1Q3} {1Q4} {optional:} {DPWR=} 74ALS874B
+  model_name: 74ALS874B

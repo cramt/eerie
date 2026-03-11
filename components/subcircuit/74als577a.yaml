@@ -1,0 +1,172 @@
+id: 74als577a
+name: 74ALS577A
+description: 'SPICE subcircuit: 74ALS577A'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: ocbar
+  name: OCBAR
+  position:
+    x: -16.0
+    y: -105.0
+  direction: left
+  pin_type: passive
+- id: clrbar
+  name: CLRBAR
+  position:
+    x: -16.0
+    y: -104.475
+  direction: left
+  pin_type: passive
+- id: clk
+  name: CLK
+  position:
+    x: -16.0
+    y: -103.95
+  direction: left
+  pin_type: passive
+- id: 1d
+  name: 1D
+  position:
+    x: -16.0
+    y: -103.425
+  direction: left
+  pin_type: passive
+- id: 2d
+  name: 2D
+  position:
+    x: -16.0
+    y: -102.9
+  direction: left
+  pin_type: passive
+- id: 3d
+  name: 3D
+  position:
+    x: -16.0
+    y: -102.375
+  direction: left
+  pin_type: passive
+- id: 4d
+  name: 4D
+  position:
+    x: -16.0
+    y: -101.85
+  direction: left
+  pin_type: passive
+- id: 5d
+  name: 5D
+  position:
+    x: -16.0
+    y: -101.325
+  direction: left
+  pin_type: passive
+- id: 6d
+  name: 6D
+  position:
+    x: -16.0
+    y: -100.8
+  direction: left
+  pin_type: passive
+- id: 7d
+  name: 7D
+  position:
+    x: -16.0
+    y: -100.275
+  direction: left
+  pin_type: passive
+- id: 8d
+  name: 8D
+  position:
+    x: -16.0
+    y: -99.75
+  direction: left
+  pin_type: passive
+- id: 1qbar
+  name: 1QBAR
+  position:
+    x: -16.0
+    y: -99.225
+  direction: left
+  pin_type: passive
+- id: 2qbar
+  name: 2QBAR
+  position:
+    x: -16.0
+    y: -98.7
+  direction: left
+  pin_type: passive
+- id: 3qbar
+  name: 3QBAR
+  position:
+    x: -16.0
+    y: -98.175
+  direction: left
+  pin_type: passive
+- id: 4qbar
+  name: 4QBAR
+  position:
+    x: -16.0
+    y: -97.65
+  direction: left
+  pin_type: passive
+- id: 5qbar
+  name: 5QBAR
+  position:
+    x: -16.0
+    y: -97.125
+  direction: left
+  pin_type: passive
+- id: 6qbar
+  name: 6QBAR
+  position:
+    x: -16.0
+    y: -96.6
+  direction: left
+  pin_type: passive
+- id: 7qbar
+  name: 7QBAR
+  position:
+    x: -16.0
+    y: -96.075
+  direction: left
+  pin_type: passive
+- id: 8qbar
+  name: 8QBAR
+  position:
+    x: -16.0
+    y: -95.55
+  direction: left
+  pin_type: passive
+- id: optional_
+  name: 'optional:'
+  position:
+    x: -16.0
+    y: -95.025
+  direction: left
+  pin_type: passive
+- id: dpwr_
+  name: DPWR=
+  position:
+    x: -16.0
+    y: -94.5
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -105.0
+    width: 32.0
+    height: 210.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -105.0
+    width: 24.0
+    height: 210.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {OCBAR} {CLRBAR} {CLK} {1D} {2D} {3D} {4D} {5D} {6D} {7D} {8D} {1QBAR} {2QBAR} {3QBAR} {4QBAR} {5QBAR} {6QBAR} {7QBAR} {8QBAR} {optional:} {DPWR=} 74ALS577A
+  model_name: 74ALS577A

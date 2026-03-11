@@ -1,0 +1,165 @@
+id: 74als1241a
+name: 74ALS1241A
+description: 'SPICE subcircuit: 74ALS1241A'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: 1gbar
+  name: 1GBAR
+  position:
+    x: -16.0
+    y: -100.0
+  direction: left
+  pin_type: passive
+- id: 2g
+  name: 2G
+  position:
+    x: -16.0
+    y: -99.445984
+  direction: left
+  pin_type: passive
+- id: 1a1
+  name: 1A1
+  position:
+    x: -16.0
+    y: -98.89197
+  direction: left
+  pin_type: passive
+- id: 1a2
+  name: 1A2
+  position:
+    x: -16.0
+    y: -98.33795
+  direction: left
+  pin_type: passive
+- id: 1a3
+  name: 1A3
+  position:
+    x: -16.0
+    y: -97.783936
+  direction: left
+  pin_type: passive
+- id: 1a4
+  name: 1A4
+  position:
+    x: -16.0
+    y: -97.22992
+  direction: left
+  pin_type: passive
+- id: 1y1
+  name: 1Y1
+  position:
+    x: -16.0
+    y: -96.6759
+  direction: left
+  pin_type: passive
+- id: 1y2
+  name: 1Y2
+  position:
+    x: -16.0
+    y: -96.12189
+  direction: left
+  pin_type: passive
+- id: 1y3
+  name: 1Y3
+  position:
+    x: -16.0
+    y: -95.56787
+  direction: left
+  pin_type: passive
+- id: 1y4
+  name: 1Y4
+  position:
+    x: -16.0
+    y: -95.01385
+  direction: left
+  pin_type: passive
+- id: 2a1
+  name: 2A1
+  position:
+    x: -16.0
+    y: -94.45983
+  direction: left
+  pin_type: passive
+- id: 2a2
+  name: 2A2
+  position:
+    x: -16.0
+    y: -93.905815
+  direction: left
+  pin_type: passive
+- id: 2a3
+  name: 2A3
+  position:
+    x: -16.0
+    y: -93.3518
+  direction: left
+  pin_type: passive
+- id: 2a4
+  name: 2A4
+  position:
+    x: -16.0
+    y: -92.79778
+  direction: left
+  pin_type: passive
+- id: 2y1
+  name: 2Y1
+  position:
+    x: -16.0
+    y: -92.24377
+  direction: left
+  pin_type: passive
+- id: 2y2
+  name: 2Y2
+  position:
+    x: -16.0
+    y: -91.68975
+  direction: left
+  pin_type: passive
+- id: 2y3
+  name: 2Y3
+  position:
+    x: -16.0
+    y: -91.135735
+  direction: left
+  pin_type: passive
+- id: 2y4
+  name: 2Y4
+  position:
+    x: -16.0
+    y: -90.58172
+  direction: left
+  pin_type: passive
+- id: optional_
+  name: 'OPTIONAL:'
+  position:
+    x: -16.0
+    y: -90.0277
+  direction: left
+  pin_type: passive
+- id: dpwr_
+  name: DPWR=
+  position:
+    x: -16.0
+    y: -89.47369
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -100.0
+    width: 32.0
+    height: 200.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -100.0
+    width: 24.0
+    height: 200.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {1GBAR} {2G} {1A1} {1A2} {1A3} {1A4} {1Y1} {1Y2} {1Y3} {1Y4} {2A1} {2A2} {2A3} {2A4} {2Y1} {2Y2} {2Y3} {2Y4} {OPTIONAL:} {DPWR=} 74ALS1241A
+  model_name: 74ALS1241A

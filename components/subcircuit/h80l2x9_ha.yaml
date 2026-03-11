@@ -1,0 +1,109 @@
+id: h80l2x9_ha
+name: H80L2X9_HA
+description: 'SPICE subcircuit: H80L2X9_HA'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: '114'
+  name: '114'
+  position:
+    x: -16.0
+    y: -60.0
+  direction: left
+  pin_type: passive
+- id: '106'
+  name: '106'
+  position:
+    x: -16.0
+    y: -59.008263
+  direction: left
+  pin_type: passive
+- id: '104'
+  name: '104'
+  position:
+    x: -16.0
+    y: -58.01653
+  direction: left
+  pin_type: passive
+- id: '111'
+  name: '111'
+  position:
+    x: -16.0
+    y: -57.02479
+  direction: left
+  pin_type: passive
+- id: '118'
+  name: '118'
+  position:
+    x: -16.0
+    y: -56.03306
+  direction: left
+  pin_type: passive
+- id: '110'
+  name: '110'
+  position:
+    x: -16.0
+    y: -55.04132
+  direction: left
+  pin_type: passive
+- id: '103'
+  name: '103'
+  position:
+    x: -16.0
+    y: -54.049587
+  direction: left
+  pin_type: passive
+- id: '102'
+  name: '102'
+  position:
+    x: -16.0
+    y: -53.057854
+  direction: left
+  pin_type: passive
+- id: '101'
+  name: '101'
+  position:
+    x: -16.0
+    y: -52.066116
+  direction: left
+  pin_type: passive
+- id: '107'
+  name: '107'
+  position:
+    x: -16.0
+    y: -51.07438
+  direction: left
+  pin_type: passive
+- id: '120'
+  name: '120'
+  position:
+    x: -16.0
+    y: -50.082645
+  direction: left
+  pin_type: passive
+- id: '121'
+  name: '121'
+  position:
+    x: -16.0
+    y: -49.090908
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -60.0
+    width: 32.0
+    height: 120.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -60.0
+    width: 24.0
+    height: 120.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {114} {106} {104} {111} {118} {110} {103} {102} {101} {107} {120} {121} H80L2X9_HA
+  model_name: H80L2X9_HA

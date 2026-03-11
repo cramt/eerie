@@ -1,0 +1,84 @@
+id: t271ht5
+name: T271HT5
+description: 'SPICE subcircuit: T271HT5'
+category: semiconductor
+subcategory: opamps
+keywords:
+- spice
+- subckt
+pins:
+- id: '1'
+  name: IN+
+  position:
+    x: -16.0
+    y: -6.0
+  direction: left
+  pin_type: input
+- id: '2'
+  name: IN-
+  position:
+    x: -16.0
+    y: 6.0
+  direction: left
+  pin_type: input
+- id: '3'
+  name: V+
+  position:
+    x: 0.0
+    y: -14.0
+  direction: up
+  pin_type: power
+- id: '4'
+  name: V-
+  position:
+    x: 0.0
+    y: 14.0
+  direction: down
+  pin_type: power
+- id: '5'
+  name: OUT
+  position:
+    x: 20.0
+    y: 0.0
+  direction: right
+  pin_type: output
+symbol:
+  bounds:
+    x: -12.0
+    y: -12.0
+    width: 28.0
+    height: 24.0
+  graphics:
+  - kind: polyline
+    points:
+    - x: -12.0
+      y: -12.0
+    - x: 16.0
+      y: 0.0
+    - x: -12.0
+      y: 12.0
+    - x: -12.0
+      y: -12.0
+    stroke_width: 1.5
+  - kind: line
+    x1: -16.0
+    y1: -6.0
+    x2: -12.0
+    y2: -6.0
+    stroke_width: 1.5
+  - kind: line
+    x1: -16.0
+    y1: 6.0
+    x2: -12.0
+    y2: 6.0
+    stroke_width: 1.5
+  - kind: line
+    x1: 16.0
+    y1: 0.0
+    x2: 20.0
+    y2: 0.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {1} {2} {3} {4} {5} T271HT5
+  model_name: T271HT5

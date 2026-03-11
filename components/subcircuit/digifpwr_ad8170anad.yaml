@@ -1,0 +1,46 @@
+id: digifpwr_ad8170anad
+name: DIGIFPWR_ad8170anad
+description: 'SPICE subcircuit: DIGIFPWR_ad8170anad'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: agnd
+  name: AGND
+  position:
+    x: -16.0
+    y: -15.0
+  direction: left
+  pin_type: passive
+- id: optional_
+  name: 'optional:'
+  position:
+    x: -16.0
+    y: -7.5
+  direction: left
+  pin_type: passive
+- id: dpwr_
+  name: DPWR=
+  position:
+    x: -16.0
+    y: 0.0
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -15.0
+    width: 32.0
+    height: 30.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -15.0
+    width: 24.0
+    height: 30.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {AGND} {optional:} {DPWR=} DIGIFPWR_ad8170anad
+  model_name: DIGIFPWR_ad8170anad

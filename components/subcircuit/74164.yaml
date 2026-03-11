@@ -1,0 +1,109 @@
+id: '74164'
+name: '74164'
+description: 'SPICE subcircuit: 74164'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: clrbar
+  name: clrbar
+  position:
+    x: -16.0
+    y: -60.0
+  direction: left
+  pin_type: passive
+- id: clk
+  name: clk
+  position:
+    x: -16.0
+    y: -59.008263
+  direction: left
+  pin_type: passive
+- id: a
+  name: a
+  position:
+    x: -16.0
+    y: -58.01653
+  direction: left
+  pin_type: passive
+- id: b
+  name: b
+  position:
+    x: -16.0
+    y: -57.02479
+  direction: left
+  pin_type: passive
+- id: qa
+  name: qa
+  position:
+    x: -16.0
+    y: -56.03306
+  direction: left
+  pin_type: passive
+- id: qb
+  name: qb
+  position:
+    x: -16.0
+    y: -55.04132
+  direction: left
+  pin_type: passive
+- id: qc
+  name: qc
+  position:
+    x: -16.0
+    y: -54.049587
+  direction: left
+  pin_type: passive
+- id: qd
+  name: qd
+  position:
+    x: -16.0
+    y: -53.057854
+  direction: left
+  pin_type: passive
+- id: qe
+  name: qe
+  position:
+    x: -16.0
+    y: -52.066116
+  direction: left
+  pin_type: passive
+- id: qf
+  name: qf
+  position:
+    x: -16.0
+    y: -51.07438
+  direction: left
+  pin_type: passive
+- id: qg
+  name: qg
+  position:
+    x: -16.0
+    y: -50.082645
+  direction: left
+  pin_type: passive
+- id: qh
+  name: qh
+  position:
+    x: -16.0
+    y: -49.090908
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -60.0
+    width: 32.0
+    height: 120.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -60.0
+    width: 24.0
+    height: 120.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {clrbar} {clk} {a} {b} {qa} {qb} {qc} {qd} {qe} {qf} {qg} {qh} 74164
+  model_name: '74164'

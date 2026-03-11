@@ -1,0 +1,123 @@
+id: corex
+name: COREX
+description: 'SPICE subcircuit: COREX'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: '110'
+  name: '110'
+  position:
+    x: -16.0
+    y: -70.0
+  direction: left
+  pin_type: passive
+- id: '2'
+  name: '2'
+  position:
+    x: -16.0
+    y: -69.1716
+  direction: left
+  pin_type: passive
+- id: '10'
+  name: '10'
+  position:
+    x: -16.0
+    y: -68.34319
+  direction: left
+  pin_type: passive
+- id: '100'
+  name: '100'
+  position:
+    x: -16.0
+    y: -67.51479
+  direction: left
+  pin_type: passive
+- id: _bsat_0_47
+  name: '{BSAT=0.47'
+  position:
+    x: -16.0
+    y: -66.68639
+  direction: left
+  pin_type: passive
+- id: br_0_15
+  name: BR=0.15
+  position:
+    x: -16.0
+    y: -65.85799
+  direction: left
+  pin_type: passive
+- id: ua_6000
+  name: UA=6000
+  position:
+    x: -16.0
+    y: -65.02959
+  direction: left
+  pin_type: passive
+- id: hc_10
+  name: HC=10
+  position:
+    x: -16.0
+    y: -64.20119
+  direction: left
+  pin_type: passive
+- id: le_0_037
+  name: LE=0.037
+  position:
+    x: -16.0
+    y: -63.37278
+  direction: left
+  pin_type: passive
+- id: lg_0_0009
+  name: LG=0.0009
+  position:
+    x: -16.0
+    y: -62.54438
+  direction: left
+  pin_type: passive
+- id: ae_0_000067
+  name: AE=0.000067
+  position:
+    x: -16.0
+    y: -61.715977
+  direction: left
+  pin_type: passive
+- id: n_1
+  name: N=1
+  position:
+    x: -16.0
+    y: -60.887573
+  direction: left
+  pin_type: passive
+- id: feddy_1_5e6
+  name: FEDDY=1.5E6
+  position:
+    x: -16.0
+    y: -60.059174
+  direction: left
+  pin_type: passive
+- id: clamp_3_5_
+  name: CLAMP=3.5}
+  position:
+    x: -16.0
+    y: -59.23077
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -70.0
+    width: 32.0
+    height: 140.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -70.0
+    width: 24.0
+    height: 140.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {110} {2} {10} {100} {{BSAT=0.47} {BR=0.15} {UA=6000} {HC=10} {LE=0.037} {LG=0.0009} {AE=0.000067} {N=1} {FEDDY=1.5E6} {CLAMP=3.5}} COREX
+  model_name: COREX

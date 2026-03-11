@@ -1,0 +1,39 @@
+id: huf75307d3t
+name: HUF75307D3T
+description: 'SPICE subcircuit: HUF75307D3T'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: '7'
+  name: '7'
+  position:
+    x: -16.0
+    y: -10.0
+  direction: left
+  pin_type: passive
+- id: '1'
+  name: '1'
+  position:
+    x: -16.0
+    y: 10.0
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -10.0
+    width: 32.0
+    height: 20.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -10.0
+    width: 24.0
+    height: 20.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {7} {1} HUF75307D3T
+  model_name: HUF75307D3T

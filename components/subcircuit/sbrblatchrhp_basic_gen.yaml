@@ -1,0 +1,53 @@
+id: sbrblatchrhp_basic_gen
+name: SBRBLATCHRHP_BASIC_GEN
+description: 'SPICE subcircuit: SBRBLATCHRHP_BASIC_GEN'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: sb
+  name: SB
+  position:
+    x: -16.0
+    y: -20.0
+  direction: left
+  pin_type: passive
+- id: rb
+  name: RB
+  position:
+    x: -16.0
+    y: -15.555555
+  direction: left
+  pin_type: passive
+- id: q
+  name: Q
+  position:
+    x: -16.0
+    y: -11.111111
+  direction: left
+  pin_type: passive
+- id: qb
+  name: QB
+  position:
+    x: -16.0
+    y: -6.666667
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -20.0
+    width: 32.0
+    height: 40.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -20.0
+    width: 24.0
+    height: 40.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {SB} {RB} {Q} {QB} SBRBLATCHRHP_BASIC_GEN
+  model_name: SBRBLATCHRHP_BASIC_GEN

@@ -1,0 +1,67 @@
+id: 54ls73a
+name: 54LS73A
+description: 'SPICE subcircuit: 54LS73A'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: clk
+  name: clk
+  position:
+    x: -16.0
+    y: -30.0
+  direction: left
+  pin_type: passive
+- id: clrbar
+  name: clrbar
+  position:
+    x: -16.0
+    y: -27.6
+  direction: left
+  pin_type: passive
+- id: j
+  name: j
+  position:
+    x: -16.0
+    y: -25.2
+  direction: left
+  pin_type: passive
+- id: k
+  name: k
+  position:
+    x: -16.0
+    y: -22.8
+  direction: left
+  pin_type: passive
+- id: q
+  name: q
+  position:
+    x: -16.0
+    y: -20.4
+  direction: left
+  pin_type: passive
+- id: qbar
+  name: qbar
+  position:
+    x: -16.0
+    y: -18.0
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -30.0
+    width: 32.0
+    height: 60.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -30.0
+    width: 24.0
+    height: 60.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {clk} {clrbar} {j} {k} {q} {qbar} 54LS73A
+  model_name: 54LS73A

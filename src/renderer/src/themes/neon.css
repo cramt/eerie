@@ -1,0 +1,73 @@
+/* ═══════════════════════════════════════════════════════════
+   NEON — Cyberpunk. Hot pink wires on void black.
+   Big, bold, unapologetic. Wide panels, large toolbar.
+   Glowing accents, heavy rounded corners, gradient touches.
+   The opposite of "subtle."
+   ═══════════════════════════════════════════════════════════ */
+
+html[data-theme="neon"] {
+  --bg-app:       #0a0a0e;
+  --bg-panel:     #101018;
+  --bg-toolbar:   #121220;
+  --bg-hover:     #1c1c30;
+  --bg-canvas:    #06060a;
+  --bg-input:     #0e0e18;
+
+  --border:       #2a2a44;
+  --border-focus: #e040fb;
+
+  --text-primary:   #e8e0f0;
+  --text-secondary: #8878aa;
+  --text-muted:     #44405a;
+
+  --accent:       #e040fb;
+  --accent-hover: #f06aff;
+  --accent-dim:   #2a1040;
+
+  --danger:  #ff3366;
+  --warning: #ffaa22;
+  --success: #00ffaa;
+
+  --font-mono: 'JetBrains Mono', 'Cascadia Code', monospace;
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+
+  --status-height: 28px;
+  --toolbar-height: 48px;
+  --panel-width: 240px;
+  --props-width: 280px;
+}
+
+/* Glowing accent borders */
+html[data-theme="neon"] .toolbar-area {
+  border-bottom: 1px solid #2a2a44;
+  box-shadow: 0 1px 12px rgba(224, 64, 251, 0.06);
+}
+
+html[data-theme="neon"] .panel-area {
+  border-right: 1px solid #2a2a44;
+  box-shadow: 1px 0 16px rgba(224, 64, 251, 0.04);
+}
+
+html[data-theme="neon"] .props-area {
+  border-left: 1px solid #2a2a44;
+  box-shadow: -1px 0 16px rgba(224, 64, 251, 0.04);
+}
+
+html[data-theme="neon"] .status-area {
+  border-top: 1px solid #2a2a44;
+  box-shadow: 0 -1px 12px rgba(224, 64, 251, 0.04);
+}
+
+/* Neon glow on focused inputs */
+html[data-theme="neon"] input:focus,
+html[data-theme="neon"] select:focus {
+  box-shadow: 0 0 10px rgba(224, 64, 251, 0.2);
+}
+
+/* Larger text for the spacious layout */
+html[data-theme="neon"] .app-layout {
+  font-size: 14px;
+}

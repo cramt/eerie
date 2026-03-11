@@ -1,0 +1,172 @@
+id: '100344'
+name: '100344'
+description: 'SPICE subcircuit: 100344'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: ebar
+  name: EBAR
+  position:
+    x: -16.0
+    y: -105.0
+  direction: left
+  pin_type: passive
+- id: lebar
+  name: LEBAR
+  position:
+    x: -16.0
+    y: -104.475
+  direction: left
+  pin_type: passive
+- id: oenbar
+  name: OENBAR
+  position:
+    x: -16.0
+    y: -103.95
+  direction: left
+  pin_type: passive
+- id: d0
+  name: D0
+  position:
+    x: -16.0
+    y: -103.425
+  direction: left
+  pin_type: passive
+- id: d1
+  name: D1
+  position:
+    x: -16.0
+    y: -102.9
+  direction: left
+  pin_type: passive
+- id: d2
+  name: D2
+  position:
+    x: -16.0
+    y: -102.375
+  direction: left
+  pin_type: passive
+- id: d3
+  name: D3
+  position:
+    x: -16.0
+    y: -101.85
+  direction: left
+  pin_type: passive
+- id: d4
+  name: D4
+  position:
+    x: -16.0
+    y: -101.325
+  direction: left
+  pin_type: passive
+- id: d5
+  name: D5
+  position:
+    x: -16.0
+    y: -100.8
+  direction: left
+  pin_type: passive
+- id: d6
+  name: D6
+  position:
+    x: -16.0
+    y: -100.275
+  direction: left
+  pin_type: passive
+- id: d7
+  name: D7
+  position:
+    x: -16.0
+    y: -99.75
+  direction: left
+  pin_type: passive
+- id: q0
+  name: Q0
+  position:
+    x: -16.0
+    y: -99.225
+  direction: left
+  pin_type: passive
+- id: q1
+  name: Q1
+  position:
+    x: -16.0
+    y: -98.7
+  direction: left
+  pin_type: passive
+- id: q2
+  name: Q2
+  position:
+    x: -16.0
+    y: -98.175
+  direction: left
+  pin_type: passive
+- id: q3
+  name: Q3
+  position:
+    x: -16.0
+    y: -97.65
+  direction: left
+  pin_type: passive
+- id: q4
+  name: Q4
+  position:
+    x: -16.0
+    y: -97.125
+  direction: left
+  pin_type: passive
+- id: q5
+  name: Q5
+  position:
+    x: -16.0
+    y: -96.6
+  direction: left
+  pin_type: passive
+- id: q6
+  name: Q6
+  position:
+    x: -16.0
+    y: -96.075
+  direction: left
+  pin_type: passive
+- id: q7
+  name: Q7
+  position:
+    x: -16.0
+    y: -95.55
+  direction: left
+  pin_type: passive
+- id: optional_
+  name: 'optional:'
+  position:
+    x: -16.0
+    y: -95.025
+  direction: left
+  pin_type: passive
+- id: vee_
+  name: VEE=
+  position:
+    x: -16.0
+    y: -94.5
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -105.0
+    width: 32.0
+    height: 210.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -105.0
+    width: 24.0
+    height: 210.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {EBAR} {LEBAR} {OENBAR} {D0} {D1} {D2} {D3} {D4} {D5} {D6} {D7} {Q0} {Q1} {Q2} {Q3} {Q4} {Q5} {Q6} {Q7} {optional:} {VEE=} 100344
+  model_name: '100344'

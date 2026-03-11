@@ -1,0 +1,179 @@
+id: '74159'
+name: '74159'
+description: 'SPICE subcircuit: 74159'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: g1bar
+  name: g1bar
+  position:
+    x: -16.0
+    y: -110.0
+  direction: left
+  pin_type: passive
+- id: g2bar
+  name: g2bar
+  position:
+    x: -16.0
+    y: -109.50114
+  direction: left
+  pin_type: passive
+- id: ia
+  name: ia
+  position:
+    x: -16.0
+    y: -109.002266
+  direction: left
+  pin_type: passive
+- id: ib
+  name: ib
+  position:
+    x: -16.0
+    y: -108.5034
+  direction: left
+  pin_type: passive
+- id: ic
+  name: ic
+  position:
+    x: -16.0
+    y: -108.00453
+  direction: left
+  pin_type: passive
+- id: id
+  name: id
+  position:
+    x: -16.0
+    y: -107.50567
+  direction: left
+  pin_type: passive
+- id: oy0
+  name: oy0
+  position:
+    x: -16.0
+    y: -107.006805
+  direction: left
+  pin_type: passive
+- id: oy1
+  name: oy1
+  position:
+    x: -16.0
+    y: -106.507935
+  direction: left
+  pin_type: passive
+- id: oy2
+  name: oy2
+  position:
+    x: -16.0
+    y: -106.00907
+  direction: left
+  pin_type: passive
+- id: oy3
+  name: oy3
+  position:
+    x: -16.0
+    y: -105.5102
+  direction: left
+  pin_type: passive
+- id: oy4
+  name: oy4
+  position:
+    x: -16.0
+    y: -105.01134
+  direction: left
+  pin_type: passive
+- id: oy5
+  name: oy5
+  position:
+    x: -16.0
+    y: -104.512474
+  direction: left
+  pin_type: passive
+- id: oy6
+  name: oy6
+  position:
+    x: -16.0
+    y: -104.0136
+  direction: left
+  pin_type: passive
+- id: oy7
+  name: oy7
+  position:
+    x: -16.0
+    y: -103.51474
+  direction: left
+  pin_type: passive
+- id: oy8
+  name: oy8
+  position:
+    x: -16.0
+    y: -103.01587
+  direction: left
+  pin_type: passive
+- id: oy9
+  name: oy9
+  position:
+    x: -16.0
+    y: -102.517006
+  direction: left
+  pin_type: passive
+- id: oy10
+  name: oy10
+  position:
+    x: -16.0
+    y: -102.01814
+  direction: left
+  pin_type: passive
+- id: oy11
+  name: oy11
+  position:
+    x: -16.0
+    y: -101.51927
+  direction: left
+  pin_type: passive
+- id: oy12
+  name: oy12
+  position:
+    x: -16.0
+    y: -101.02041
+  direction: left
+  pin_type: passive
+- id: oy13
+  name: oy13
+  position:
+    x: -16.0
+    y: -100.521545
+  direction: left
+  pin_type: passive
+- id: oy14
+  name: oy14
+  position:
+    x: -16.0
+    y: -100.022675
+  direction: left
+  pin_type: passive
+- id: oy15
+  name: oy15
+  position:
+    x: -16.0
+    y: -99.52381
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -110.0
+    width: 32.0
+    height: 220.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -110.0
+    width: 24.0
+    height: 220.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {g1bar} {g2bar} {ia} {ib} {ic} {id} {oy0} {oy1} {oy2} {oy3} {oy4} {oy5} {oy6} {oy7} {oy8} {oy9} {oy10} {oy11} {oy12} {oy13} {oy14} {oy15} 74159
+  model_name: '74159'

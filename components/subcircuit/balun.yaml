@@ -1,0 +1,53 @@
+id: balun
+name: BALUN
+description: 'SPICE subcircuit: BALUN'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: v
+  name: V
+  position:
+    x: -16.0
+    y: -20.0
+  direction: left
+  pin_type: passive
+- id: vcm
+  name: VCM
+  position:
+    x: -16.0
+    y: -15.555555
+  direction: left
+  pin_type: passive
+- id: vn
+  name: VN
+  position:
+    x: -16.0
+    y: -11.111111
+  direction: left
+  pin_type: passive
+- id: vp
+  name: VP
+  position:
+    x: -16.0
+    y: -6.666667
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -20.0
+    width: 32.0
+    height: 40.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -20.0
+    width: 24.0
+    height: 40.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {V} {VCM} {VN} {VP} BALUN
+  model_name: BALUN

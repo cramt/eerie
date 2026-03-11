@@ -1,0 +1,67 @@
+id: db3
+name: db3
+description: 'SPICE subcircuit: db3'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: c
+  name: C
+  position:
+    x: -16.0
+    y: -30.0
+  direction: left
+  pin_type: passive
+- id: e
+  name: E
+  position:
+    x: -16.0
+    y: -27.6
+  direction: left
+  pin_type: passive
+- id: vk_32
+  name: Vk=32
+  position:
+    x: -16.0
+    y: -25.2
+  direction: left
+  pin_type: passive
+- id: delta_v_19v
+  name: Delta_V=19V
+  position:
+    x: -16.0
+    y: -22.8
+  direction: left
+  pin_type: passive
+- id: ibo_10ua
+  name: Ibo=10uA
+  position:
+    x: -16.0
+    y: -20.4
+  direction: left
+  pin_type: passive
+- id: rs_10
+  name: Rs=10
+  position:
+    x: -16.0
+    y: -18.0
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -30.0
+    width: 32.0
+    height: 60.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -30.0
+    width: 24.0
+    height: 60.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {C} {E} {Vk=32} {Delta_V=19V} {Ibo=10uA} {Rs=10} db3
+  model_name: db3

@@ -1,0 +1,39 @@
+id: ta75645_ist
+name: ta75645_ISt
+description: 'SPICE subcircuit: ta75645_ISt'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: th
+  name: TH
+  position:
+    x: -16.0
+    y: -10.0
+  direction: left
+  pin_type: passive
+- id: tl
+  name: TL
+  position:
+    x: -16.0
+    y: 10.0
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -10.0
+    width: 32.0
+    height: 20.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -10.0
+    width: 24.0
+    height: 20.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {TH} {TL} ta75645_ISt
+  model_name: ta75645_ISt

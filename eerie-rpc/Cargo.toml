@@ -1,0 +1,10 @@
+[package]
+name = "eerie-rpc"
+version = "0.1.0"
+edition = "2024"
+description = "RPC service trait for eerie daemon"
+
+[dependencies]
+roam           = { workspace = true }
+facet          = { workspace = true }
+thevenin-types = { git = "https://github.com/cramt/thevenin", branch = "ralph/simulation-engine" }

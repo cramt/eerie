@@ -1,0 +1,95 @@
+id: mstrip
+name: MSTRIP
+description: 'SPICE subcircuit: MSTRIP'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: '1'
+  name: '1'
+  position:
+    x: -16.0
+    y: -50.0
+  direction: left
+  pin_type: passive
+- id: '3'
+  name: '3'
+  position:
+    x: -16.0
+    y: -48.76543
+  direction: left
+  pin_type: passive
+- id: _sigma_2_74e_8
+  name: '{SIGMA=2.74E-8'
+  position:
+    x: -16.0
+    y: -47.530865
+  direction: left
+  pin_type: passive
+- id: d_10u
+  name: D=10U
+  position:
+    x: -16.0
+    y: -46.296295
+  direction: left
+  pin_type: passive
+- id: er_3_7
+  name: ER=3.7
+  position:
+    x: -16.0
+    y: -45.06173
+  direction: left
+  pin_type: passive
+- id: er0_8_85p
+  name: ER0=8.85P
+  position:
+    x: -16.0
+    y: -43.82716
+  direction: left
+  pin_type: passive
+- id: lth_1
+  name: LTH=1
+  position:
+    x: -16.0
+    y: -42.59259
+  direction: left
+  pin_type: passive
+- id: wth_11u
+  name: WTH=11U
+  position:
+    x: -16.0
+    y: -41.358025
+  direction: left
+  pin_type: passive
+- id: hth_2u
+  name: HTH=2U
+  position:
+    x: -16.0
+    y: -40.123455
+  direction: left
+  pin_type: passive
+- id: len__16_
+  name: LEN=.16}
+  position:
+    x: -16.0
+    y: -38.88889
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -50.0
+    width: 32.0
+    height: 100.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -50.0
+    width: 24.0
+    height: 100.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {1} {3} {{SIGMA=2.74E-8} {D=10U} {ER=3.7} {ER0=8.85P} {LTH=1} {WTH=11U} {HTH=2U} {LEN=.16}} MSTRIP
+  model_name: MSTRIP

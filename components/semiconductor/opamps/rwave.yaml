@@ -1,0 +1,84 @@
+id: rwave
+name: RWAVE
+description: 'SPICE subcircuit: RWAVE'
+category: semiconductor
+subcategory: opamps
+keywords:
+- spice
+- subckt
+pins:
+- id: '2'
+  name: IN+
+  position:
+    x: -16.0
+    y: -6.0
+  direction: left
+  pin_type: input
+- id: _a_1_590
+  name: IN-
+  position:
+    x: -16.0
+    y: 6.0
+  direction: left
+  pin_type: input
+- id: t1_0_533u
+  name: V+
+  position:
+    x: 0.0
+    y: -14.0
+  direction: up
+  pin_type: power
+- id: t2_9_788u
+  name: V-
+  position:
+    x: 0.0
+    y: 14.0
+  direction: down
+  pin_type: power
+- id: vp_100_
+  name: OUT
+  position:
+    x: 20.0
+    y: 0.0
+  direction: right
+  pin_type: output
+symbol:
+  bounds:
+    x: -12.0
+    y: -12.0
+    width: 28.0
+    height: 24.0
+  graphics:
+  - kind: polyline
+    points:
+    - x: -12.0
+      y: -12.0
+    - x: 16.0
+      y: 0.0
+    - x: -12.0
+      y: 12.0
+    - x: -12.0
+      y: -12.0
+    stroke_width: 1.5
+  - kind: line
+    x1: -16.0
+    y1: -6.0
+    x2: -12.0
+    y2: -6.0
+    stroke_width: 1.5
+  - kind: line
+    x1: -16.0
+    y1: 6.0
+    x2: -12.0
+    y2: 6.0
+    stroke_width: 1.5
+  - kind: line
+    x1: 16.0
+    y1: 0.0
+    x2: 20.0
+    y2: 0.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {2} {{A=1.590} {T1=0.533U} {T2=9.788U} {VP=100}} RWAVE
+  model_name: RWAVE

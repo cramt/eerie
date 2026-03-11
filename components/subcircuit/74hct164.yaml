@@ -1,0 +1,144 @@
+id: 74hct164
+name: 74HCT164
+description: 'SPICE subcircuit: 74HCT164'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: cp
+  name: CP
+  position:
+    x: -16.0
+    y: -85.0
+  direction: left
+  pin_type: passive
+- id: mr
+  name: MR
+  position:
+    x: -16.0
+    y: -84.33594
+  direction: left
+  pin_type: passive
+- id: dsa
+  name: DSA
+  position:
+    x: -16.0
+    y: -83.671875
+  direction: left
+  pin_type: passive
+- id: dsb
+  name: DSB
+  position:
+    x: -16.0
+    y: -83.00781
+  direction: left
+  pin_type: passive
+- id: q0
+  name: Q0
+  position:
+    x: -16.0
+    y: -82.34375
+  direction: left
+  pin_type: passive
+- id: q1
+  name: Q1
+  position:
+    x: -16.0
+    y: -81.67969
+  direction: left
+  pin_type: passive
+- id: q2
+  name: Q2
+  position:
+    x: -16.0
+    y: -81.015625
+  direction: left
+  pin_type: passive
+- id: q3
+  name: Q3
+  position:
+    x: -16.0
+    y: -80.35156
+  direction: left
+  pin_type: passive
+- id: q4
+  name: Q4
+  position:
+    x: -16.0
+    y: -79.6875
+  direction: left
+  pin_type: passive
+- id: q5
+  name: Q5
+  position:
+    x: -16.0
+    y: -79.02344
+  direction: left
+  pin_type: passive
+- id: q6
+  name: Q6
+  position:
+    x: -16.0
+    y: -78.359375
+  direction: left
+  pin_type: passive
+- id: q7
+  name: Q7
+  position:
+    x: -16.0
+    y: -77.69531
+  direction: left
+  pin_type: passive
+- id: vcc
+  name: VCC
+  position:
+    x: -16.0
+    y: -77.03125
+  direction: left
+  pin_type: passive
+- id: vgnd
+  name: VGND
+  position:
+    x: -16.0
+    y: -76.36719
+  direction: left
+  pin_type: passive
+- id: vcc1__vcc_
+  name: vcc1={vcc}
+  position:
+    x: -16.0
+    y: -75.703125
+  direction: left
+  pin_type: passive
+- id: speed1__speed_
+  name: speed1={speed}
+  position:
+    x: -16.0
+    y: -75.03906
+  direction: left
+  pin_type: passive
+- id: tripdt1__tripdt_
+  name: tripdt1={tripdt}
+  position:
+    x: -16.0
+    y: -74.375
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -85.0
+    width: 32.0
+    height: 170.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -85.0
+    width: 24.0
+    height: 170.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {CP} {MR} {DSA} {DSB} {Q0} {Q1} {Q2} {Q3} {Q4} {Q5} {Q6} {Q7} {VCC} {VGND} {vcc1={vcc}} {speed1={speed}} {tripdt1={tripdt}} 74HCT164
+  model_name: 74HCT164

@@ -1,0 +1,74 @@
+id: rectified_voltage
+name: rectified_voltage
+description: 'SPICE subcircuit: rectified_voltage'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: n1
+  name: N1
+  position:
+    x: -16.0
+    y: -35.0
+  direction: left
+  pin_type: passive
+- id: n2
+  name: N2
+  position:
+    x: -16.0
+    y: -33.055557
+  direction: left
+  pin_type: passive
+- id: v0_diode_0_5
+  name: V0_diode=0.5
+  position:
+    x: -16.0
+    y: -31.11111
+  direction: left
+  pin_type: passive
+- id: rdiode_1m
+  name: Rdiode=1m
+  position:
+    x: -16.0
+    y: -29.166666
+  direction: left
+  pin_type: passive
+- id: vac_220
+  name: Vac=220
+  position:
+    x: -16.0
+    y: -27.222221
+  direction: left
+  pin_type: passive
+- id: fr_50
+  name: Fr=50
+  position:
+    x: -16.0
+    y: -25.277779
+  direction: left
+  pin_type: passive
+- id: fi_0
+  name: fi=0
+  position:
+    x: -16.0
+    y: -23.333332
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -35.0
+    width: 32.0
+    height: 70.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -35.0
+    width: 24.0
+    height: 70.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {N1} {N2} {V0_diode=0.5} {Rdiode=1m} {Vac=220} {Fr=50} {fi=0} rectified_voltage
+  model_name: rectified_voltage

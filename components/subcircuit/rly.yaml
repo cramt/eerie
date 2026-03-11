@@ -1,0 +1,74 @@
+id: rly
+name: RLY
+description: 'SPICE subcircuit: RLY'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: coilp
+  name: coilp
+  position:
+    x: -16.0
+    y: -35.0
+  direction: left
+  pin_type: passive
+- id: coilm
+  name: coilm
+  position:
+    x: -16.0
+    y: -33.055557
+  direction: left
+  pin_type: passive
+- id: ctl
+  name: CTL
+  position:
+    x: -16.0
+    y: -31.11111
+  direction: left
+  pin_type: passive
+- id: vnom_5
+  name: VNOM=5
+  position:
+    x: -16.0
+    y: -29.166666
+  direction: left
+  pin_type: passive
+- id: rcoil_150
+  name: RCOIL=150
+  position:
+    x: -16.0
+    y: -27.222221
+  direction: left
+  pin_type: passive
+- id: lcoil_0_1
+  name: LCOIL=0.1
+  position:
+    x: -16.0
+    y: -25.277779
+  direction: left
+  pin_type: passive
+- id: ccoil_1f
+  name: CCOIL=1f
+  position:
+    x: -16.0
+    y: -23.333332
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -35.0
+    width: 32.0
+    height: 70.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -35.0
+    width: 24.0
+    height: 70.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {coilp} {coilm} {CTL} {VNOM=5} {RCOIL=150} {LCOIL=0.1} {CCOIL=1f} RLY
+  model_name: RLY

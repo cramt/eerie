@@ -1,0 +1,74 @@
+id: cmr
+name: CMR
+description: 'SPICE subcircuit: CMR'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: vdd
+  name: VDD
+  position:
+    x: -16.0
+    y: -35.0
+  direction: left
+  pin_type: passive
+- id: vss
+  name: VSS
+  position:
+    x: -16.0
+    y: -33.055557
+  direction: left
+  pin_type: passive
+- id: vip
+  name: VIP
+  position:
+    x: -16.0
+    y: -31.11111
+  direction: left
+  pin_type: passive
+- id: vim
+  name: VIM
+  position:
+    x: -16.0
+    y: -29.166666
+  direction: left
+  pin_type: passive
+- id: vop
+  name: VOP
+  position:
+    x: -16.0
+    y: -27.222221
+  direction: left
+  pin_type: passive
+- id: vom
+  name: VOM
+  position:
+    x: -16.0
+    y: -25.277779
+  direction: left
+  pin_type: passive
+- id: gndf
+  name: GNDF
+  position:
+    x: -16.0
+    y: -23.333332
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -35.0
+    width: 32.0
+    height: 70.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -35.0
+    width: 24.0
+    height: 70.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {VDD} {VSS} {VIP} {VIM} {VOP} {VOM} {GNDF} CMR
+  model_name: CMR

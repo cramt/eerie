@@ -1,0 +1,46 @@
+id: tl431ed
+name: TL431ED
+description: 'SPICE subcircuit: TL431ED'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: cathode
+  name: CATHODE
+  position:
+    x: -16.0
+    y: -15.0
+  direction: left
+  pin_type: passive
+- id: anode
+  name: ANODE
+  position:
+    x: -16.0
+    y: -7.5
+  direction: left
+  pin_type: passive
+- id: ref
+  name: REF
+  position:
+    x: -16.0
+    y: 0.0
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -15.0
+    width: 32.0
+    height: 30.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -15.0
+    width: 24.0
+    height: 30.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {CATHODE} {ANODE} {REF} TL431ED
+  model_name: TL431ED

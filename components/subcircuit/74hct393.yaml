@@ -1,0 +1,102 @@
+id: 74hct393
+name: 74HCT393
+description: 'SPICE subcircuit: 74HCT393'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: 1mr
+  name: 1MR
+  position:
+    x: -16.0
+    y: -55.0
+  direction: left
+  pin_type: passive
+- id: 1cp
+  name: 1CP
+  position:
+    x: -16.0
+    y: -53.9
+  direction: left
+  pin_type: passive
+- id: 1q0
+  name: 1Q0
+  position:
+    x: -16.0
+    y: -52.8
+  direction: left
+  pin_type: passive
+- id: 1q1
+  name: 1Q1
+  position:
+    x: -16.0
+    y: -51.7
+  direction: left
+  pin_type: passive
+- id: 1q2
+  name: 1Q2
+  position:
+    x: -16.0
+    y: -50.6
+  direction: left
+  pin_type: passive
+- id: 1q3
+  name: 1Q3
+  position:
+    x: -16.0
+    y: -49.5
+  direction: left
+  pin_type: passive
+- id: vcc
+  name: VCC
+  position:
+    x: -16.0
+    y: -48.4
+  direction: left
+  pin_type: passive
+- id: vgnd
+  name: VGND
+  position:
+    x: -16.0
+    y: -47.3
+  direction: left
+  pin_type: passive
+- id: vcc1__vcc_
+  name: vcc1={vcc}
+  position:
+    x: -16.0
+    y: -46.2
+  direction: left
+  pin_type: passive
+- id: speed1__speed_
+  name: speed1={speed}
+  position:
+    x: -16.0
+    y: -45.1
+  direction: left
+  pin_type: passive
+- id: tripdt1a__tripdt_
+  name: tripdt1a={tripdt}
+  position:
+    x: -16.0
+    y: -44.0
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -55.0
+    width: 32.0
+    height: 110.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -55.0
+    width: 24.0
+    height: 110.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {1MR} {1CP} {1Q0} {1Q1} {1Q2} {1Q3} {VCC} {VGND} {vcc1={vcc}} {speed1={speed}} {tripdt1a={tripdt}} 74HCT393
+  model_name: 74HCT393

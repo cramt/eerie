@@ -1,0 +1,68 @@
+id: dc_voltage
+name: DC Voltage Source
+description: Ideal DC voltage source
+category: source
+subcategory: voltage
+keywords: [V, voltage, source, DC, battery]
+
+pins:
+  - id: p
+    name: "+"
+    position: { x: 0, y: -12 }
+    direction: up
+    pin_type: power
+  - id: n
+    name: "-"
+    position: { x: 0, y: 12 }
+    direction: down
+    pin_type: power
+
+symbol:
+  bounds: { x: -8, y: -12, width: 16, height: 24 }
+  graphics:
+    - kind: circle
+      cx: 0.0
+      cy: 0.0
+      r: 8.0
+      stroke_width: 1.5
+    - kind: line
+      x1: 0.0
+      y1: -12.0
+      x2: 0.0
+      y2: -8.0
+      stroke_width: 1.5
+    - kind: line
+      x1: 0.0
+      y1: 8.0
+      x2: 0.0
+      y2: 12.0
+      stroke_width: 1.5
+    - kind: line
+      x1: -3.0
+      y1: -4.0
+      x2: 3.0
+      y2: -4.0
+      stroke_width: 1.5
+    - kind: line
+      x1: 0.0
+      y1: -7.0
+      x2: 0.0
+      y2: -1.0
+      stroke_width: 1.5
+    - kind: line
+      x1: -3.0
+      y1: 4.0
+      x2: 3.0
+      y2: 4.0
+      stroke_width: 1.5
+
+properties:
+  - id: voltage
+    label: Voltage
+    unit: V
+    property_type: float
+    default: { Float: 5.0 }
+
+simulation:
+  model_type: spice_primitive
+  netlist: "V{label} {p} {n} DC {voltage}"

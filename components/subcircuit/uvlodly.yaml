@@ -1,0 +1,67 @@
+id: uvlodly
+name: UVLODLY
+description: 'SPICE subcircuit: UVLODLY'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: com
+  name: COM
+  position:
+    x: -16.0
+    y: -30.0
+  direction: left
+  pin_type: passive
+- id: hb
+  name: HB
+  position:
+    x: -16.0
+    y: -27.6
+  direction: left
+  pin_type: passive
+- id: hs
+  name: HS
+  position:
+    x: -16.0
+    y: -25.2
+  direction: left
+  pin_type: passive
+- id: uvlo_dly
+  name: UVLO_DLY
+  position:
+    x: -16.0
+    y: -22.8
+  direction: left
+  pin_type: passive
+- id: vdd
+  name: VDD
+  position:
+    x: -16.0
+    y: -20.4
+  direction: left
+  pin_type: passive
+- id: vhbhs_uvlo
+  name: VHBHS_UVLO
+  position:
+    x: -16.0
+    y: -18.0
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -30.0
+    width: 32.0
+    height: 60.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -30.0
+    width: 24.0
+    height: 60.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {COM} {HB} {HS} {UVLO_DLY} {VDD} {VHBHS_UVLO} UVLODLY
+  model_name: UVLODLY

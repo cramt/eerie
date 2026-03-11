@@ -1,0 +1,95 @@
+id: hc40103cell
+name: hc40103cell
+description: 'SPICE subcircuit: hc40103cell'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: _cp
+  name: _CP
+  position:
+    x: -16.0
+    y: -50.0
+  direction: left
+  pin_type: passive
+- id: _mr
+  name: _MR
+  position:
+    x: -16.0
+    y: -48.76543
+  direction: left
+  pin_type: passive
+- id: j
+  name: J
+  position:
+    x: -16.0
+    y: -47.530865
+  direction: left
+  pin_type: passive
+- id: pe
+  name: PE
+  position:
+    x: -16.0
+    y: -46.296295
+  direction: left
+  pin_type: passive
+- id: pl
+  name: PL
+  position:
+    x: -16.0
+    y: -45.06173
+  direction: left
+  pin_type: passive
+- id: te
+  name: TE
+  position:
+    x: -16.0
+    y: -43.82716
+  direction: left
+  pin_type: passive
+- id: q
+  name: Q
+  position:
+    x: -16.0
+    y: -42.59259
+  direction: left
+  pin_type: passive
+- id: _q
+  name: _Q
+  position:
+    x: -16.0
+    y: -41.358025
+  direction: left
+  pin_type: passive
+- id: tripdt3__tripdt2_
+  name: tripdt3={tripdt2}
+  position:
+    x: -16.0
+    y: -40.123455
+  direction: left
+  pin_type: passive
+- id: tdfb__tdfa_
+  name: tdfb={tdfa}
+  position:
+    x: -16.0
+    y: -38.88889
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -50.0
+    width: 32.0
+    height: 100.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -50.0
+    width: 24.0
+    height: 100.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {_CP} {_MR} {J} {PE} {PL} {TE} {Q} {_Q} {tripdt3={tripdt2}} {tdfb={tdfa}} hc40103cell
+  model_name: hc40103cell

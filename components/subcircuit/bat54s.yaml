@@ -1,0 +1,46 @@
+id: bat54s
+name: BAT54S
+description: 'SPICE subcircuit: BAT54S'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: a
+  name: a
+  position:
+    x: -16.0
+    y: -15.0
+  direction: left
+  pin_type: passive
+- id: ka
+  name: ka
+  position:
+    x: -16.0
+    y: -7.5
+  direction: left
+  pin_type: passive
+- id: k
+  name: k
+  position:
+    x: -16.0
+    y: 0.0
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -15.0
+    width: 32.0
+    height: 30.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -15.0
+    width: 24.0
+    height: 30.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {a} {ka} {k} BAT54S
+  model_name: BAT54S

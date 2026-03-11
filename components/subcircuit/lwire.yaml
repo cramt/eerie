@@ -1,0 +1,53 @@
+id: lwire
+name: Lwire
+description: 'SPICE subcircuit: Lwire'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: n1
+  name: N1
+  position:
+    x: -16.0
+    y: -20.0
+  direction: left
+  pin_type: passive
+- id: n2
+  name: N2
+  position:
+    x: -16.0
+    y: -15.555555
+  direction: left
+  pin_type: passive
+- id: length_1
+  name: length=1
+  position:
+    x: -16.0
+    y: -11.111111
+  direction: left
+  pin_type: passive
+- id: d_1m
+  name: D=1m
+  position:
+    x: -16.0
+    y: -6.666667
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -20.0
+    width: 32.0
+    height: 40.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -20.0
+    width: 24.0
+    height: 40.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {N1} {N2} {length=1} {D=1m} Lwire
+  model_name: Lwire

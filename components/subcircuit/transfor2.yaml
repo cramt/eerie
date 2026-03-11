@@ -1,0 +1,53 @@
+id: transfor2
+name: Transfor2
+description: 'SPICE subcircuit: Transfor2'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: an1
+  name: an1
+  position:
+    x: -16.0
+    y: -20.0
+  direction: left
+  pin_type: passive
+- id: bn1
+  name: bn1
+  position:
+    x: -16.0
+    y: -15.555555
+  direction: left
+  pin_type: passive
+- id: an2
+  name: an2
+  position:
+    x: -16.0
+    y: -11.111111
+  direction: left
+  pin_type: passive
+- id: bn2
+  name: bn2
+  position:
+    x: -16.0
+    y: -6.666667
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -20.0
+    width: 32.0
+    height: 40.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -20.0
+    width: 24.0
+    height: 40.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {an1} {bn1} {an2} {bn2} Transfor2
+  model_name: Transfor2

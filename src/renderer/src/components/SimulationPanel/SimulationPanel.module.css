@@ -1,0 +1,329 @@
+/* ═══════════════════════════════════════════════════════════
+   SimulationPanel — integrated bottom panel (no modal)
+   ═══════════════════════════════════════════════════════════ */
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-panel);
+  border-top: 1px solid var(--border);
+  overflow: hidden;
+  min-height: 120px;
+}
+
+/* Drag handle for resizing */
+.dragHandle {
+  height: 4px;
+  cursor: ns-resize;
+  background: transparent;
+  flex-shrink: 0;
+  transition: background 0.15s;
+}
+
+.dragHandle:hover,
+.dragHandle:active {
+  background: var(--accent);
+}
+
+/* ── Config bar ────────────────────────────────────────────── */
+.configBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 12px;
+  border-bottom: 1px solid var(--border);
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.configLeft {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
+.configRight {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.analysisSelector {
+  display: flex;
+  gap: 2px;
+}
+
+.analysisBtn {
+  padding: 3px 10px;
+  font-size: 11px;
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+  background: transparent;
+  white-space: nowrap;
+}
+
+.analysisBtn:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.analysisBtnActive {
+  background: var(--accent-dim);
+  color: var(--accent-hover);
+  border-color: var(--accent);
+}
+
+/* ── Inline params ─────────────────────────────────────────── */
+.params {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.paramGroup {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.paramLabel {
+  font-size: 10px;
+  color: var(--text-muted);
+  white-space: nowrap;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.paramInput {
+  width: 72px;
+  padding: 2px 6px;
+  font-size: 11px;
+  font-family: var(--font-mono);
+  color: var(--text-primary);
+  background: var(--bg-input, var(--bg-panel));
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+
+.paramInput:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+/* ── Run button ────────────────────────────────────────────── */
+.runBtn {
+  padding: 4px 14px;
+  border-radius: var(--radius-sm);
+  background: var(--accent-dim);
+  color: var(--accent-hover);
+  font-size: 12px;
+  font-weight: 600;
+  border: 1px solid var(--accent);
+  white-space: nowrap;
+  transition: background 0.1s;
+}
+
+.runBtn:hover:not(:disabled) {
+  background: var(--accent);
+  color: #fff;
+}
+
+.runBtn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.offlineTag {
+  font-size: 10px;
+  color: var(--danger);
+  padding: 2px 6px;
+  border: 1px solid var(--danger);
+  border-radius: var(--radius-sm);
+  opacity: 0.7;
+}
+
+.closeBtn {
+  color: var(--text-muted);
+  font-size: 14px;
+  padding: 2px 4px;
+}
+
+.closeBtn:hover {
+  color: var(--text-primary);
+}
+
+/* ── Error ─────────────────────────────────────────────────── */
+.error {
+  padding: 6px 12px;
+  color: var(--danger);
+  font-size: 12px;
+  font-family: var(--font-mono);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+/* ── Results area ──────────────────────────────────────────── */
+.resultsArea {
+  flex: 1;
+  overflow: auto;
+  min-height: 0;
+}
+
+.emptyState {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  min-height: 80px;
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+.emptyState kbd {
+  display: inline-block;
+  padding: 1px 5px;
+  margin: 0 2px;
+  font-size: 11px;
+  font-family: var(--font-mono);
+  background: var(--bg-hover);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+}
+
+/* ── Op table ──────────────────────────────────────────────── */
+.opTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+  font-family: var(--font-mono);
+}
+
+.opTable th {
+  text-align: left;
+  padding: 4px 12px;
+  color: var(--text-muted);
+  font-weight: 400;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid var(--border);
+}
+
+.opTable td {
+  padding: 3px 12px;
+  color: var(--text-primary);
+  border-bottom: 1px solid rgba(42, 42, 68, 0.3);
+}
+
+.opValue {
+  text-align: right;
+}
+
+/* ── Plot area ─────────────────────────────────────────────── */
+.plotContainer {
+  display: flex;
+  height: 100%;
+}
+
+.legend {
+  min-width: 140px;
+  max-width: 160px;
+  overflow-y: auto;
+  font-size: 11px;
+  padding: 4px 0;
+  border-right: 1px solid var(--border);
+}
+
+.legendHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2px 8px;
+  margin-bottom: 2px;
+}
+
+.plotName {
+  font-weight: 600;
+  color: var(--text-secondary);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.legendActions {
+  display: flex;
+  gap: 4px;
+}
+
+.legendBtn {
+  font-size: 10px;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 1px 4px;
+  border-radius: 2px;
+}
+
+.legendBtn:hover {
+  color: var(--text-primary);
+  background: var(--bg-hover);
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 1px 8px;
+  cursor: pointer;
+  border-radius: 2px;
+}
+
+.legendItem:hover {
+  background: var(--bg-hover);
+}
+
+.legendItem input[type="checkbox"] {
+  width: 12px;
+  height: 12px;
+  accent-color: var(--accent);
+}
+
+.legendColor {
+  width: 10px;
+  height: 3px;
+  border-radius: 1px;
+  flex-shrink: 0;
+}
+
+.legendLabel {
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.chart {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+}
+
+/* uPlot dark theme overrides */
+.chart :global(.u-wrap) {
+  background: var(--bg-canvas, #06060a);
+  border-radius: var(--radius-sm);
+}
+
+.chart :global(.u-select) {
+  background: rgba(224, 64, 251, 0.1);
+}
+
+.chart :global(.u-cursor-x),
+.chart :global(.u-cursor-y) {
+  border-color: rgba(136, 120, 170, 0.3) !important;
+}

@@ -1,0 +1,45 @@
+id: ground
+name: Ground
+description: Power/signal ground reference (0V)
+category: symbol
+keywords: [GND, ground, 0V, reference]
+
+pins:
+  - id: p
+    name: GND
+    position: { x: 0, y: 0 }
+    direction: up
+    pin_type: power
+
+symbol:
+  bounds: { x: -8, y: 0, width: 16, height: 10 }
+  graphics:
+    - kind: line
+      x1: 0.0
+      y1: 0.0
+      x2: 0.0
+      y2: 3.0
+      stroke_width: 1.5
+    - kind: line
+      x1: -8.0
+      y1: 3.0
+      x2: 8.0
+      y2: 3.0
+      stroke_width: 2.0
+    - kind: line
+      x1: -5.0
+      y1: 6.0
+      x2: 5.0
+      y2: 6.0
+      stroke_width: 2.0
+    - kind: line
+      x1: -2.0
+      y1: 9.0
+      x2: 2.0
+      y2: 9.0
+      stroke_width: 2.0
+
+properties: []
+
+simulation:
+  model_type: ideal

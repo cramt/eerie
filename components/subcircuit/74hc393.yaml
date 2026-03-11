@@ -1,0 +1,67 @@
+id: 74hc393
+name: 74HC393
+description: 'SPICE subcircuit: 74HC393'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: clk
+  name: clk
+  position:
+    x: -16.0
+    y: -30.0
+  direction: left
+  pin_type: passive
+- id: clr
+  name: clr
+  position:
+    x: -16.0
+    y: -27.6
+  direction: left
+  pin_type: passive
+- id: qa
+  name: qa
+  position:
+    x: -16.0
+    y: -25.2
+  direction: left
+  pin_type: passive
+- id: qb
+  name: qb
+  position:
+    x: -16.0
+    y: -22.8
+  direction: left
+  pin_type: passive
+- id: qc
+  name: qc
+  position:
+    x: -16.0
+    y: -20.4
+  direction: left
+  pin_type: passive
+- id: qd
+  name: qd
+  position:
+    x: -16.0
+    y: -18.0
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -30.0
+    width: 32.0
+    height: 60.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -30.0
+    width: 24.0
+    height: 60.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {clk} {clr} {qa} {qb} {qc} {qd} 74HC393
+  model_name: 74HC393

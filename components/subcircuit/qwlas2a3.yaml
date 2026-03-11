@@ -1,0 +1,319 @@
+id: qwlas2a3
+name: QWLAS2A3
+description: 'SPICE subcircuit: QWLAS2A3'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: p
+  name: P
+  position:
+    x: -16.0
+    y: -210.0
+  direction: left
+  pin_type: passive
+- id: n
+  name: N
+  position:
+    x: -16.0
+    y: -209.75015
+  direction: left
+  pin_type: passive
+- id: pf
+  name: PF
+  position:
+    x: -16.0
+    y: -209.50029
+  direction: left
+  pin_type: passive
+- id: _ne_1e12
+  name: '{NE=1E12'
+  position:
+    x: -16.0
+    y: -209.25044
+  direction: left
+  pin_type: passive
+- id: n_2
+  name: N=2
+  position:
+    x: -16.0
+    y: -209.0006
+  direction: left
+  pin_type: passive
+- id: ne2_1e12
+  name: NE2=1E12
+  position:
+    x: -16.0
+    y: -208.75075
+  direction: left
+  pin_type: passive
+- id: nw2_1
+  name: NW2=1
+  position:
+    x: -16.0
+    y: -208.50089
+  direction: left
+  pin_type: passive
+- id: etai_1
+  name: ETAI=1
+  position:
+    x: -16.0
+    y: -208.25104
+  direction: left
+  pin_type: passive
+- id: lambda_850e_9
+  name: LAMBDA=850E-9
+  position:
+    x: -16.0
+    y: -208.00119
+  direction: left
+  pin_type: passive
+- id: nw_1
+  name: NW=1
+  position:
+    x: -16.0
+    y: -207.75134
+  direction: left
+  pin_type: passive
+- id: vact_1e_17
+  name: VACT=1E-17
+  position:
+    x: -16.0
+    y: -207.50148
+  direction: left
+  pin_type: passive
+- id: gamma_0_1
+  name: GAMMA=0.1
+  position:
+    x: -16.0
+    y: -207.25163
+  direction: left
+  pin_type: passive
+- id: vgr_1e8
+  name: VGR=1E8
+  position:
+    x: -16.0
+    y: -207.00179
+  direction: left
+  pin_type: passive
+- id: tp_3e_12
+  name: TP=3E-12
+  position:
+    x: -16.0
+    y: -206.75194
+  direction: left
+  pin_type: passive
+- id: etac_0_35
+  name: ETAC=0.35
+  position:
+    x: -16.0
+    y: -206.50208
+  direction: left
+  pin_type: passive
+- id: no_1e24
+  name: NO=1E24
+  position:
+    x: -16.0
+    y: -206.25223
+  direction: left
+  pin_type: passive
+- id: nth_1_25e24
+  name: NTH=1.25E24
+  position:
+    x: -16.0
+    y: -206.00238
+  direction: left
+  pin_type: passive
+- id: go_1e5
+  name: GO=1E5
+  position:
+    x: -16.0
+    y: -205.75253
+  direction: left
+  pin_type: passive
+- id: m_1
+  name: M=1
+  position:
+    x: -16.0
+    y: -205.50267
+  direction: left
+  pin_type: passive
+- id: eps_1e_23
+  name: EPS=1E-23
+  position:
+    x: -16.0
+    y: -205.25282
+  direction: left
+  pin_type: passive
+- id: tn_1e_8
+  name: TN=1E-8
+  position:
+    x: -16.0
+    y: -205.00298
+  direction: left
+  pin_type: passive
+- id: ap_0
+  name: AP=0
+  position:
+    x: -16.0
+    y: -204.75313
+  direction: left
+  pin_type: passive
+- id: a_1e8
+  name: A=1E8
+  position:
+    x: -16.0
+    y: -204.50327
+  direction: left
+  pin_type: passive
+- id: b_1e_16
+  name: B=1E-16
+  position:
+    x: -16.0
+    y: -204.25342
+  direction: left
+  pin_type: passive
+- id: c_0
+  name: C=0
+  position:
+    x: -16.0
+    y: -204.00357
+  direction: left
+  pin_type: passive
+- id: ab_1e8
+  name: AB=1E8
+  position:
+    x: -16.0
+    y: -203.75372
+  direction: left
+  pin_type: passive
+- id: bb_1e_16
+  name: BB=1E-16
+  position:
+    x: -16.0
+    y: -203.50386
+  direction: left
+  pin_type: passive
+- id: cb_1e_40
+  name: CB=1E-40
+  position:
+    x: -16.0
+    y: -203.25401
+  direction: left
+  pin_type: passive
+- id: betaa_0
+  name: BETAA=0
+  position:
+    x: -16.0
+    y: -203.00417
+  direction: left
+  pin_type: passive
+- id: betab_1e_6
+  name: BETAB=1E-6
+  position:
+    x: -16.0
+    y: -202.75432
+  direction: left
+  pin_type: passive
+- id: betac_0
+  name: BETAC=0
+  position:
+    x: -16.0
+    y: -202.50446
+  direction: left
+  pin_type: passive
+- id: vbarr_1e_16
+  name: VBARR=1E-16
+  position:
+    x: -16.0
+    y: -202.25461
+  direction: left
+  pin_type: passive
+- id: tcapt_1e_12
+  name: TCAPT=1e-12
+  position:
+    x: -16.0
+    y: -202.00476
+  direction: left
+  pin_type: passive
+- id: tem_1e_9
+  name: TEM=1e-9
+  position:
+    x: -16.0
+    y: -201.75491
+  direction: left
+  pin_type: passive
+- id: cjo_0
+  name: CJO=0
+  position:
+    x: -16.0
+    y: -201.50505
+  direction: left
+  pin_type: passive
+- id: mpow_0_5
+  name: MPOW=0.5
+  position:
+    x: -16.0
+    y: -201.2552
+  direction: left
+  pin_type: passive
+- id: vj_1
+  name: VJ=1
+  position:
+    x: -16.0
+    y: -201.00536
+  direction: left
+  pin_type: passive
+- id: fc_0_5
+  name: FC=0.5
+  position:
+    x: -16.0
+    y: -200.75551
+  direction: left
+  pin_type: passive
+- id: delta_1e_60
+  name: DELTA=1e-60
+  position:
+    x: -16.0
+    y: -200.50565
+  direction: left
+  pin_type: passive
+- id: del2_0
+  name: DEL2=0
+  position:
+    x: -16.0
+    y: -200.2558
+  direction: left
+  pin_type: passive
+- id: tf_1
+  name: TF=1
+  position:
+    x: -16.0
+    y: -200.00595
+  direction: left
+  pin_type: passive
+- id: _
+  name: '}'
+  position:
+    x: -16.0
+    y: -199.7561
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -210.0
+    width: 32.0
+    height: 420.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -210.0
+    width: 24.0
+    height: 420.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {P} {N} {PF} {{NE=1E12} {N=2} {NE2=1E12} {NW2=1} {ETAI=1} {LAMBDA=850E-9} {NW=1} {VACT=1E-17} {GAMMA=0.1} {VGR=1E8} {TP=3E-12} {ETAC=0.35} {NO=1E24} {NTH=1.25E24} {GO=1E5} {M=1} {EPS=1E-23} {TN=1E-8} {AP=0} {A=1E8} {B=1E-16} {C=0} {AB=1E8} {BB=1E-16} {CB=1E-40} {BETAA=0} {BETAB=1E-6} {BETAC=0} {VBARR=1E-16} {TCAPT=1e-12} {TEM=1e-9} {CJO=0} {MPOW=0.5} {VJ=1} {FC=0.5} {DELTA=1e-60} {DEL2=0} {TF=1} {}} QWLAS2A3
+  model_name: QWLAS2A3

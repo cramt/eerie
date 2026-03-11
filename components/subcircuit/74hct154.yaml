@@ -1,0 +1,193 @@
+id: 74hct154
+name: 74HCT154
+description: 'SPICE subcircuit: 74HCT154'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: y0bar
+  name: Y0BAR
+  position:
+    x: -16.0
+    y: -120.0
+  direction: left
+  pin_type: passive
+- id: y1bar
+  name: Y1BAR
+  position:
+    x: -16.0
+    y: -119.54631
+  direction: left
+  pin_type: passive
+- id: y2bar
+  name: Y2BAR
+  position:
+    x: -16.0
+    y: -119.09263
+  direction: left
+  pin_type: passive
+- id: y3bar
+  name: Y3BAR
+  position:
+    x: -16.0
+    y: -118.63894
+  direction: left
+  pin_type: passive
+- id: y4bar
+  name: Y4BAR
+  position:
+    x: -16.0
+    y: -118.18526
+  direction: left
+  pin_type: passive
+- id: y5bar
+  name: Y5BAR
+  position:
+    x: -16.0
+    y: -117.73157
+  direction: left
+  pin_type: passive
+- id: y6bar
+  name: Y6BAR
+  position:
+    x: -16.0
+    y: -117.277885
+  direction: left
+  pin_type: passive
+- id: y7bar
+  name: Y7BAR
+  position:
+    x: -16.0
+    y: -116.824196
+  direction: left
+  pin_type: passive
+- id: y8bar
+  name: Y8BAR
+  position:
+    x: -16.0
+    y: -116.370514
+  direction: left
+  pin_type: passive
+- id: y9bar
+  name: Y9BAR
+  position:
+    x: -16.0
+    y: -115.916824
+  direction: left
+  pin_type: passive
+- id: y10bar
+  name: Y10BAR
+  position:
+    x: -16.0
+    y: -115.463135
+  direction: left
+  pin_type: passive
+- id: y11bar
+  name: Y11BAR
+  position:
+    x: -16.0
+    y: -115.00945
+  direction: left
+  pin_type: passive
+- id: y12bar
+  name: Y12BAR
+  position:
+    x: -16.0
+    y: -114.55576
+  direction: left
+  pin_type: passive
+- id: y13bar
+  name: Y13BAR
+  position:
+    x: -16.0
+    y: -114.10208
+  direction: left
+  pin_type: passive
+- id: y14bar
+  name: Y14BAR
+  position:
+    x: -16.0
+    y: -113.64839
+  direction: left
+  pin_type: passive
+- id: y15bar
+  name: Y15BAR
+  position:
+    x: -16.0
+    y: -113.19471
+  direction: left
+  pin_type: passive
+- id: e1bar
+  name: E1BAR
+  position:
+    x: -16.0
+    y: -112.74102
+  direction: left
+  pin_type: passive
+- id: e2bar
+  name: E2BAR
+  position:
+    x: -16.0
+    y: -112.28734
+  direction: left
+  pin_type: passive
+- id: a0
+  name: A0
+  position:
+    x: -16.0
+    y: -111.83365
+  direction: left
+  pin_type: passive
+- id: a1
+  name: A1
+  position:
+    x: -16.0
+    y: -111.37996
+  direction: left
+  pin_type: passive
+- id: a2
+  name: A2
+  position:
+    x: -16.0
+    y: -110.92628
+  direction: left
+  pin_type: passive
+- id: a3
+  name: A3
+  position:
+    x: -16.0
+    y: -110.47259
+  direction: left
+  pin_type: passive
+- id: optional_
+  name: 'optional:'
+  position:
+    x: -16.0
+    y: -110.018906
+  direction: left
+  pin_type: passive
+- id: dpwr_
+  name: DPWR=
+  position:
+    x: -16.0
+    y: -109.565216
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -120.0
+    width: 32.0
+    height: 240.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -120.0
+    width: 24.0
+    height: 240.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {Y0BAR} {Y1BAR} {Y2BAR} {Y3BAR} {Y4BAR} {Y5BAR} {Y6BAR} {Y7BAR} {Y8BAR} {Y9BAR} {Y10BAR} {Y11BAR} {Y12BAR} {Y13BAR} {Y14BAR} {Y15BAR} {E1BAR} {E2BAR} {A0} {A1} {A2} {A3} {optional:} {DPWR=} 74HCT154
+  model_name: 74HCT154

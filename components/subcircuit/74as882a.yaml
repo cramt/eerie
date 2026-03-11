@@ -1,0 +1,186 @@
+id: 74as882a
+name: 74AS882A
+description: 'SPICE subcircuit: 74AS882A'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: cn
+  name: CN
+  position:
+    x: -16.0
+    y: -115.0
+  direction: left
+  pin_type: passive
+- id: p0bar
+  name: P0BAR
+  position:
+    x: -16.0
+    y: -114.524796
+  direction: left
+  pin_type: passive
+- id: p1bar
+  name: P1BAR
+  position:
+    x: -16.0
+    y: -114.04958
+  direction: left
+  pin_type: passive
+- id: p2bar
+  name: P2BAR
+  position:
+    x: -16.0
+    y: -113.57438
+  direction: left
+  pin_type: passive
+- id: p3bar
+  name: P3BAR
+  position:
+    x: -16.0
+    y: -113.099174
+  direction: left
+  pin_type: passive
+- id: p4bar
+  name: P4BAR
+  position:
+    x: -16.0
+    y: -112.62397
+  direction: left
+  pin_type: passive
+- id: p5bar
+  name: P5BAR
+  position:
+    x: -16.0
+    y: -112.14876
+  direction: left
+  pin_type: passive
+- id: p6bar
+  name: P6BAR
+  position:
+    x: -16.0
+    y: -111.67355
+  direction: left
+  pin_type: passive
+- id: p7bar
+  name: P7BAR
+  position:
+    x: -16.0
+    y: -111.19835
+  direction: left
+  pin_type: passive
+- id: g0bar
+  name: G0BAR
+  position:
+    x: -16.0
+    y: -110.72314
+  direction: left
+  pin_type: passive
+- id: g1bar
+  name: G1BAR
+  position:
+    x: -16.0
+    y: -110.24793
+  direction: left
+  pin_type: passive
+- id: g2bar
+  name: G2BAR
+  position:
+    x: -16.0
+    y: -109.77273
+  direction: left
+  pin_type: passive
+- id: g3bar
+  name: G3BAR
+  position:
+    x: -16.0
+    y: -109.29752
+  direction: left
+  pin_type: passive
+- id: g4bar
+  name: G4BAR
+  position:
+    x: -16.0
+    y: -108.82231
+  direction: left
+  pin_type: passive
+- id: g5bar
+  name: G5BAR
+  position:
+    x: -16.0
+    y: -108.34711
+  direction: left
+  pin_type: passive
+- id: g6bar
+  name: G6BAR
+  position:
+    x: -16.0
+    y: -107.8719
+  direction: left
+  pin_type: passive
+- id: g7bar
+  name: G7BAR
+  position:
+    x: -16.0
+    y: -107.39669
+  direction: left
+  pin_type: passive
+- id: cn8
+  name: CN8
+  position:
+    x: -16.0
+    y: -106.921486
+  direction: left
+  pin_type: passive
+- id: cn16
+  name: CN16
+  position:
+    x: -16.0
+    y: -106.44628
+  direction: left
+  pin_type: passive
+- id: cn24
+  name: CN24
+  position:
+    x: -16.0
+    y: -105.97108
+  direction: left
+  pin_type: passive
+- id: cn32
+  name: CN32
+  position:
+    x: -16.0
+    y: -105.495865
+  direction: left
+  pin_type: passive
+- id: optional_
+  name: 'optional:'
+  position:
+    x: -16.0
+    y: -105.02066
+  direction: left
+  pin_type: passive
+- id: dpwr_
+  name: DPWR=
+  position:
+    x: -16.0
+    y: -104.545456
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -115.0
+    width: 32.0
+    height: 230.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -115.0
+    width: 24.0
+    height: 230.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {CN} {P0BAR} {P1BAR} {P2BAR} {P3BAR} {P4BAR} {P5BAR} {P6BAR} {P7BAR} {G0BAR} {G1BAR} {G2BAR} {G3BAR} {G4BAR} {G5BAR} {G6BAR} {G7BAR} {CN8} {CN16} {CN24} {CN32} {optional:} {DPWR=} 74AS882A
+  model_name: 74AS882A

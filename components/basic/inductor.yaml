@@ -1,0 +1,68 @@
+id: inductor
+name: Inductor
+description: Passive two-terminal inductor (coil symbol)
+category: passive
+subcategory: inductors
+keywords: [L, henry, passive, inductor, coil]
+
+pins:
+  - id: p
+    name: "+"
+    position: { x: -14, y: 0 }
+    direction: left
+    pin_type: passive
+  - id: n
+    name: "-"
+    position: { x: 14, y: 0 }
+    direction: right
+    pin_type: passive
+
+symbol:
+  bounds: { x: -14, y: -5, width: 28, height: 10 }
+  graphics:
+    - kind: line
+      x1: -14.0
+      y1: 0.0
+      x2: -10.0
+      y2: 0.0
+      stroke_width: 1.5
+    - kind: arc
+      cx: -7.0
+      cy: 0.0
+      r: 3.0
+      start_angle: 180.0
+      end_angle: 0.0
+      stroke_width: 1.5
+    - kind: arc
+      cx: -1.0
+      cy: 0.0
+      r: 3.0
+      start_angle: 180.0
+      end_angle: 0.0
+      stroke_width: 1.5
+    - kind: arc
+      cx: 5.0
+      cy: 0.0
+      r: 3.0
+      start_angle: 180.0
+      end_angle: 0.0
+      stroke_width: 1.5
+    - kind: line
+      x1: 8.0
+      y1: 0.0
+      x2: 14.0
+      y2: 0.0
+      stroke_width: 1.5
+
+properties:
+  - id: inductance
+    label: Inductance
+    unit: H
+    property_type: float
+    default: { Float: 0.001 }
+    min: 0.0
+    si_prefixes: true
+
+simulation:
+  model_type: spice_primitive
+  netlist: "L{label} {p} {n} {inductance}"

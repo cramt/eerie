@@ -1,0 +1,39 @@
+id: vos_drift_buf634a
+name: VOS_DRIFT_BUF634A
+description: 'SPICE subcircuit: VOS_DRIFT_BUF634A'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: vos_
+  name: VOS+
+  position:
+    x: -16.0
+    y: -10.0
+  direction: left
+  pin_type: passive
+- id: vos_
+  name: VOS-
+  position:
+    x: -16.0
+    y: 10.0
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -10.0
+    width: 32.0
+    height: 20.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -10.0
+    width: 24.0
+    height: 20.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {VOS+} {VOS-} VOS_DRIFT_BUF634A
+  model_name: VOS_DRIFT_BUF634A

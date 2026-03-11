@@ -1,0 +1,46 @@
+id: cm30tf24h
+name: CM30TF24H
+description: 'SPICE subcircuit: CM30TF24H'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: '71'
+  name: '71'
+  position:
+    x: -16.0
+    y: -15.0
+  direction: left
+  pin_type: passive
+- id: '72'
+  name: '72'
+  position:
+    x: -16.0
+    y: -7.5
+  direction: left
+  pin_type: passive
+- id: '74'
+  name: '74'
+  position:
+    x: -16.0
+    y: 0.0
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -15.0
+    width: 32.0
+    height: 30.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -15.0
+    width: 24.0
+    height: 30.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {71} {72} {74} CM30TF24H
+  model_name: CM30TF24H

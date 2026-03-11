@@ -1,0 +1,39 @@
+id: sub3720
+name: SUB3720
+description: 'SPICE subcircuit: SUB3720'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: '153'
+  name: '153'
+  position:
+    x: -16.0
+    y: -10.0
+  direction: left
+  pin_type: passive
+- id: '147'
+  name: '147'
+  position:
+    x: -16.0
+    y: 10.0
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -10.0
+    width: 32.0
+    height: 20.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -10.0
+    width: 24.0
+    height: 20.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {153} {147} SUB3720
+  model_name: SUB3720

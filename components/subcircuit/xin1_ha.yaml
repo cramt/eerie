@@ -1,0 +1,53 @@
+id: xin1_ha
+name: XIN1_HA
+description: 'SPICE subcircuit: XIN1_HA'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: '140'
+  name: '140'
+  position:
+    x: -16.0
+    y: -20.0
+  direction: left
+  pin_type: passive
+- id: '141'
+  name: '141'
+  position:
+    x: -16.0
+    y: -15.555555
+  direction: left
+  pin_type: passive
+- id: '142'
+  name: '142'
+  position:
+    x: -16.0
+    y: -11.111111
+  direction: left
+  pin_type: passive
+- id: '109'
+  name: '109'
+  position:
+    x: -16.0
+    y: -6.666667
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -20.0
+    width: 32.0
+    height: 40.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -20.0
+    width: 24.0
+    height: 40.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {140} {141} {142} {109} XIN1_HA
+  model_name: XIN1_HA

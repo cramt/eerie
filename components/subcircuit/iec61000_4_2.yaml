@@ -1,0 +1,53 @@
+id: iec61000_4_2
+name: IEC61000_4_2
+description: 'SPICE subcircuit: IEC61000_4_2'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: esd_
+  name: ESD+
+  position:
+    x: -16.0
+    y: -20.0
+  direction: left
+  pin_type: passive
+- id: esd_
+  name: ESD-
+  position:
+    x: -16.0
+    y: -15.555555
+  direction: left
+  pin_type: passive
+- id: level_4
+  name: Level=4
+  position:
+    x: -16.0
+    y: -11.111111
+  direction: left
+  pin_type: passive
+- id: td_10m
+  name: TD=10m
+  position:
+    x: -16.0
+    y: -6.666667
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -20.0
+    width: 32.0
+    height: 40.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -20.0
+    width: 24.0
+    height: 40.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {ESD+} {ESD-} {Level=4} {TD=10m} IEC61000_4_2
+  model_name: IEC61000_4_2

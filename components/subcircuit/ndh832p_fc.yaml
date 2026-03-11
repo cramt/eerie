@@ -1,0 +1,46 @@
+id: ndh832p_fc
+name: NDH832P_FC
+description: 'SPICE subcircuit: NDH832P_FC'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: '20'
+  name: '20'
+  position:
+    x: -16.0
+    y: -15.0
+  direction: left
+  pin_type: passive
+- id: '10'
+  name: '10'
+  position:
+    x: -16.0
+    y: -7.5
+  direction: left
+  pin_type: passive
+- id: '30'
+  name: '30'
+  position:
+    x: -16.0
+    y: 0.0
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -15.0
+    width: 32.0
+    height: 30.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -15.0
+    width: 24.0
+    height: 30.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {20} {10} {30} NDH832P_FC
+  model_name: NDH832P_FC

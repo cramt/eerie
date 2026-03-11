@@ -1,0 +1,46 @@
+id: tn0624n2
+name: TN0624N2
+description: 'SPICE subcircuit: TN0624N2'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: '10'
+  name: '10'
+  position:
+    x: -16.0
+    y: -15.0
+  direction: left
+  pin_type: passive
+- id: '20'
+  name: '20'
+  position:
+    x: -16.0
+    y: -7.5
+  direction: left
+  pin_type: passive
+- id: '40'
+  name: '40'
+  position:
+    x: -16.0
+    y: 0.0
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -15.0
+    width: 32.0
+    height: 30.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -15.0
+    width: 24.0
+    height: 30.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {10} {20} {40} TN0624N2
+  model_name: TN0624N2

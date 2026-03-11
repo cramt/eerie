@@ -1,0 +1,95 @@
+id: lamp2
+name: lamp2
+description: 'SPICE subcircuit: lamp2'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: '1'
+  name: '1'
+  position:
+    x: -16.0
+    y: -50.0
+  direction: left
+  pin_type: passive
+- id: '2'
+  name: '2'
+  position:
+    x: -16.0
+    y: -48.76543
+  direction: left
+  pin_type: passive
+- id: res
+  name: res
+  position:
+    x: -16.0
+    y: -47.530865
+  direction: left
+  pin_type: passive
+- id: ptot
+  name: ptot
+  position:
+    x: -16.0
+    y: -46.296295
+  direction: left
+  pin_type: passive
+- id: unom__unom_
+  name: UNOM={UNOM}
+  position:
+    x: -16.0
+    y: -45.06173
+  direction: left
+  pin_type: passive
+- id: pnom__pnom_
+  name: PNOM={PNOM}
+  position:
+    x: -16.0
+    y: -43.82716
+  direction: left
+  pin_type: passive
+- id: rcold__rcold_
+  name: RCOLD={RCOLD}
+  position:
+    x: -16.0
+    y: -42.59259
+  direction: left
+  pin_type: passive
+- id: tcold__tcold_
+  name: TCOLD={TCOLD}
+  position:
+    x: -16.0
+    y: -41.358025
+  direction: left
+  pin_type: passive
+- id: tau__tau_
+  name: TAU={TAU}
+  position:
+    x: -16.0
+    y: -40.123455
+  direction: left
+  pin_type: passive
+- id: tamb__tamb_
+  name: TAMB={TAMB}
+  position:
+    x: -16.0
+    y: -38.88889
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -50.0
+    width: 32.0
+    height: 100.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -50.0
+    width: 24.0
+    height: 100.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {1} {2} {res} {ptot} {UNOM={UNOM}} {PNOM={PNOM}} {RCOLD={RCOLD}} {TCOLD={TCOLD}} {TAU={TAU}} {TAMB={TAMB}} lamp2
+  model_name: lamp2

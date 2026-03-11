@@ -1,0 +1,46 @@
+id: sub5314
+name: SUB5314
+description: 'SPICE subcircuit: SUB5314'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: '199'
+  name: '199'
+  position:
+    x: -16.0
+    y: -15.0
+  direction: left
+  pin_type: passive
+- id: '200'
+  name: '200'
+  position:
+    x: -16.0
+    y: -7.5
+  direction: left
+  pin_type: passive
+- id: '201'
+  name: '201'
+  position:
+    x: -16.0
+    y: 0.0
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -15.0
+    width: 32.0
+    height: 30.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -15.0
+    width: 24.0
+    height: 30.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {199} {200} {201} SUB5314
+  model_name: SUB5314

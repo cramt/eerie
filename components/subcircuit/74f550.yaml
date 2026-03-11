@@ -1,0 +1,221 @@
+id: 74f550
+name: 74F550
+description: 'SPICE subcircuit: 74F550'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: a0
+  name: A0
+  position:
+    x: -16.0
+    y: -140.0
+  direction: left
+  pin_type: passive
+- id: a1
+  name: A1
+  position:
+    x: -16.0
+    y: -139.6159
+  direction: left
+  pin_type: passive
+- id: a2
+  name: A2
+  position:
+    x: -16.0
+    y: -139.23183
+  direction: left
+  pin_type: passive
+- id: a3
+  name: A3
+  position:
+    x: -16.0
+    y: -138.84773
+  direction: left
+  pin_type: passive
+- id: a4
+  name: A4
+  position:
+    x: -16.0
+    y: -138.46365
+  direction: left
+  pin_type: passive
+- id: a5
+  name: A5
+  position:
+    x: -16.0
+    y: -138.07956
+  direction: left
+  pin_type: passive
+- id: a6
+  name: A6
+  position:
+    x: -16.0
+    y: -137.69548
+  direction: left
+  pin_type: passive
+- id: a7
+  name: A7
+  position:
+    x: -16.0
+    y: -137.31139
+  direction: left
+  pin_type: passive
+- id: b0
+  name: B0
+  position:
+    x: -16.0
+    y: -136.92729
+  direction: left
+  pin_type: passive
+- id: b1
+  name: B1
+  position:
+    x: -16.0
+    y: -136.54321
+  direction: left
+  pin_type: passive
+- id: b2
+  name: B2
+  position:
+    x: -16.0
+    y: -136.15912
+  direction: left
+  pin_type: passive
+- id: b3
+  name: B3
+  position:
+    x: -16.0
+    y: -135.77504
+  direction: left
+  pin_type: passive
+- id: b4
+  name: B4
+  position:
+    x: -16.0
+    y: -135.39095
+  direction: left
+  pin_type: passive
+- id: b5
+  name: B5
+  position:
+    x: -16.0
+    y: -135.00685
+  direction: left
+  pin_type: passive
+- id: b6
+  name: B6
+  position:
+    x: -16.0
+    y: -134.62277
+  direction: left
+  pin_type: passive
+- id: b7
+  name: B7
+  position:
+    x: -16.0
+    y: -134.23868
+  direction: left
+  pin_type: passive
+- id: cpa
+  name: CPA
+  position:
+    x: -16.0
+    y: -133.8546
+  direction: left
+  pin_type: passive
+- id: cpb
+  name: CPB
+  position:
+    x: -16.0
+    y: -133.4705
+  direction: left
+  pin_type: passive
+- id: ceabar
+  name: CEABAR
+  position:
+    x: -16.0
+    y: -133.08643
+  direction: left
+  pin_type: passive
+- id: cebbar
+  name: CEBBAR
+  position:
+    x: -16.0
+    y: -132.70233
+  direction: left
+  pin_type: passive
+- id: fab
+  name: FAB
+  position:
+    x: -16.0
+    y: -132.31824
+  direction: left
+  pin_type: passive
+- id: fba
+  name: FBA
+  position:
+    x: -16.0
+    y: -131.93416
+  direction: left
+  pin_type: passive
+- id: cfab
+  name: CFAB
+  position:
+    x: -16.0
+    y: -131.55006
+  direction: left
+  pin_type: passive
+- id: cfba
+  name: CFBA
+  position:
+    x: -16.0
+    y: -131.16599
+  direction: left
+  pin_type: passive
+- id: oeabar
+  name: OEABAR
+  position:
+    x: -16.0
+    y: -130.78189
+  direction: left
+  pin_type: passive
+- id: oebbar
+  name: OEBBAR
+  position:
+    x: -16.0
+    y: -130.3978
+  direction: left
+  pin_type: passive
+- id: optional_
+  name: 'OPTIONAL:'
+  position:
+    x: -16.0
+    y: -130.01372
+  direction: left
+  pin_type: passive
+- id: dpwr_
+  name: DPWR=
+  position:
+    x: -16.0
+    y: -129.62962
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -140.0
+    width: 32.0
+    height: 280.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -140.0
+    width: 24.0
+    height: 280.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {A0} {A1} {A2} {A3} {A4} {A5} {A6} {A7} {B0} {B1} {B2} {B3} {B4} {B5} {B6} {B7} {CPA} {CPB} {CEABAR} {CEBBAR} {FAB} {FBA} {CFAB} {CFBA} {OEABAR} {OEBBAR} {OPTIONAL:} {DPWR=} 74F550
+  model_name: 74F550

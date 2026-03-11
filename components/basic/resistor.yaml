@@ -1,0 +1,68 @@
+id: resistor
+name: Resistor
+description: Passive two-terminal resistor (European rectangle symbol)
+category: passive
+subcategory: resistors
+keywords: [R, ohm, passive, resistor]
+
+pins:
+  - id: p
+    name: "+"
+    position: { x: -12, y: 0 }
+    direction: left
+    pin_type: passive
+  - id: n
+    name: "-"
+    position: { x: 12, y: 0 }
+    direction: right
+    pin_type: passive
+
+symbol:
+  bounds: { x: -12, y: -4, width: 24, height: 8 }
+  graphics:
+    - kind: line
+      x1: -12.0
+      y1: 0.0
+      x2: -6.0
+      y2: 0.0
+      stroke_width: 1.5
+    - kind: rect
+      x: -6.0
+      y: -3.0
+      width: 12.0
+      height: 6.0
+      stroke_width: 1.5
+    - kind: line
+      x1: 6.0
+      y1: 0.0
+      x2: 12.0
+      y2: 0.0
+      stroke_width: 1.5
+
+properties:
+  - id: resistance
+    label: Resistance
+    unit: Ω
+    property_type: float
+    default: { Float: 1000.0 }
+    min: 0.0
+    si_prefixes: true
+  - id: tolerance
+    label: Tolerance
+    unit: "%"
+    property_type: enum
+    default: { Float: 5.0 }
+    options:
+      - { Float: 1.0 }
+      - { Float: 2.0 }
+      - { Float: 5.0 }
+      - { Float: 10.0 }
+  - id: power_rating
+    label: Power Rating
+    unit: W
+    property_type: float
+    default: { Float: 0.25 }
+
+simulation:
+  model_type: spice_primitive
+  netlist: "R{label} {p} {n} {resistance}"

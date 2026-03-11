@@ -1,0 +1,305 @@
+id: 74f1762
+name: 74F1762
+description: 'SPICE subcircuit: 74F1762'
+category: subcircuit
+keywords:
+- spice
+- subckt
+pins:
+- id: ra0
+  name: RA0
+  position:
+    x: -16.0
+    y: -200.0
+  direction: left
+  pin_type: passive
+- id: ra1
+  name: RA1
+  position:
+    x: -16.0
+    y: -199.73701
+  direction: left
+  pin_type: passive
+- id: ra2
+  name: RA2
+  position:
+    x: -16.0
+    y: -199.47403
+  direction: left
+  pin_type: passive
+- id: ra3
+  name: RA3
+  position:
+    x: -16.0
+    y: -199.21104
+  direction: left
+  pin_type: passive
+- id: ra4
+  name: RA4
+  position:
+    x: -16.0
+    y: -198.94806
+  direction: left
+  pin_type: passive
+- id: ra5
+  name: RA5
+  position:
+    x: -16.0
+    y: -198.68507
+  direction: left
+  pin_type: passive
+- id: ra6
+  name: RA6
+  position:
+    x: -16.0
+    y: -198.42209
+  direction: left
+  pin_type: passive
+- id: ra7
+  name: RA7
+  position:
+    x: -16.0
+    y: -198.1591
+  direction: left
+  pin_type: passive
+- id: ra8
+  name: RA8
+  position:
+    x: -16.0
+    y: -197.89612
+  direction: left
+  pin_type: passive
+- id: ra9
+  name: RA9
+  position:
+    x: -16.0
+    y: -197.63313
+  direction: left
+  pin_type: passive
+- id: ra10
+  name: RA10
+  position:
+    x: -16.0
+    y: -197.37015
+  direction: left
+  pin_type: passive
+- id: ca0
+  name: CA0
+  position:
+    x: -16.0
+    y: -197.10716
+  direction: left
+  pin_type: passive
+- id: ca1
+  name: CA1
+  position:
+    x: -16.0
+    y: -196.84418
+  direction: left
+  pin_type: passive
+- id: ca2
+  name: CA2
+  position:
+    x: -16.0
+    y: -196.58119
+  direction: left
+  pin_type: passive
+- id: ca3
+  name: CA3
+  position:
+    x: -16.0
+    y: -196.3182
+  direction: left
+  pin_type: passive
+- id: ca4
+  name: CA4
+  position:
+    x: -16.0
+    y: -196.05522
+  direction: left
+  pin_type: passive
+- id: ca5
+  name: CA5
+  position:
+    x: -16.0
+    y: -195.79224
+  direction: left
+  pin_type: passive
+- id: ca6
+  name: CA6
+  position:
+    x: -16.0
+    y: -195.52925
+  direction: left
+  pin_type: passive
+- id: ca7
+  name: CA7
+  position:
+    x: -16.0
+    y: -195.26627
+  direction: left
+  pin_type: passive
+- id: ca8
+  name: CA8
+  position:
+    x: -16.0
+    y: -195.00328
+  direction: left
+  pin_type: passive
+- id: ca9
+  name: CA9
+  position:
+    x: -16.0
+    y: -194.7403
+  direction: left
+  pin_type: passive
+- id: ca10
+  name: CA10
+  position:
+    x: -16.0
+    y: -194.47731
+  direction: left
+  pin_type: passive
+- id: count
+  name: COUNT
+  position:
+    x: -16.0
+    y: -194.21432
+  direction: left
+  pin_type: passive
+- id: mr
+  name: MR
+  position:
+    x: -16.0
+    y: -193.95135
+  direction: left
+  pin_type: passive
+- id: mux
+  name: MUX
+  position:
+    x: -16.0
+    y: -193.68837
+  direction: left
+  pin_type: passive
+- id: refenbar
+  name: REFENBAR
+  position:
+    x: -16.0
+    y: -193.42538
+  direction: left
+  pin_type: passive
+- id: ma0bar
+  name: MA0BAR
+  position:
+    x: -16.0
+    y: -193.1624
+  direction: left
+  pin_type: passive
+- id: ma1bar
+  name: MA1BAR
+  position:
+    x: -16.0
+    y: -192.89941
+  direction: left
+  pin_type: passive
+- id: ma2bar
+  name: MA2BAR
+  position:
+    x: -16.0
+    y: -192.63643
+  direction: left
+  pin_type: passive
+- id: ma3bar
+  name: MA3BAR
+  position:
+    x: -16.0
+    y: -192.37344
+  direction: left
+  pin_type: passive
+- id: ma4bar
+  name: MA4BAR
+  position:
+    x: -16.0
+    y: -192.11046
+  direction: left
+  pin_type: passive
+- id: ma5bar
+  name: MA5BAR
+  position:
+    x: -16.0
+    y: -191.84747
+  direction: left
+  pin_type: passive
+- id: ma6bar
+  name: MA6BAR
+  position:
+    x: -16.0
+    y: -191.58449
+  direction: left
+  pin_type: passive
+- id: ma7bar
+  name: MA7BAR
+  position:
+    x: -16.0
+    y: -191.3215
+  direction: left
+  pin_type: passive
+- id: ma8bar
+  name: MA8BAR
+  position:
+    x: -16.0
+    y: -191.05852
+  direction: left
+  pin_type: passive
+- id: ma9bar
+  name: MA9BAR
+  position:
+    x: -16.0
+    y: -190.79553
+  direction: left
+  pin_type: passive
+- id: ma10bar
+  name: MA10BAR
+  position:
+    x: -16.0
+    y: -190.53255
+  direction: left
+  pin_type: passive
+- id: optional_
+  name: 'OPTIONAL:'
+  position:
+    x: -16.0
+    y: -190.26956
+  direction: left
+  pin_type: passive
+- id: dpwr
+  name: DPWR
+  position:
+    x: -16.0
+    y: -190.00658
+  direction: left
+  pin_type: passive
+- id: _
+  name: =
+  position:
+    x: -16.0
+    y: -189.74359
+  direction: left
+  pin_type: passive
+symbol:
+  bounds:
+    x: -16.0
+    y: -200.0
+    width: 32.0
+    height: 400.0
+  graphics:
+  - kind: rect
+    x: -12.0
+    y: -200.0
+    width: 24.0
+    height: 400.0
+    stroke_width: 1.5
+simulation:
+  model_type: spice_subckt
+  netlist: X{label} {RA0} {RA1} {RA2} {RA3} {RA4} {RA5} {RA6} {RA7} {RA8} {RA9} {RA10} {CA0} {CA1} {CA2} {CA3} {CA4} {CA5} {CA6} {CA7} {CA8} {CA9} {CA10} {COUNT} {MR} {MUX} {REFENBAR} {MA0BAR} {MA1BAR} {MA2BAR} {MA3BAR} {MA4BAR} {MA5BAR} {MA6BAR} {MA7BAR} {MA8BAR} {MA9BAR} {MA10BAR} {OPTIONAL:} {DPWR} {=} 74F1762
+  model_name: 74F1762
