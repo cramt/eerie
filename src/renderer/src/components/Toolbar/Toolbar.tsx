@@ -17,9 +17,7 @@ const TOOLS: { id: Tool; label: string; icon: string; key: string }[] = [
 
 export default function Toolbar({ onOpen, onSave }: Props) {
   const { tool, setTool, simPanelOpen, toggleSimPanel } = useUiStore()
-  const { circuit, dirty } = useCircuitStore()
-
-  const title = `${circuit.name}${dirty ? ' \u25CF' : ''}`
+  const { dirty } = useCircuitStore()
 
   return (
     <div className={styles.toolbar}>
@@ -39,13 +37,13 @@ export default function Toolbar({ onOpen, onSave }: Props) {
         ))}
       </div>
 
-      <span className={styles.title}>{title}</span>
+      <span className={styles.title} />
 
       <div className={styles.actions}>
-        <button className={styles.btn} onClick={onOpen} title="Open (Ctrl+O)">
+        <button className={styles.btn} onClick={onOpen} title="Open project (Ctrl+O)">
           Open
         </button>
-        <button className={styles.btn} onClick={onSave} title="Save (Ctrl+S)">
+        <button className={styles.btn} onClick={onSave} title="Save (Ctrl+S)" disabled={!dirty}>
           Save
         </button>
         <button

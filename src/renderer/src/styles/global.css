@@ -74,12 +74,17 @@ input:focus, select:focus {
 }
 
 /* ── Layout ─────────────────────────────────────────────── */
+:root {
+  --tabbar-height: 36px;
+}
+
 .app-layout {
   display: grid;
-  grid-template-rows: var(--toolbar-height) 1fr auto var(--status-height);
+  grid-template-rows: var(--toolbar-height) var(--tabbar-height) 1fr auto var(--status-height);
   grid-template-columns: var(--panel-width) 1fr var(--props-width);
   grid-template-areas:
     "toolbar toolbar toolbar"
+    "panel   tabs    props"
     "panel   canvas  props"
     "panel   plot    props"
     "status  status  status";
@@ -89,11 +94,27 @@ input:focus, select:focus {
 }
 
 .toolbar-area  { grid-area: toolbar; }
-.panel-area    { grid-area: panel; }
+.panel-area    { grid-area: panel; display: flex; flex-direction: column; overflow: hidden; }
+.tabs-area     { grid-area: tabs; overflow: hidden; }
 .canvas-area   { grid-area: canvas; overflow: hidden; }
 .plot-area     { grid-area: plot; overflow: hidden; }
 .props-area    { grid-area: props; }
 .status-area   { grid-area: status; }
+
+/* File explorer takes a fixed portion; components fill the rest */
+.panel-area .file-explorer-wrap {
+  flex-shrink: 0;
+  max-height: 40%;
+  min-height: 80px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.panel-area .component-panel-wrap {
+  flex: 1;
+  overflow: hidden;
+}
 
 /* ── Scrollbar ──────────────────────────────────────────── */
 ::-webkit-scrollbar { width: 6px; }

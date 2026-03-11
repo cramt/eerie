@@ -4,6 +4,7 @@ import { useCircuitStore } from './store/circuitStore'
 import { useUiStore } from './store/uiStore'
 import { useHistoryStore } from './store/historyStore'
 import { useProjectStore } from './store/projectStore'
+import { useTabsStore } from './store/tabsStore'
 import Toolbar from './components/Toolbar/Toolbar'
 import Canvas from './components/Canvas/Canvas'
 import ComponentPanel from './components/ComponentPanel/ComponentPanel'
@@ -11,6 +12,8 @@ import PropertyEditor from './components/PropertyEditor/PropertyEditor'
 import SimulationPanel from './components/SimulationPanel/SimulationPanel'
 import StatusBar from './components/StatusBar/StatusBar'
 import FileDialog, { type FileDialogMode } from './components/FileDialog/FileDialog'
+import TabBar from './components/TabBar/TabBar'
+import FileExplorer from './components/FileExplorer/FileExplorer'
 import { filePinToUi, uiPinToFile } from './utils/netlistBuilder'
 import * as api from './api'
 
@@ -21,9 +24,10 @@ import type { Circuit, ComponentInstance, Net } from './types'
 
 export default function App() {
   const { circuit, setCircuit, projectPath, circuitName, dirty, setDirty } = useCircuitStore()
-  const { theme, tool, setTool, setPlacingTypeId, selectedComponentIds, selectedNetIds, setSimPanelOpen, toggleSimPanel } = useUiStore()
+  const { theme, tool, setTool, setPlacingTypeId, selectedComponentIds, selectedNetIds, setSimPanelOpen } = useUiStore()
   const { undo, redo } = useHistoryStore()
   const { setComponents } = useProjectStore()
+  const { openTab, closeTab } = useTabsStore()
 
   // ── File dialog state ───────────────────────────────────────────────
   const [fileDialog, setFileDialog] = useState<{ mode: FileDialogMode } | null>(null)
@@ -55,11 +59,11 @@ export default function App() {
       await openProject(proj)
       const content = await api.readCircuit(proj, circ)
       const parsed = parseCircuitYaml(content)
-      if (parsed) setCircuit(parsed, proj, circ)
+      if (parsed) openTab(proj, circ, parsed)
     } catch (err) {
       console.error('Failed to open circuit:', err)
     }
-  }, [openProject, setCircuit])
+  }, [openProject, openTab])
 
   const saveCircuit = useCallback(async (proj: string, circ: string) => {
     try {
@@ -71,6 +75,17 @@ export default function App() {
       console.error('Failed to save circuit:', err)
     }
   }, [circuit, setCircuit, setDirty])
+
+  const createAndOpenCircuit = useCallback(async (proj: string, circ: string) => {
+    const newCircuit: Circuit = { name: circ, components: [], nets: [] }
+    try {
+      const yaml = serializeCircuitYaml(newCircuit)
+      await api.saveCircuit(proj, circ, yaml)
+      openTab(proj, circ, newCircuit)
+    } catch (err) {
+      console.error('Failed to create circuit:', err)
+    }
+  }, [openTab])
 
   // Auto-open the daemon's project directory on startup (native mode)
   useEffect(() => {
@@ -112,6 +127,10 @@ export default function App() {
   const handleFileDialogCancel = useCallback(() => {
     setFileDialog(null)
   }, [])
+
+  const handleCloseTab = useCallback((tabId: string) => {
+    closeTab(tabId)
+  }, [closeTab])
 
   // ── Keyboard shortcuts ─────────────────────────────────────────────────
   // Chord state: after pressing E, wait for a second key to pick a component
@@ -236,7 +255,18 @@ export default function App() {
         <Toolbar onOpen={handleOpen} onSave={handleSave} />
       </div>
       <div className="panel-area">
-        <ComponentPanel />
+        <div className="file-explorer-wrap">
+          <FileExplorer
+            onOpenCircuit={loadCircuit}
+            onNewCircuit={createAndOpenCircuit}
+          />
+        </div>
+        <div className="component-panel-wrap">
+          <ComponentPanel />
+        </div>
+      </div>
+      <div className="tabs-area">
+        <TabBar onCloseTab={handleCloseTab} />
       </div>
       <div className="canvas-area">
         <Canvas />
