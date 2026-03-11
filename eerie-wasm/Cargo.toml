@@ -21,3 +21,8 @@ getrandom = { version = "0.3", features = ["wasm_js"] }
 
 [dev-dependencies]
 wasm-bindgen-test = "0.3"
+
+# Disable wasm-pack's built-in wasm-opt (it tries to download binaryen from the network).
+# The Nix build runs wasm-opt separately via pkgs.binaryen.
+[package.metadata.wasm-pack.profile.release]
+wasm-opt = false

@@ -35,6 +35,20 @@
           extensions = ["rust-src" "rust-analyzer" "clippy" "rustfmt"];
         };
 
+        wasm-bindgen-cli_0_2_114 = pkgs.wasm-bindgen-cli.overrideAttrs (old: rec {
+          version = "0.2.114";
+          src = pkgs.fetchCrate {
+            pname = "wasm-bindgen-cli";
+            inherit version;
+            hash = "sha256-xrCym+rFY6EUQFWyWl6OPA+LtftpUAE5pIaElAIVqW0=";
+          };
+          cargoDeps = pkgs.rustPlatform.fetchCargoVendor {
+            inherit src;
+            name = "wasm-bindgen-cli-${version}-vendor.tar.gz";
+            hash = "sha256-Z8+dUXPQq7S+Q7DWNr2Y9d8GMuEdSnq00quUR0wDNPM=";
+          };
+        });
+
         wasm-pack_14 = pkgs.wasm-pack.overrideAttrs (old: rec {
           version = "0.14.0";
           src = pkgs.fetchFromGitHub {
@@ -64,6 +78,9 @@
 
         # Pre-build all cargo dependencies (cached across rebuilds)
         cargoArtifacts = craneLib.buildDepsOnly commonCraneArgs;
+
+        # Vendored cargo sources for offline builds (wasm sandbox)
+        cargoVendorDir = craneLib.vendorCargoDeps commonCraneArgs;
 
         # ── pnpm dependency management (pnpm2nix-nzbr) ────────────────────
         mkPnpmPackage = (pkgs.callPackage "${pnpm2nix-nzbr}/derivation.nix" {}).mkPnpmPackage;
@@ -110,6 +127,7 @@
             export npm_config_nodedir=${pkgs.nodejs_22}
             echo "manage-package-manager-versions=false" >> .npmrc
             cp -fv ${lockfilePassthru.patchedLockfileYaml} pnpm-lock.yaml
+            mkdir -p eerie-wasm/pkg
             pnpm store add $(cat ${lockfilePassthru.processResultAllDeps})
             pnpm install --ignore-scripts --force --frozen-lockfile
           '';
@@ -127,10 +145,15 @@
           pname = "eerie-wasm";
           version = "0.1.0";
           src = ./.;
-          nativeBuildInputs = [rustToolchain wasm-pack_14 pkgs.wasm-bindgen-cli];
+          nativeBuildInputs = [rustToolchain wasm-pack_14 wasm-bindgen-cli_0_2_114 pkgs.binaryen];
           buildPhase = ''
             export HOME=$NIX_BUILD_TOP
+            export CARGO_HOME=$NIX_BUILD_TOP/.cargo-home
+            mkdir -p $CARGO_HOME
+            cp ${cargoVendorDir}/config.toml $CARGO_HOME/config.toml
+
             wasm-pack build eerie-wasm --target web --out-dir pkg
+            wasm-opt -O eerie-wasm/pkg/eerie_wasm_bg.wasm -o eerie-wasm/pkg/eerie_wasm_bg.wasm
           '';
           installPhase = ''
             mkdir -p $out
