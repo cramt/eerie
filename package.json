@@ -17,6 +17,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@tanstack/router-vite-plugin": "^1.166.7",
     "@types/node": "^25.3.5",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
@@ -38,6 +39,7 @@
     "@bearcove/roam-wire": "^7.3.0",
     "@bearcove/roam-ws": "7.3.0",
     "@monaco-editor/react": "4.8.0-rc.3",
+    "@tanstack/react-router": "^1.166.7",
     "eerie-wasm": "workspace:*",
     "konva": "^10.2.0",
     "neverthrow": "^8.2.0",
