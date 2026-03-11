@@ -35,10 +35,12 @@ function eerieDaemon(): Plugin {
         "cargo",
         [
           "watch",
-          "-w", "eerie-daemon",
-          "-w", "eerie-core",
-          "-w", "eerie-rpc",
-          "-x", "run -p eerie-daemon",
+          "-w",
+          "eerie-daemon",
+          "-w",
+          "eerie-rpc",
+          "-x",
+          "run -p eerie-daemon",
         ],
         { stdio: ["ignore", "pipe", "inherit"] },
       );
@@ -87,22 +89,19 @@ function eerieDaemon(): Plugin {
         }
 
         const port = daemonPort;
-        const upstream = createConnection(
-          { host: "127.0.0.1", port },
-          () => {
-            upstream.write(
-              `GET /rpc HTTP/1.1\r\n` +
-                `Host: localhost:${port}\r\n` +
-                `Upgrade: websocket\r\n` +
-                `Connection: Upgrade\r\n` +
-                `Sec-WebSocket-Key: ${req.headers["sec-websocket-key"]}\r\n` +
-                `Sec-WebSocket-Version: 13\r\n` +
-                `\r\n`,
-            );
-            upstream.pipe(socket);
-            socket.pipe(upstream);
-          },
-        );
+        const upstream = createConnection({ host: "127.0.0.1", port }, () => {
+          upstream.write(
+            `GET /rpc HTTP/1.1\r\n` +
+              `Host: localhost:${port}\r\n` +
+              `Upgrade: websocket\r\n` +
+              `Connection: Upgrade\r\n` +
+              `Sec-WebSocket-Key: ${req.headers["sec-websocket-key"]}\r\n` +
+              `Sec-WebSocket-Version: 13\r\n` +
+              `\r\n`,
+          );
+          upstream.pipe(socket);
+          socket.pipe(upstream);
+        });
         upstream.on("error", () => socket.destroy());
         socket.on("error", () => upstream.destroy());
       });
@@ -135,10 +134,12 @@ function eerieWasmWatch(): Plugin {
         "cargo",
         [
           "watch",
-          "-w", "eerie-wasm",
-          "-w", "eerie-core",
-          "-w", "eerie-rpc",
-          "-s", "wasm-pack build eerie-wasm --dev --target web --out-dir pkg",
+          "-w",
+          "eerie-wasm",
+          "-w",
+          "eerie-rpc",
+          "-s",
+          "wasm-pack build eerie-wasm --dev --target web --out-dir pkg",
         ],
         { stdio: ["ignore", "pipe", "pipe"] },
       );
@@ -157,7 +158,10 @@ function eerieWasmWatch(): Plugin {
       // Watch for wasm-pack output to complete, then reload
       child.stdout!.on("data", (chunk: Buffer) => {
         const text = chunk.toString();
-        if (text.includes("Your wasm pkg is ready") || text.includes("[INFO]: Optional fields")) {
+        if (
+          text.includes("Your wasm pkg is ready") ||
+          text.includes("[INFO]: Optional fields")
+        ) {
           console.log("[eerie-wasm] rebuild complete, reloading...");
           server.ws.send({ type: "full-reload", path: "*" });
         }
@@ -189,10 +193,12 @@ function eerieCodegenWatch(): Plugin {
         "cargo",
         [
           "watch",
-          "-w", "eerie-codegen",
-          "-w", "eerie-core",
-          "-w", "eerie-rpc",
-          "-s", "cargo run -p eerie-codegen",
+          "-w",
+          "eerie-codegen",
+          "-w",
+          "eerie-rpc",
+          "-s",
+          "cargo run -p eerie-codegen",
         ],
         { stdio: ["ignore", "pipe", "pipe"] },
       );
@@ -230,6 +236,9 @@ export default defineConfig({
   optimizeDeps: {
     include: ["konva", "react-konva", "react", "react-dom", "zustand", "yaml"],
     exclude: ["eerie-wasm"],
+  },
+  server: {
+    open: true,
   },
   build: {
     outDir: resolve("dist"),

@@ -63,6 +63,10 @@ export interface Source {
   waveform: Waveform | null;
 }
 
+export type XspiceConnection =
+  | { tag: 'Scalar'; value: string }
+  | { tag: 'Array'; value: string[] };
+
 export type ElementKind =
   | { tag: 'Resistor'; pos: string; neg: string; value: Expr; params: Param[] }
   | { tag: 'Capacitor'; pos: string; neg: string; value: Expr; params: Param[] }
@@ -81,6 +85,10 @@ export type ElementKind =
   | { tag: 'Ccvs'; out_pos: string; out_neg: string; vsrc: string; rm: Expr }
   | { tag: 'BehavioralSource'; pos: string; neg: string; spec: string }
   | { tag: 'SubcktCall'; ports: string[]; subckt: string; params: Param[] }
+  | { tag: 'Ltra'; pos1: string; neg1: string; pos2: string; neg2: string; model: string; params: Param[] }
+  | { tag: 'Txl'; pos1: string; neg1: string; pos2: string; neg2: string; model: string; params: Param[] }
+  | { tag: 'Cpl'; in_nodes: string[]; out_nodes: string[]; gnd: string; model: string; params: Param[] }
+  | { tag: 'Xspice'; connections: XspiceConnection[]; model: string }
   | { tag: 'Raw'; value: string };
 
 export interface Element {
@@ -140,9 +148,11 @@ export type Item =
   | { tag: 'Param'; value: Param[] }
   | { tag: 'Include'; value: string }
   | { tag: 'Lib'; file: string; entry: string | null }
+  | { tag: 'Func'; name: string; args: string[]; body: string }
   | { tag: 'Global'; value: string[] }
   | { tag: 'Options'; value: Param[] }
   | { tag: 'Save'; value: string[] }
+  | { tag: 'Temp'; value: number }
   | { tag: 'Comment'; value: string }
   | { tag: 'Raw'; value: string };
 
@@ -537,56 +547,56 @@ export class EerieServiceDispatcher implements ChannelingDispatcher {
       } catch {
         call.replyInternalError();
       }
-    } else if (method.id === 0x62a627c365db5022n) {
+    } else if (method.id === 0xbc09ff702226c8fcn) {
       try {
         const result = await this.handler.simulateOp(args[0] as Netlist);
         if (result.ok) call.reply(result.value); else call.replyErr(result.error);
       } catch {
         call.replyInternalError();
       }
-    } else if (method.id === 0xa83584e5cb672caen) {
+    } else if (method.id === 0x7f3aa8a19fd95d94n) {
       try {
         const result = await this.handler.simulateDc(args[0] as Netlist);
         if (result.ok) call.reply(result.value); else call.replyErr(result.error);
       } catch {
         call.replyInternalError();
       }
-    } else if (method.id === 0x545c5d22fce1fd94n) {
+    } else if (method.id === 0x840b8a9aa05651f8n) {
       try {
         const result = await this.handler.simulateAc(args[0] as Netlist);
         if (result.ok) call.reply(result.value); else call.replyErr(result.error);
       } catch {
         call.replyInternalError();
       }
-    } else if (method.id === 0x92986846076f8b64n) {
+    } else if (method.id === 0x4b150c63389d01c6n) {
       try {
         const result = await this.handler.simulateTran(args[0] as Netlist);
         if (result.ok) call.reply(result.value); else call.replyErr(result.error);
       } catch {
         call.replyInternalError();
       }
-    } else if (method.id === 0x9a0bf475b9c459a6n) {
+    } else if (method.id === 0xb09fc529b420d60en) {
       try {
         const result = await this.handler.simulateNoise(args[0] as Netlist);
         if (result.ok) call.reply(result.value); else call.replyErr(result.error);
       } catch {
         call.replyInternalError();
       }
-    } else if (method.id === 0x275fcf3d2de15280n) {
+    } else if (method.id === 0xbe86e025cde89527n) {
       try {
         const result = await this.handler.simulateTf(args[0] as Netlist);
         if (result.ok) call.reply(result.value); else call.replyErr(result.error);
       } catch {
         call.replyInternalError();
       }
-    } else if (method.id === 0xf042c23cd861405an) {
+    } else if (method.id === 0x86dba434a641c21fn) {
       try {
         const result = await this.handler.simulateSens(args[0] as Netlist);
         if (result.ok) call.reply(result.value); else call.replyErr(result.error);
       } catch {
         call.replyInternalError();
       }
-    } else if (method.id === 0x77c406f0d6708b48n) {
+    } else if (method.id === 0xbf7851855b7cc2bbn) {
       try {
         const result = await this.handler.simulatePz(args[0] as Netlist);
         if (result.ok) call.reply(result.value); else call.replyErr(result.error);
@@ -610,7 +620,8 @@ const eerieService_schema_registry: SchemaRegistry = new Map<string, Schema>([
   ["PwlPoint", { kind: 'struct', fields: { 'time': { kind: 'ref', name: 'Expr' }, 'value': { kind: 'ref', name: 'Expr' } } }],
   ["Waveform", { kind: 'enum', variants: [{ name: 'Pulse', fields: { 'v1': { kind: 'ref', name: 'Expr' }, 'v2': { kind: 'ref', name: 'Expr' }, 'td': { kind: 'option', inner: { kind: 'ref', name: 'Expr' } }, 'tr': { kind: 'option', inner: { kind: 'ref', name: 'Expr' } }, 'tf': { kind: 'option', inner: { kind: 'ref', name: 'Expr' } }, 'pw': { kind: 'option', inner: { kind: 'ref', name: 'Expr' } }, 'per': { kind: 'option', inner: { kind: 'ref', name: 'Expr' } } } }, { name: 'Sin', fields: { 'v0': { kind: 'ref', name: 'Expr' }, 'va': { kind: 'ref', name: 'Expr' }, 'freq': { kind: 'option', inner: { kind: 'ref', name: 'Expr' } }, 'td': { kind: 'option', inner: { kind: 'ref', name: 'Expr' } }, 'theta': { kind: 'option', inner: { kind: 'ref', name: 'Expr' } }, 'phi': { kind: 'option', inner: { kind: 'ref', name: 'Expr' } } } }, { name: 'Exp', fields: { 'v1': { kind: 'ref', name: 'Expr' }, 'v2': { kind: 'ref', name: 'Expr' }, 'td1': { kind: 'option', inner: { kind: 'ref', name: 'Expr' } }, 'tau1': { kind: 'option', inner: { kind: 'ref', name: 'Expr' } }, 'td2': { kind: 'option', inner: { kind: 'ref', name: 'Expr' } }, 'tau2': { kind: 'option', inner: { kind: 'ref', name: 'Expr' } } } }, { name: 'Pwl', fields: { kind: 'vec', element: { kind: 'ref', name: 'PwlPoint' } } }, { name: 'Sffm', fields: { 'v0': { kind: 'ref', name: 'Expr' }, 'va': { kind: 'ref', name: 'Expr' }, 'fc': { kind: 'option', inner: { kind: 'ref', name: 'Expr' } }, 'fs': { kind: 'option', inner: { kind: 'ref', name: 'Expr' } }, 'md': { kind: 'option', inner: { kind: 'ref', name: 'Expr' } } } }, { name: 'Am', fields: { 'va': { kind: 'ref', name: 'Expr' }, 'vo': { kind: 'ref', name: 'Expr' }, 'fc': { kind: 'ref', name: 'Expr' }, 'fs': { kind: 'ref', name: 'Expr' }, 'td': { kind: 'option', inner: { kind: 'ref', name: 'Expr' } } } }] }],
   ["Source", { kind: 'struct', fields: { 'dc': { kind: 'option', inner: { kind: 'ref', name: 'Expr' } }, 'ac': { kind: 'option', inner: { kind: 'ref', name: 'AcSpec' } }, 'waveform': { kind: 'option', inner: { kind: 'ref', name: 'Waveform' } } } }],
-  ["ElementKind", { kind: 'enum', variants: [{ name: 'Resistor', fields: { 'pos': { kind: 'string' }, 'neg': { kind: 'string' }, 'value': { kind: 'ref', name: 'Expr' }, 'params': { kind: 'vec', element: { kind: 'ref', name: 'Param' } } } }, { name: 'Capacitor', fields: { 'pos': { kind: 'string' }, 'neg': { kind: 'string' }, 'value': { kind: 'ref', name: 'Expr' }, 'params': { kind: 'vec', element: { kind: 'ref', name: 'Param' } } } }, { name: 'Inductor', fields: { 'pos': { kind: 'string' }, 'neg': { kind: 'string' }, 'value': { kind: 'ref', name: 'Expr' }, 'params': { kind: 'vec', element: { kind: 'ref', name: 'Param' } } } }, { name: 'VoltageSource', fields: { 'pos': { kind: 'string' }, 'neg': { kind: 'string' }, 'source': { kind: 'ref', name: 'Source' } } }, { name: 'CurrentSource', fields: { 'pos': { kind: 'string' }, 'neg': { kind: 'string' }, 'source': { kind: 'ref', name: 'Source' } } }, { name: 'Diode', fields: { 'anode': { kind: 'string' }, 'cathode': { kind: 'string' }, 'model': { kind: 'string' }, 'params': { kind: 'vec', element: { kind: 'ref', name: 'Param' } } } }, { name: 'Bjt', fields: { 'c': { kind: 'string' }, 'b': { kind: 'string' }, 'e': { kind: 'string' }, 'substrate': { kind: 'option', inner: { kind: 'string' } }, 'model': { kind: 'string' }, 'params': { kind: 'vec', element: { kind: 'ref', name: 'Param' } } } }, { name: 'Mosfet', fields: { 'd': { kind: 'string' }, 'g': { kind: 'string' }, 's': { kind: 'string' }, 'bulk': { kind: 'string' }, 'body': { kind: 'option', inner: { kind: 'string' } }, 'model': { kind: 'string' }, 'params': { kind: 'vec', element: { kind: 'ref', name: 'Param' } } } }, { name: 'Jfet', fields: { 'd': { kind: 'string' }, 'g': { kind: 'string' }, 's': { kind: 'string' }, 'model': { kind: 'string' }, 'params': { kind: 'vec', element: { kind: 'ref', name: 'Param' } } } }, { name: 'Mesa', fields: { 'd': { kind: 'string' }, 'g': { kind: 'string' }, 's': { kind: 'string' }, 'model': { kind: 'string' }, 'params': { kind: 'vec', element: { kind: 'ref', name: 'Param' } } } }, { name: 'MutualCoupling', fields: { 'l1': { kind: 'string' }, 'l2': { kind: 'string' }, 'coupling': { kind: 'ref', name: 'Expr' } } }, { name: 'Vcvs', fields: { 'out_pos': { kind: 'string' }, 'out_neg': { kind: 'string' }, 'in_pos': { kind: 'string' }, 'in_neg': { kind: 'string' }, 'gain': { kind: 'ref', name: 'Expr' } } }, { name: 'Cccs', fields: { 'out_pos': { kind: 'string' }, 'out_neg': { kind: 'string' }, 'vsrc': { kind: 'string' }, 'gain': { kind: 'ref', name: 'Expr' } } }, { name: 'Vccs', fields: { 'out_pos': { kind: 'string' }, 'out_neg': { kind: 'string' }, 'in_pos': { kind: 'string' }, 'in_neg': { kind: 'string' }, 'gm': { kind: 'ref', name: 'Expr' } } }, { name: 'Ccvs', fields: { 'out_pos': { kind: 'string' }, 'out_neg': { kind: 'string' }, 'vsrc': { kind: 'string' }, 'rm': { kind: 'ref', name: 'Expr' } } }, { name: 'BehavioralSource', fields: { 'pos': { kind: 'string' }, 'neg': { kind: 'string' }, 'spec': { kind: 'string' } } }, { name: 'SubcktCall', fields: { 'ports': { kind: 'vec', element: { kind: 'string' } }, 'subckt': { kind: 'string' }, 'params': { kind: 'vec', element: { kind: 'ref', name: 'Param' } } } }, { name: 'Raw', fields: { kind: 'string' } }] }],
+  ["XspiceConnection", { kind: 'enum', variants: [{ name: 'Scalar', fields: { kind: 'string' } }, { name: 'Array', fields: { kind: 'vec', element: { kind: 'string' } } }] }],
+  ["ElementKind", { kind: 'enum', variants: [{ name: 'Resistor', fields: { 'pos': { kind: 'string' }, 'neg': { kind: 'string' }, 'value': { kind: 'ref', name: 'Expr' }, 'params': { kind: 'vec', element: { kind: 'ref', name: 'Param' } } } }, { name: 'Capacitor', fields: { 'pos': { kind: 'string' }, 'neg': { kind: 'string' }, 'value': { kind: 'ref', name: 'Expr' }, 'params': { kind: 'vec', element: { kind: 'ref', name: 'Param' } } } }, { name: 'Inductor', fields: { 'pos': { kind: 'string' }, 'neg': { kind: 'string' }, 'value': { kind: 'ref', name: 'Expr' }, 'params': { kind: 'vec', element: { kind: 'ref', name: 'Param' } } } }, { name: 'VoltageSource', fields: { 'pos': { kind: 'string' }, 'neg': { kind: 'string' }, 'source': { kind: 'ref', name: 'Source' } } }, { name: 'CurrentSource', fields: { 'pos': { kind: 'string' }, 'neg': { kind: 'string' }, 'source': { kind: 'ref', name: 'Source' } } }, { name: 'Diode', fields: { 'anode': { kind: 'string' }, 'cathode': { kind: 'string' }, 'model': { kind: 'string' }, 'params': { kind: 'vec', element: { kind: 'ref', name: 'Param' } } } }, { name: 'Bjt', fields: { 'c': { kind: 'string' }, 'b': { kind: 'string' }, 'e': { kind: 'string' }, 'substrate': { kind: 'option', inner: { kind: 'string' } }, 'model': { kind: 'string' }, 'params': { kind: 'vec', element: { kind: 'ref', name: 'Param' } } } }, { name: 'Mosfet', fields: { 'd': { kind: 'string' }, 'g': { kind: 'string' }, 's': { kind: 'string' }, 'bulk': { kind: 'string' }, 'body': { kind: 'option', inner: { kind: 'string' } }, 'model': { kind: 'string' }, 'params': { kind: 'vec', element: { kind: 'ref', name: 'Param' } } } }, { name: 'Jfet', fields: { 'd': { kind: 'string' }, 'g': { kind: 'string' }, 's': { kind: 'string' }, 'model': { kind: 'string' }, 'params': { kind: 'vec', element: { kind: 'ref', name: 'Param' } } } }, { name: 'Mesa', fields: { 'd': { kind: 'string' }, 'g': { kind: 'string' }, 's': { kind: 'string' }, 'model': { kind: 'string' }, 'params': { kind: 'vec', element: { kind: 'ref', name: 'Param' } } } }, { name: 'MutualCoupling', fields: { 'l1': { kind: 'string' }, 'l2': { kind: 'string' }, 'coupling': { kind: 'ref', name: 'Expr' } } }, { name: 'Vcvs', fields: { 'out_pos': { kind: 'string' }, 'out_neg': { kind: 'string' }, 'in_pos': { kind: 'string' }, 'in_neg': { kind: 'string' }, 'gain': { kind: 'ref', name: 'Expr' } } }, { name: 'Cccs', fields: { 'out_pos': { kind: 'string' }, 'out_neg': { kind: 'string' }, 'vsrc': { kind: 'string' }, 'gain': { kind: 'ref', name: 'Expr' } } }, { name: 'Vccs', fields: { 'out_pos': { kind: 'string' }, 'out_neg': { kind: 'string' }, 'in_pos': { kind: 'string' }, 'in_neg': { kind: 'string' }, 'gm': { kind: 'ref', name: 'Expr' } } }, { name: 'Ccvs', fields: { 'out_pos': { kind: 'string' }, 'out_neg': { kind: 'string' }, 'vsrc': { kind: 'string' }, 'rm': { kind: 'ref', name: 'Expr' } } }, { name: 'BehavioralSource', fields: { 'pos': { kind: 'string' }, 'neg': { kind: 'string' }, 'spec': { kind: 'string' } } }, { name: 'SubcktCall', fields: { 'ports': { kind: 'vec', element: { kind: 'string' } }, 'subckt': { kind: 'string' }, 'params': { kind: 'vec', element: { kind: 'ref', name: 'Param' } } } }, { name: 'Ltra', fields: { 'pos1': { kind: 'string' }, 'neg1': { kind: 'string' }, 'pos2': { kind: 'string' }, 'neg2': { kind: 'string' }, 'model': { kind: 'string' }, 'params': { kind: 'vec', element: { kind: 'ref', name: 'Param' } } } }, { name: 'Txl', fields: { 'pos1': { kind: 'string' }, 'neg1': { kind: 'string' }, 'pos2': { kind: 'string' }, 'neg2': { kind: 'string' }, 'model': { kind: 'string' }, 'params': { kind: 'vec', element: { kind: 'ref', name: 'Param' } } } }, { name: 'Cpl', fields: { 'in_nodes': { kind: 'vec', element: { kind: 'string' } }, 'out_nodes': { kind: 'vec', element: { kind: 'string' } }, 'gnd': { kind: 'string' }, 'model': { kind: 'string' }, 'params': { kind: 'vec', element: { kind: 'ref', name: 'Param' } } } }, { name: 'Xspice', fields: { 'connections': { kind: 'vec', element: { kind: 'ref', name: 'XspiceConnection' } }, 'model': { kind: 'string' } } }, { name: 'Raw', fields: { kind: 'string' } }] }],
   ["Element", { kind: 'struct', fields: { 'name': { kind: 'string' }, 'kind': { kind: 'ref', name: 'ElementKind' } } }],
   ["SubcktDef", { kind: 'struct', fields: { 'name': { kind: 'string' }, 'ports': { kind: 'vec', element: { kind: 'string' } }, 'params': { kind: 'vec', element: { kind: 'ref', name: 'Param' } }, 'items': { kind: 'vec', element: { kind: 'ref', name: 'Item' } } } }],
   ["ModelDef", { kind: 'struct', fields: { 'name': { kind: 'string' }, 'kind': { kind: 'string' }, 'params': { kind: 'vec', element: { kind: 'ref', name: 'Param' } } } }],
@@ -619,7 +630,7 @@ const eerieService_schema_registry: SchemaRegistry = new Map<string, Schema>([
   ["PzInputType", { kind: 'enum', variants: [{ name: 'Vol', fields: null }, { name: 'Cur', fields: null }] }],
   ["PzAnalysisType", { kind: 'enum', variants: [{ name: 'Pol', fields: null }, { name: 'Zer', fields: null }, { name: 'Pz', fields: null }] }],
   ["Analysis", { kind: 'enum', variants: [{ name: 'Op', fields: null }, { name: 'Dc', fields: { 'src': { kind: 'string' }, 'start': { kind: 'ref', name: 'Expr' }, 'stop': { kind: 'ref', name: 'Expr' }, 'step': { kind: 'ref', name: 'Expr' }, 'src2': { kind: 'option', inner: { kind: 'ref', name: 'DcSweep' } } } }, { name: 'Tran', fields: { 'tstep': { kind: 'ref', name: 'Expr' }, 'tstop': { kind: 'ref', name: 'Expr' }, 'tstart': { kind: 'option', inner: { kind: 'ref', name: 'Expr' } }, 'tmax': { kind: 'option', inner: { kind: 'ref', name: 'Expr' } } } }, { name: 'Ac', fields: { 'variation': { kind: 'ref', name: 'AcVariation' }, 'n': { kind: 'u32' }, 'fstart': { kind: 'ref', name: 'Expr' }, 'fstop': { kind: 'ref', name: 'Expr' } } }, { name: 'Noise', fields: { 'output': { kind: 'string' }, 'ref_node': { kind: 'option', inner: { kind: 'string' } }, 'src': { kind: 'string' }, 'variation': { kind: 'ref', name: 'AcVariation' }, 'n': { kind: 'u32' }, 'fstart': { kind: 'ref', name: 'Expr' }, 'fstop': { kind: 'ref', name: 'Expr' } } }, { name: 'Tf', fields: { 'output': { kind: 'string' }, 'input': { kind: 'string' } } }, { name: 'Sens', fields: { 'output': { kind: 'vec', element: { kind: 'string' } } } }, { name: 'Pz', fields: { 'node_i': { kind: 'string' }, 'node_g': { kind: 'string' }, 'node_j': { kind: 'string' }, 'node_k': { kind: 'string' }, 'input_type': { kind: 'ref', name: 'PzInputType' }, 'analysis_type': { kind: 'ref', name: 'PzAnalysisType' } } }] }],
-  ["Item", { kind: 'enum', variants: [{ name: 'Element', fields: { kind: 'ref', name: 'Element' } }, { name: 'Subckt', fields: { kind: 'ref', name: 'SubcktDef' } }, { name: 'Model', fields: { kind: 'ref', name: 'ModelDef' } }, { name: 'Analysis', fields: { kind: 'ref', name: 'Analysis' } }, { name: 'Param', fields: { kind: 'vec', element: { kind: 'ref', name: 'Param' } } }, { name: 'Include', fields: { kind: 'string' } }, { name: 'Lib', fields: { 'file': { kind: 'string' }, 'entry': { kind: 'option', inner: { kind: 'string' } } } }, { name: 'Global', fields: { kind: 'vec', element: { kind: 'string' } } }, { name: 'Options', fields: { kind: 'vec', element: { kind: 'ref', name: 'Param' } } }, { name: 'Save', fields: { kind: 'vec', element: { kind: 'string' } } }, { name: 'Comment', fields: { kind: 'string' } }, { name: 'Raw', fields: { kind: 'string' } }] }],
+  ["Item", { kind: 'enum', variants: [{ name: 'Element', fields: { kind: 'ref', name: 'Element' } }, { name: 'Subckt', fields: { kind: 'ref', name: 'SubcktDef' } }, { name: 'Model', fields: { kind: 'ref', name: 'ModelDef' } }, { name: 'Analysis', fields: { kind: 'ref', name: 'Analysis' } }, { name: 'Param', fields: { kind: 'vec', element: { kind: 'ref', name: 'Param' } } }, { name: 'Include', fields: { kind: 'string' } }, { name: 'Lib', fields: { 'file': { kind: 'string' }, 'entry': { kind: 'option', inner: { kind: 'string' } } } }, { name: 'Func', fields: { 'name': { kind: 'string' }, 'args': { kind: 'vec', element: { kind: 'string' } }, 'body': { kind: 'string' } } }, { name: 'Global', fields: { kind: 'vec', element: { kind: 'string' } } }, { name: 'Options', fields: { kind: 'vec', element: { kind: 'ref', name: 'Param' } } }, { name: 'Save', fields: { kind: 'vec', element: { kind: 'string' } } }, { name: 'Temp', fields: { kind: 'f64' } }, { name: 'Comment', fields: { kind: 'string' } }, { name: 'Raw', fields: { kind: 'string' } }] }],
   ["Netlist", { kind: 'struct', fields: { 'title': { kind: 'string' }, 'items': { kind: 'vec', element: { kind: 'ref', name: 'Item' } } } }],
   ["Complex", { kind: 'struct', fields: { 're': { kind: 'f64' }, 'im': { kind: 'f64' } } }],
   ["SimVector", { kind: 'struct', fields: { 'name': { kind: 'string' }, 'real': { kind: 'vec', element: { kind: 'f64' } }, 'complex': { kind: 'vec', element: { kind: 'ref', name: 'Complex' } } } }],
@@ -652,49 +663,49 @@ export const eerieService_descriptor: ServiceDescriptor = {
     },
     {
       name: 'simulateOp',
-      id: 0x62a627c365db5022n,
+      id: 0xbc09ff702226c8fcn,
       args: { kind: 'tuple', elements: [{ kind: 'ref', name: 'Netlist' }] },
       result: { kind: 'enum', variants: [{ name: 'Ok', fields: { kind: 'ref', name: 'SimResult' } }, { name: 'Err', fields: { kind: 'enum', variants: [{ name: 'User', fields: { kind: 'string' } }, { name: 'UnknownMethod', fields: null }, { name: 'InvalidPayload', fields: null }, { name: 'Cancelled', fields: null }] } }] },
     },
     {
       name: 'simulateDc',
-      id: 0xa83584e5cb672caen,
+      id: 0x7f3aa8a19fd95d94n,
       args: { kind: 'tuple', elements: [{ kind: 'ref', name: 'Netlist' }] },
       result: { kind: 'enum', variants: [{ name: 'Ok', fields: { kind: 'ref', name: 'SimResult' } }, { name: 'Err', fields: { kind: 'enum', variants: [{ name: 'User', fields: { kind: 'string' } }, { name: 'UnknownMethod', fields: null }, { name: 'InvalidPayload', fields: null }, { name: 'Cancelled', fields: null }] } }] },
     },
     {
       name: 'simulateAc',
-      id: 0x545c5d22fce1fd94n,
+      id: 0x840b8a9aa05651f8n,
       args: { kind: 'tuple', elements: [{ kind: 'ref', name: 'Netlist' }] },
       result: { kind: 'enum', variants: [{ name: 'Ok', fields: { kind: 'ref', name: 'SimResult' } }, { name: 'Err', fields: { kind: 'enum', variants: [{ name: 'User', fields: { kind: 'string' } }, { name: 'UnknownMethod', fields: null }, { name: 'InvalidPayload', fields: null }, { name: 'Cancelled', fields: null }] } }] },
     },
     {
       name: 'simulateTran',
-      id: 0x92986846076f8b64n,
+      id: 0x4b150c63389d01c6n,
       args: { kind: 'tuple', elements: [{ kind: 'ref', name: 'Netlist' }] },
       result: { kind: 'enum', variants: [{ name: 'Ok', fields: { kind: 'ref', name: 'SimResult' } }, { name: 'Err', fields: { kind: 'enum', variants: [{ name: 'User', fields: { kind: 'string' } }, { name: 'UnknownMethod', fields: null }, { name: 'InvalidPayload', fields: null }, { name: 'Cancelled', fields: null }] } }] },
     },
     {
       name: 'simulateNoise',
-      id: 0x9a0bf475b9c459a6n,
+      id: 0xb09fc529b420d60en,
       args: { kind: 'tuple', elements: [{ kind: 'ref', name: 'Netlist' }] },
       result: { kind: 'enum', variants: [{ name: 'Ok', fields: { kind: 'ref', name: 'SimResult' } }, { name: 'Err', fields: { kind: 'enum', variants: [{ name: 'User', fields: { kind: 'string' } }, { name: 'UnknownMethod', fields: null }, { name: 'InvalidPayload', fields: null }, { name: 'Cancelled', fields: null }] } }] },
     },
     {
       name: 'simulateTf',
-      id: 0x275fcf3d2de15280n,
+      id: 0xbe86e025cde89527n,
       args: { kind: 'tuple', elements: [{ kind: 'ref', name: 'Netlist' }] },
       result: { kind: 'enum', variants: [{ name: 'Ok', fields: { kind: 'ref', name: 'SimResult' } }, { name: 'Err', fields: { kind: 'enum', variants: [{ name: 'User', fields: { kind: 'string' } }, { name: 'UnknownMethod', fields: null }, { name: 'InvalidPayload', fields: null }, { name: 'Cancelled', fields: null }] } }] },
     },
     {
       name: 'simulateSens',
-      id: 0xf042c23cd861405an,
+      id: 0x86dba434a641c21fn,
       args: { kind: 'tuple', elements: [{ kind: 'ref', name: 'Netlist' }] },
       result: { kind: 'enum', variants: [{ name: 'Ok', fields: { kind: 'ref', name: 'SimResult' } }, { name: 'Err', fields: { kind: 'enum', variants: [{ name: 'User', fields: { kind: 'string' } }, { name: 'UnknownMethod', fields: null }, { name: 'InvalidPayload', fields: null }, { name: 'Cancelled', fields: null }] } }] },
     },
     {
       name: 'simulatePz',
-      id: 0x77c406f0d6708b48n,
+      id: 0xbf7851855b7cc2bbn,
       args: { kind: 'tuple', elements: [{ kind: 'ref', name: 'Netlist' }] },
       result: { kind: 'enum', variants: [{ name: 'Ok', fields: { kind: 'ref', name: 'SimResult' } }, { name: 'Err', fields: { kind: 'enum', variants: [{ name: 'User', fields: { kind: 'string' } }, { name: 'UnknownMethod', fields: null }, { name: 'InvalidPayload', fields: null }, { name: 'Cancelled', fields: null }] } }] },
     },

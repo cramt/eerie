@@ -2263,9 +2263,10 @@ dependencies = [
 [[package]]
 name = "thevenin"
 version = "0.1.0"
-source = "git+https://github.com/cramt/thevenin?branch=ralph%2Fsimulation-engine#2f292d28a5a18cdc9ccf5f42c3c1f128374cbc77"
+source = "git+https://github.com/cramt/thevenin?branch=ralph%2Fsimulation-engine#1c59ad6eaa5375f9d8cd1ef2cdaab3ce52a43b8c"
 dependencies = [
  "faer",
+ "libm",
  "thevenin-types",
  "thiserror 2.0.18",
 ]
@@ -2273,7 +2274,7 @@ dependencies = [
 [[package]]
 name = "thevenin-types"
 version = "0.1.0"
-source = "git+https://github.com/cramt/thevenin?branch=ralph%2Fsimulation-engine#2f292d28a5a18cdc9ccf5f42c3c1f128374cbc77"
+source = "git+https://github.com/cramt/thevenin?branch=ralph%2Fsimulation-engine#1c59ad6eaa5375f9d8cd1ef2cdaab3ce52a43b8c"
 dependencies = [
  "facet",
  "thiserror 2.0.18",
@@ -2718,18 +2719,18 @@ checksum = "d7249219f66ced02969388cf2bb044a09756a083d0fab1e566056b04d9fbcaa5"
 
 [[package]]
 name = "zerocopy"
-version = "0.8.40"
+version = "0.8.42"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a789c6e490b576db9f7e6b6d661bcc9799f7c0ac8352f56ea20193b2681532e5"
+checksum = "f2578b716f8a7a858b7f02d5bd870c14bf4ddbbcf3a4c05414ba6503640505e3"
 dependencies = [
  "zerocopy-derive",
 ]
 
 [[package]]
 name = "zerocopy-derive"
-version = "0.8.40"
+version = "0.8.42"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f65c489a7071a749c849713807783f70672b28094011623e200cb86dcb835953"
+checksum = "7e6cc098ea4d3bd6246687de65af3f920c430e236bee1e3bf2e441463f08a02f"
 dependencies = [
  "proc-macro2",
  "quote",
