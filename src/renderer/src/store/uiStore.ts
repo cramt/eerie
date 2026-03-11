@@ -6,6 +6,8 @@ interface UiStore {
   placingTypeId: string | null
   /** When placing a project component, the preset properties + optional prefix */
   placingPreset: { properties: Record<string, unknown>; namePrefix?: string } | null
+  /** Index into the project component list, or null when using generic */
+  placingProjectIdx: number | null
   selectedComponentIds: Set<string>
   selectedNetIds: Set<string>
   theme: Theme
@@ -16,6 +18,7 @@ interface UiStore {
   setTool: (tool: Tool) => void
   setPlacingTypeId: (typeId: string | null) => void
   setPlacingPreset: (preset: { properties: Record<string, unknown>; namePrefix?: string } | null) => void
+  setPlacingProjectIdx: (idx: number | null) => void
   setSimPanelOpen: (open: boolean) => void
   toggleSimPanel: () => void
   selectComponent: (id: string | null) => void
@@ -35,6 +38,7 @@ export const useUiStore = create<UiStore>((set, get) => ({
   tool: 'select',
   placingTypeId: null,
   placingPreset: null,
+  placingProjectIdx: null,
   selectedComponentIds: new Set<string>(),
   selectedNetIds: new Set<string>(),
   theme: 'neon',
@@ -47,6 +51,7 @@ export const useUiStore = create<UiStore>((set, get) => ({
   toggleSimPanel: () => set((s) => ({ simPanelOpen: !s.simPanelOpen })),
   setPlacingTypeId: (typeId) => set({ placingTypeId: typeId }),
   setPlacingPreset: (preset) => set({ placingPreset: preset }),
+  setPlacingProjectIdx: (idx) => set({ placingProjectIdx: idx }),
   selectComponent: (id) => set({
     selectedComponentIds: id ? new Set([id]) : new Set(),
     selectedNetIds: new Set(),

@@ -8,7 +8,7 @@ import styles from './ComponentPanel.module.css'
 const GENERIC_LIBRARY = getLibraryCategories()
 
 export default function ComponentPanel() {
-  const { setTool, setPlacingTypeId, setPlacingPreset, tool, placingTypeId } = useUiStore()
+  const { setTool, setPlacingTypeId, setPlacingPreset, setPlacingProjectIdx, tool, placingTypeId, placingProjectIdx } = useUiStore()
   const { components: projectComponents } = useProjectStore()
   const [search, setSearch] = useState('')
   const [collapsed, setCollapsed] = useState<Record<string, boolean>>({})
@@ -27,7 +27,13 @@ export default function ComponentPanel() {
     const comp = projectComponents[idx]
     setPlacingTypeId(comp.type_id)
     setPlacingPreset({ properties: comp.properties, namePrefix: comp.name_prefix })
+    setPlacingProjectIdx(idx)
     setTool('place')
+  }
+
+  const handlePickGenericWithClear = (typeId: string) => {
+    setPlacingProjectIdx(null)
+    handlePickGeneric(typeId)
   }
 
   // Project-defined component library
@@ -67,7 +73,7 @@ export default function ComponentPanel() {
               <div key={cat} className={styles.category}>
                 <div className={styles.catLabel}>{cat}</div>
                 {items.map((item) => {
-                  const isActive = tool === 'place' && placingTypeId === item.type_id
+                  const isActive = tool === 'place' && placingProjectIdx === item.idx
                   return (
                     <button
                       key={item.idx}
@@ -135,7 +141,7 @@ export default function ComponentPanel() {
               <button
                 key={item.id}
                 className={`${styles.item} ${tool === 'place' && placingTypeId === item.id ? styles.itemActive : ''}`}
-                onClick={() => handlePickGeneric(item.id)}
+                onClick={() => handlePickGenericWithClear(item.id)}
                 title={`Place ${item.label}`}
               >
                 <span className={styles.itemIcon}>{item.label.slice(0, 1)}</span>
