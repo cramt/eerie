@@ -141,55 +141,67 @@
         # ── Web frontend (vite build) ────────────────────────────────────────
         frontendSrc = pkgs.lib.cleanSourceWith {
           src = ./.;
-          filter = path: _type: !(
-            builtins.match ".*/target(/.*)?$" path != null
-            || builtins.match ".*/node_modules(/.*)?$" path != null
-            || builtins.match ".*/out(/.*)?$" path != null
-            || builtins.match ".*/dist(/.*)?$" path != null
-          );
+          filter = path: _type:
+            !(
+              builtins.match ".*/target(/.*)?$" path
+              != null
+              || builtins.match ".*/node_modules(/.*)?$" path != null
+              || builtins.match ".*/out(/.*)?$" path != null
+              || builtins.match ".*/dist(/.*)?$" path != null
+            );
         };
 
-        mkFrontend = { viteMode, includeWasm ? false }: pkgs.stdenv.mkDerivation {
-          pname = "eerie-frontend-${viteMode}";
-          version = "0.1.0";
-          src = frontendSrc;
-          nativeBuildInputs = [pkgs.nodejs_22 pkgs.pnpm];
-          strictDeps = true;
+        mkFrontend = {
+          viteMode,
+          includeWasm ? false,
+        }:
+          pkgs.stdenv.mkDerivation {
+            pname = "eerie-frontend-${viteMode}";
+            version = "0.1.0";
+            src = frontendSrc;
+            nativeBuildInputs = [pkgs.nodejs_22 pkgs.pnpm];
+            strictDeps = true;
 
-          configurePhase = ''
-            export HOME=$NIX_BUILD_TOP
-            export npm_config_nodedir=${pkgs.nodejs_22}
-            echo "manage-package-manager-versions=false" >> .npmrc
+            configurePhase =
+              ''
+                export HOME=$NIX_BUILD_TOP
+                export npm_config_nodedir=${pkgs.nodejs_22}
+                echo "manage-package-manager-versions=false" >> .npmrc
 
-            cp -a ${installedDeps}/node_modules .
-            chmod -R u+w node_modules
+                cp -a ${installedDeps}/node_modules .
+                chmod -R u+w node_modules
 
-            cp -f ${lockfilePassthru.patchedLockfileYaml} pnpm-lock.yaml
-          '' + pkgs.lib.optionalString includeWasm ''
-            # Copy WASM build output
-            mkdir -p eerie-wasm/pkg
-            cp -r ${wasmPkg}/* eerie-wasm/pkg/
-          '';
+                cp -f ${lockfilePassthru.patchedLockfileYaml} pnpm-lock.yaml
+              ''
+              + pkgs.lib.optionalString includeWasm ''
+                # Copy WASM build output
+                mkdir -p eerie-wasm/pkg
+                cp -r ${wasmPkg}/* eerie-wasm/pkg/
+              '';
 
-          buildPhase = ''
-            VITE_MODE=${viteMode} pnpm exec vite build
-          '';
+            buildPhase = ''
+              VITE_MODE=${viteMode} pnpm exec vite build
+            '';
 
-          installPhase = ''
-            mkdir -p $out
-            cp -r dist/* $out/
-          '';
+            installPhase = ''
+              mkdir -p $out
+              cp -r dist/* $out/
+            '';
+          };
+
+        frontendNative = mkFrontend {viteMode = "native";};
+        frontendWasm = mkFrontend {
+          viteMode = "wasm";
+          includeWasm = true;
         };
-
-        frontendNative = mkFrontend { viteMode = "native"; };
-        frontendWasm = mkFrontend { viteMode = "wasm"; includeWasm = true; };
 
         # ── Daemon binary (native simulation via thevenin) ───────────────
-        daemonBin = craneLib.buildPackage (commonCraneArgs // {
-          inherit cargoArtifacts;
-          pname = "eerie-daemon";
-          cargoExtraArgs = "-p eerie-daemon";
-        });
+        daemonBin = craneLib.buildPackage (commonCraneArgs
+          // {
+            inherit cargoArtifacts;
+            pname = "eerie-daemon";
+            cargoExtraArgs = "-p eerie-daemon";
+          });
 
         # ── Eerie (daemon + embedded frontend) ──────────────────────────
         eerie = pkgs.stdenv.mkDerivation {
@@ -268,20 +280,20 @@
         };
 
         devShells.default = pkgs.mkShell {
-          packages =
-            with pkgs; [
-              rustToolchain
-              wasm-pack_14
-              cargo-watch
-              nodejs_22
-              pnpm
-              pkg-config
-              openssl
-              git
-              jq
-              yq-go
-              rsync
-            ];
+          packages = with pkgs; [
+            rustToolchain
+            wasm-pack_14
+            cargo-watch
+            nodejs_22
+            pnpm
+            pkg-config
+            openssl
+            git
+            jq
+            yq-go
+            rsync
+            cargo-dist
+          ];
 
           shellHook = ''
             export RUST_BACKTRACE=1

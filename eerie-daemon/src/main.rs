@@ -4,15 +4,39 @@ use std::net::SocketAddr;
 
 use axum::{
     Router,
-    extract::WebSocketUpgrade,
+    body::Body,
+    extract::{Path, WebSocketUpgrade},
+    http::{Response, StatusCode, Uri, header},
     response::IntoResponse,
     routing::get,
 };
+use mime_guess::mime;
 use roam::DriverCaller;
 use tower_http::services::ServeDir;
 
 use crate::service::DaemonService;
 use eerie_rpc::EerieServiceDispatcher;
+
+#[derive(rust_embed::RustEmbed)]
+#[folder = "../dist/"]
+struct Assets;
+
+async fn embedded_handler(path: &str) -> Response<Body> {
+    let path = path.strip_prefix('/').unwrap_or(path);
+    let path = if path.is_empty() { "index.html" } else { path };
+
+    match Assets::get(&path) {
+        Some(content) => {
+            let body = Body::from(content.data.into_owned());
+            let mime = mime_guess::from_path(&path).first_or_octet_stream();
+            Response::builder()
+                .header(header::CONTENT_TYPE, mime.as_ref())
+                .body(body)
+                .unwrap()
+        }
+        None => StatusCode::NOT_FOUND.into_response(),
+    }
+}
 
 #[tokio::main]
 async fn main() {
@@ -25,7 +49,11 @@ async fn main() {
 
     let static_dir = std::env::args().nth(2);
 
-    let mut app = Router::new().route("/rpc", get(ws_handler));
+    let mut app = Router::new()
+        .route("/rpc", get(ws_handler))
+        .fallback(get(
+            |x: Uri| async move { embedded_handler(x.path()).await },
+        ));
 
     if let Some(dir) = static_dir {
         app = app.fallback_service(ServeDir::new(dir));
@@ -138,9 +166,12 @@ impl LinkTx for AxumWsTx {
     type Permit = AxumWsTxPermit;
 
     async fn reserve(&self) -> io::Result<Self::Permit> {
-        let permit = self.tx.clone().reserve_owned().await.map_err(|_| {
-            io::Error::new(io::ErrorKind::ConnectionReset, "ws writer stopped")
-        })?;
+        let permit = self
+            .tx
+            .clone()
+            .reserve_owned()
+            .await
+            .map_err(|_| io::Error::new(io::ErrorKind::ConnectionReset, "ws writer stopped"))?;
         Ok(AxumWsTxPermit { permit })
     }
 

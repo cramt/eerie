@@ -19,3 +19,5 @@ axum           = { version = "0.8", features = ["ws"] }
 env_logger     = "0.11"
 log            = { workspace = true }
 tower-http     = { version = "0.6", features = ["fs", "set-header"] }
+rust-embed = "8"
+mime_guess = "2"

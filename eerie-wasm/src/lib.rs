@@ -1,6 +1,8 @@
 #![cfg(target_arch = "wasm32")]
-
-use eerie_rpc::{EerieService, EerieServiceDispatcher};
+use eerie_rpc::{
+    Capabilities, EerieService, EerieServiceDispatcher, FileContent, FileOpenRequest,
+    FileSaveRequest, FileSaveResult,
+};
 use roam::DriverCaller;
 use roam_inprocess::JsInProcessLink;
 use thevenin_types::{Netlist, SimResult};
@@ -41,6 +43,18 @@ impl EerieService for WasmService {
 
     async fn simulate_pz(&self, netlist: Netlist) -> Result<SimResult, String> {
         thevenin::simulate_pz(&netlist).map_err(|e| e.to_string())
+    }
+
+    async fn get_capabilities(&self) -> Result<Capabilities, String> {
+        Err("unsupported".to_string())
+    }
+
+    async fn file_open(&self, _: FileOpenRequest) -> Result<FileContent, String> {
+        Err("unsupported".to_string())
+    }
+
+    async fn file_save(&self, _: FileSaveRequest) -> Result<FileSaveResult, String> {
+        Err("unsupported".to_string())
     }
 }
 
