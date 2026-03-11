@@ -42,7 +42,13 @@ function eerieDaemon(): Plugin {
           "-x",
           "run -p eerie-daemon",
         ],
-        { stdio: ["ignore", "pipe", "inherit"] },
+        {
+          stdio: ["ignore", "pipe", "inherit"],
+          env: {
+            ...process.env,
+            EERIE_PROJECT_DIR: resolve("examples/getting-started"),
+          },
+        },
       );
 
       // Listen for PORT lines on every daemon (re)start

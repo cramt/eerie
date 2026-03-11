@@ -48,8 +48,10 @@ async fn main() {
 
     let static_dir = std::env::args().nth(2);
 
-    // Determine the project directory (cwd) and ensure eerie.yaml exists.
-    let project_dir = std::env::current_dir().expect("cannot determine cwd");
+    // Determine the project directory: EERIE_PROJECT_DIR env var, then cwd.
+    let project_dir = std::env::var("EERIE_PROJECT_DIR")
+        .map(std::path::PathBuf::from)
+        .unwrap_or_else(|_| std::env::current_dir().expect("cannot determine cwd"));
     ensure_project_manifest(&project_dir);
 
     PROJECT_DIR
