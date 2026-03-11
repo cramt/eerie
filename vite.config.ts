@@ -229,7 +229,7 @@ function eerieCodegenWatch(): Plugin {
 
 export default defineConfig({
   root: "src/renderer",
-  base: mode === "wasm" ? "./" : "/",
+  base: "./",
   resolve: {
     alias: {
       "@renderer": resolve("src/renderer/src"),
