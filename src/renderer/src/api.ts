@@ -309,6 +309,26 @@ export function vfsGetProjectComponents(project: string): ProjectComponent[] | n
   return parseManifestComponents(manifestYaml);
 }
 
+/** Read the raw eerie.yaml manifest for a project. */
+export async function readManifest(projectPath: string): Promise<string> {
+  const caps = await getCapabilities();
+  if (caps.file_io) {
+    const file = await openFileDaemon(`${projectPath}/eerie.yaml`);
+    return file.content;
+  }
+  return vfsReadManifest(projectPath) ?? '';
+}
+
+/** Write the raw eerie.yaml manifest for a project. */
+export async function saveManifest(projectPath: string, content: string): Promise<void> {
+  const caps = await getCapabilities();
+  if (caps.file_io) {
+    await saveFileDaemon(`${projectPath}/eerie.yaml`, content);
+  } else {
+    vfsWriteManifest(projectPath, content);
+  }
+}
+
 /** Read a circuit file (native: full path; VFS: uses vfsReadCircuit). */
 export async function readCircuit(projectPath: string, circuitName: string): Promise<string> {
   const caps = await getCapabilities();

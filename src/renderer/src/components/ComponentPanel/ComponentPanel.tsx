@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { useUiStore } from '../../store/uiStore'
 import { useProjectStore } from '../../store/projectStore'
 import { getLibraryCategories, SYMBOL_REGISTRY } from '../../symbols'
+import ComponentLibraryDialog from '../ComponentLibraryDialog/ComponentLibraryDialog'
 import styles from './ComponentPanel.module.css'
 
 const GENERIC_LIBRARY = getLibraryCategories()
@@ -11,6 +12,7 @@ export default function ComponentPanel() {
   const { components: projectComponents } = useProjectStore()
   const [search, setSearch] = useState('')
   const [collapsed, setCollapsed] = useState<Record<string, boolean>>({})
+  const [showLibEditor, setShowLibEditor] = useState(false)
 
   const filter = search.toLowerCase()
 
@@ -47,41 +49,47 @@ export default function ComponentPanel() {
     const categories = Object.entries(byCategory)
 
     return (
-      <div className={styles.panel}>
-        <div className={styles.header}>Components</div>
-        <input
-          className={styles.search}
-          placeholder="Search…"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
-        <div className={styles.list}>
-          {categories.map(([cat, items]) => (
-            <div key={cat} className={styles.category}>
-              <div className={styles.catLabel}>{cat}</div>
-              {items.map((item) => {
-                const isActive = tool === 'place' && placingTypeId === item.type_id
-                return (
-                  <button
-                    key={item.idx}
-                    className={`${styles.item} ${isActive ? styles.itemActive : ''}`}
-                    onClick={() => handlePickProject(item.idx)}
-                    title={`Place ${item.name}`}
-                  >
-                    <span className={styles.itemIcon}>
-                      {(SYMBOL_REGISTRY[item.type_id]?.label ?? item.type_id).slice(0, 1)}
-                    </span>
-                    <span>{item.name}</span>
-                  </button>
-                )
-              })}
-            </div>
-          ))}
-          {categories.length === 0 && (
-            <p className={styles.empty}>No components match "{search}"</p>
-          )}
+      <>
+        {showLibEditor && <ComponentLibraryDialog onClose={() => setShowLibEditor(false)} />}
+        <div className={styles.panel}>
+          <div className={styles.header}>
+            <span>Components</span>
+            <button className={styles.editLibBtn} onClick={() => setShowLibEditor(true)} title="Edit component library">✎ Edit</button>
+          </div>
+          <input
+            className={styles.search}
+            placeholder="Search…"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+          <div className={styles.list}>
+            {categories.map(([cat, items]) => (
+              <div key={cat} className={styles.category}>
+                <div className={styles.catLabel}>{cat}</div>
+                {items.map((item) => {
+                  const isActive = tool === 'place' && placingTypeId === item.type_id
+                  return (
+                    <button
+                      key={item.idx}
+                      className={`${styles.item} ${isActive ? styles.itemActive : ''}`}
+                      onClick={() => handlePickProject(item.idx)}
+                      title={`Place ${item.name}`}
+                    >
+                      <span className={styles.itemIcon}>
+                        {(SYMBOL_REGISTRY[item.type_id]?.label ?? item.type_id).slice(0, 1)}
+                      </span>
+                      <span>{item.name}</span>
+                    </button>
+                  )
+                })}
+              </div>
+            ))}
+            {categories.length === 0 && (
+              <p className={styles.empty}>No components match "{search}"</p>
+            )}
+          </div>
         </div>
-      </div>
+      </>
     )
   }
 
@@ -98,8 +106,13 @@ export default function ComponentPanel() {
   }
 
   return (
-    <div className={styles.panel}>
-      <div className={styles.header}>Components</div>
+    <>
+      {showLibEditor && <ComponentLibraryDialog onClose={() => setShowLibEditor(false)} />}
+      <div className={styles.panel}>
+      <div className={styles.header}>
+        <span>Components</span>
+        <button className={styles.editLibBtn} onClick={() => setShowLibEditor(true)} title="Set up component library">✎ Set up</button>
+      </div>
       <input
         className={styles.search}
         placeholder="Search…"
@@ -136,5 +149,6 @@ export default function ComponentPanel() {
         )}
       </div>
     </div>
+    </>
   )
 }
