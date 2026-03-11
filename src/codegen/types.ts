@@ -239,6 +239,50 @@ export interface Netlist {
 }
 
 /**
+ * Result of a save — contains the path that was actually written to
+ * (may differ from request when the user picked a new name).
+ */
+export interface FileSaveResult {
+  path: string;
+}
+
+/**
+ * Request to save a file. If `path` is empty the daemon should show a
+ * native save dialog.
+ */
+export interface FileSaveRequest {
+  path: string;
+  content: string;
+}
+
+/**
+ * Request to open a file. If `path` is empty the daemon should show a
+ * native file-picker dialog (if available) or return an error.
+ */
+export interface FileOpenRequest {
+  path: string;
+}
+
+/**
+ * Content returned when opening a file via the daemon.
+ */
+export interface FileContent {
+  name: string;
+  content: string;
+}
+
+/**
+ * Describes what the backend can do. The frontend queries this once on
+ * connect and adapts its behaviour accordingly.
+ */
+export interface Capabilities {
+  /**
+   * Backend can read/write files on the host filesystem.
+   */
+  file_io: boolean;
+}
+
+/**
  * Pin definition metadata for a component type.
  */
 export interface PinMeta {
