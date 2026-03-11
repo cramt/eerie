@@ -5,12 +5,11 @@ use std::net::SocketAddr;
 use axum::{
     Router,
     body::Body,
-    extract::{Path, WebSocketUpgrade},
+    extract::WebSocketUpgrade,
     http::{Response, StatusCode, Uri, header},
     response::IntoResponse,
     routing::get,
 };
-use mime_guess::mime;
 use roam::DriverCaller;
 use tower_http::services::ServeDir;
 

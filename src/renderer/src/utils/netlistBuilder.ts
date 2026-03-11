@@ -9,7 +9,7 @@ import type {
   ElementKind,
   Analysis,
 } from "../../../codegen/generated-rpc";
-import { FILE_PIN_TO_UI, UI_PIN_TO_FILE } from "../../../codegen/types";
+import { FILE_PIN_TO_UI, UI_PIN_TO_FILE } from "../pinDefs";
 
 /** Map a file pin_id to a UI pin name */
 export function filePinToUi(typeId: string, pinId: string): string {

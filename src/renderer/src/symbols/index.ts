@@ -1,5 +1,5 @@
 import type { PinDef } from "../types";
-import { PIN_DEFINITIONS } from "../../../codegen/types";
+import { PIN_DEFINITIONS } from "../pinDefs";
 
 import Resistor, { resistorPinPositions } from "./Resistor";
 import Capacitor, { capacitorPinPositions } from "./Capacitor";

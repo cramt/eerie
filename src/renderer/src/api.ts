@@ -13,21 +13,12 @@ export type SimulateResponse =
   | { ok: true; value: SimResult }
   | { ok: false; error: { message: string } };
 
-// ── Runtime mode detection ─────────────────────────────────────────────────
-// VITE_MODE is set at build time to "native" or "wasm".
-// In native mode, the vite dev server proxies /rpc to the daemon.
-// In production native builds, the daemon serves the frontend itself.
-
-const VITE_MODE = import.meta.env.VITE_MODE as "native" | "wasm";
-
-// ── Connect to backend ─────────────────────────────────────────────────────
-
 let clientPromise: Promise<EerieServiceCaller> | null = null;
 
 function getClient(): Promise<EerieServiceCaller> {
   if (clientPromise) return clientPromise;
 
-  if (VITE_MODE === "native") {
+  if (import.meta.env.VITE_MODE === "native") {
     const url = `ws://${location.host}/rpc`;
     console.log(`[eerie] native mode — connecting to ${url}`);
     clientPromise = connectEerieService(url);
@@ -35,37 +26,38 @@ function getClient(): Promise<EerieServiceCaller> {
     console.log(
       "[eerie] WASM mode — simulation runs in browser via roam inprocess",
     );
-    clientPromise = connectWasm();
+    clientPromise = (async () => {
+      const [
+        wasmMod,
+        { InProcessTransport },
+        { helloExchangeInitiator, defaultHello },
+      ] = await Promise.all([
+        import("eerie-wasm"),
+        import("@bearcove/roam-inprocess"),
+        import("@bearcove/roam-core"),
+      ]);
+
+      // wasm-pack --target web requires explicit initialization
+      await wasmMod.default();
+
+      let rustLink: { deliver(payload: Uint8Array): void } | null = null;
+      const transport = new InProcessTransport((payload: Uint8Array) => {
+        if (!rustLink) throw new Error("rustLink not initialized");
+        rustLink.deliver(payload);
+      });
+      rustLink = wasmMod.start_acceptor((payload: Uint8Array) => {
+        transport.pushMessage(payload);
+      });
+
+      const connection = await helloExchangeInitiator(
+        transport,
+        defaultHello(),
+      );
+      return new EerieServiceClient(connection.asCaller());
+    })();
   }
 
   return clientPromise;
-}
-
-async function connectWasm(): Promise<EerieServiceCaller> {
-  const [
-    wasmMod,
-    { InProcessTransport },
-    { helloExchangeInitiator, defaultHello },
-  ] = await Promise.all([
-    import("eerie-wasm"),
-    import("@bearcove/roam-inprocess"),
-    import("@bearcove/roam-core"),
-  ]);
-
-  // wasm-pack --target web requires explicit initialization
-  await wasmMod.default();
-
-  let rustLink: { deliver(payload: Uint8Array): void } | null = null;
-  const transport = new InProcessTransport((payload: Uint8Array) => {
-    if (!rustLink) throw new Error("rustLink not initialized");
-    rustLink.deliver(payload);
-  });
-  rustLink = wasmMod.start_acceptor((payload: Uint8Array) => {
-    transport.pushMessage(payload);
-  });
-
-  const connection = await helloExchangeInitiator(transport, defaultHello());
-  return new EerieServiceClient(connection.asCaller());
 }
 
 // ── Analysis dispatch ──────────────────────────────────────────────────────
@@ -142,7 +134,9 @@ export function getCapabilities(): Promise<Capabilities> {
         const client = await getClient();
         const res = await client.getCapabilities();
         if (res.ok) return res.value;
-      } catch { /* fall through */ }
+      } catch {
+        /* fall through */
+      }
       // WASM or unreachable daemon — no native capabilities
       return { file_io: false };
     })();
@@ -193,10 +187,7 @@ async function openFileDaemon(path: string): Promise<FileContent> {
   return { path: res.value.name, content: res.value.content };
 }
 
-async function saveFileDaemon(
-  path: string,
-  content: string,
-): Promise<void> {
+async function saveFileDaemon(path: string, content: string): Promise<void> {
   const client = await getClient();
   const res = await client.fileSave({ path, content });
   if (!res.ok) throw new Error(res.error);

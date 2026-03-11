@@ -1,0 +1,17 @@
+{
+  "resistor":    [{"name": "a",        "file_alias": "p"}, {"name": "b",       "file_alias": "n"}],
+  "capacitor":   [{"name": "a",        "file_alias": "p"}, {"name": "b",       "file_alias": "n"}],
+  "inductor":    [{"name": "a",        "file_alias": "p"}, {"name": "b",       "file_alias": "n"}],
+  "diode":       [{"name": "anode",    "file_alias": "p"}, {"name": "cathode", "file_alias": "n"}],
+  "npn":         [{"name": "collector"}, {"name": "base"}, {"name": "emitter"}],
+  "pnp":         [{"name": "collector"}, {"name": "base"}, {"name": "emitter"}],
+  "nmos":        [{"name": "drain"}, {"name": "gate"}, {"name": "source"}, {"name": "body"}],
+  "pmos":        [{"name": "drain"}, {"name": "gate"}, {"name": "source"}, {"name": "body"}],
+  "igbt":        [{"name": "drain"}, {"name": "gate"}, {"name": "source"}, {"name": "body"}],
+  "opamp":       [{"name": "non_inverting"}, {"name": "inverting"}, {"name": "output"}, {"name": "v_pos"}, {"name": "v_neg"}],
+  "transformer": [{"name": "primary_pos"}, {"name": "primary_neg"}, {"name": "secondary_pos"}, {"name": "secondary_neg"}],
+  "relay":       [{"name": "coil_pos"}, {"name": "coil_neg"}, {"name": "contact_common"}, {"name": "contact_no"}],
+  "dc_voltage":  [{"name": "positive", "file_alias": "p"}, {"name": "negative", "file_alias": "n"}],
+  "dc_current":  [{"name": "positive", "file_alias": "p"}, {"name": "negative", "file_alias": "n"}],
+  "ground":      [{"name": "gnd", "file_alias": "p"}]
+}

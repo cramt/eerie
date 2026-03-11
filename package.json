@@ -37,6 +37,7 @@
     "@bearcove/roam-postcard": "^7.3.0",
     "@bearcove/roam-wire": "^7.3.0",
     "@bearcove/roam-ws": "7.3.0",
+    "@monaco-editor/react": "4.8.0-rc.3",
     "eerie-wasm": "workspace:*",
     "konva": "^10.2.0",
     "neverthrow": "^8.2.0",

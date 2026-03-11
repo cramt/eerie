@@ -1,8 +1,7 @@
 /**
- * Convert a typed Netlist to SPICE text for passing to the WASM simulator.
+ * Convert a typed Netlist to SPICE text for passing to the simulator.
  *
- * This is the TypeScript equivalent of thevenin_types::Netlist::to_string().
- * Uses Facet's external tagging format.
+ * Uses roam's internal tagging format: { tag: 'Variant', ...fields }
  */
 import type {
   Netlist,
@@ -14,27 +13,14 @@ import type {
   Waveform,
   Analysis,
   Param,
-} from "../../../codegen/types";
-
-// ── Helpers for external-tagged enums ────────────────────────────────────────
-
-/** Get the variant key of an externally-tagged union: "Op" | { Dc: ... } → "Op" | "Dc" */
-function variantKey(val: string | Record<string, unknown>): string {
-  if (typeof val === "string") return val;
-  return Object.keys(val)[0];
-}
-
-/** Get the inner data of an externally-tagged union */
-function variantData<T>(val: string | Record<string, T>): T | undefined {
-  if (typeof val === "string") return undefined;
-  return Object.values(val)[0];
-}
+} from "../../../codegen/generated-rpc";
 
 function writeExpr(e: Expr): string {
-  if ("Num" in e) return String(e.Num);
-  if ("Param" in e) return e.Param;
-  if ("Brace" in e) return `{${e.Brace}}`;
-  return "0";
+  switch (e.tag) {
+    case "Num":   return String(e.value);
+    case "Param": return e.value;
+    case "Brace": return `{${e.value}}`;
+  }
 }
 
 function writeParams(params: Param[]): string {
@@ -48,8 +34,7 @@ function writeSource(source: Source): string {
     parts.push(writeExpr(source.dc));
   }
   if (source.ac != null) {
-    const phase =
-      source.ac.phase != null ? ` ${writeExpr(source.ac.phase)}` : "";
+    const phase = source.ac.phase != null ? ` ${writeExpr(source.ac.phase)}` : "";
     parts.push(`AC ${writeExpr(source.ac.mag)}${phase}`);
   }
   if (source.waveform != null) {
@@ -59,62 +44,52 @@ function writeSource(source: Source): string {
 }
 
 function writeWaveform(w: Waveform): string {
-  const key = variantKey(w as Record<string, unknown>);
-  const d = variantData(w as Record<string, any>);
-  switch (key) {
+  switch (w.tag) {
     case "Pulse": {
-      const args = [writeExpr(d.v1), writeExpr(d.v2)];
-      if (d.td != null) args.push(writeExpr(d.td));
-      if (d.tr != null) args.push(writeExpr(d.tr));
-      if (d.tf != null) args.push(writeExpr(d.tf));
-      if (d.pw != null) args.push(writeExpr(d.pw));
-      if (d.per != null) args.push(writeExpr(d.per));
+      const args = [writeExpr(w.v1), writeExpr(w.v2)];
+      if (w.td != null) args.push(writeExpr(w.td));
+      if (w.tr != null) args.push(writeExpr(w.tr));
+      if (w.tf != null) args.push(writeExpr(w.tf));
+      if (w.pw != null) args.push(writeExpr(w.pw));
+      if (w.per != null) args.push(writeExpr(w.per));
       return `PULSE(${args.join(" ")})`;
     }
     case "Sin": {
-      const args = [writeExpr(d.v0), writeExpr(d.va)];
-      if (d.freq != null) args.push(writeExpr(d.freq));
-      if (d.td != null) args.push(writeExpr(d.td));
-      if (d.theta != null) args.push(writeExpr(d.theta));
-      if (d.phi != null) args.push(writeExpr(d.phi));
+      const args = [writeExpr(w.v0), writeExpr(w.va)];
+      if (w.freq != null) args.push(writeExpr(w.freq));
+      if (w.td != null) args.push(writeExpr(w.td));
+      if (w.theta != null) args.push(writeExpr(w.theta));
+      if (w.phi != null) args.push(writeExpr(w.phi));
       return `SIN(${args.join(" ")})`;
     }
     case "Exp": {
-      const args = [writeExpr(d.v1), writeExpr(d.v2)];
-      if (d.td1 != null) args.push(writeExpr(d.td1));
-      if (d.tau1 != null) args.push(writeExpr(d.tau1));
-      if (d.td2 != null) args.push(writeExpr(d.td2));
-      if (d.tau2 != null) args.push(writeExpr(d.tau2));
+      const args = [writeExpr(w.v1), writeExpr(w.v2)];
+      if (w.td1 != null) args.push(writeExpr(w.td1));
+      if (w.tau1 != null) args.push(writeExpr(w.tau1));
+      if (w.td2 != null) args.push(writeExpr(w.td2));
+      if (w.tau2 != null) args.push(writeExpr(w.tau2));
       return `EXP(${args.join(" ")})`;
     }
     case "Pwl":
-      return `PWL(${(d as any[]).map((p: any) => `${writeExpr(p.time)} ${writeExpr(p.value)}`).join(" ")})`;
+      return `PWL(${w.value.map((p) => `${writeExpr(p.time)} ${writeExpr(p.value)}`).join(" ")})`;
     case "Sffm": {
-      const args = [writeExpr(d.v0), writeExpr(d.va)];
-      if (d.fc != null) args.push(writeExpr(d.fc));
-      if (d.fs != null) args.push(writeExpr(d.fs));
-      if (d.md != null) args.push(writeExpr(d.md));
+      const args = [writeExpr(w.v0), writeExpr(w.va)];
+      if (w.fc != null) args.push(writeExpr(w.fc));
+      if (w.fs != null) args.push(writeExpr(w.fs));
+      if (w.md != null) args.push(writeExpr(w.md));
       return `SFFM(${args.join(" ")})`;
     }
     case "Am": {
-      const args = [
-        writeExpr(d.va),
-        writeExpr(d.vo),
-        writeExpr(d.fc),
-        writeExpr(d.fs),
-      ];
-      if (d.td != null) args.push(writeExpr(d.td));
+      const args = [writeExpr(w.va), writeExpr(w.vo), writeExpr(w.fc), writeExpr(w.fs)];
+      if (w.td != null) args.push(writeExpr(w.td));
       return `AM(${args.join(" ")})`;
     }
-    default:
-      return "";
   }
 }
 
 function writeElement(el: Element): string {
-  const key = variantKey(el.kind as Record<string, unknown>);
-  const k = variantData(el.kind as Record<string, any>)!;
-  switch (key) {
+  const k: ElementKind = el.kind;
+  switch (k.tag) {
     case "Resistor":
       return `${el.name} ${k.pos} ${k.neg} ${writeExpr(k.value)}${writeParams(k.params)}`;
     case "Capacitor":
@@ -151,84 +126,72 @@ function writeElement(el: Element): string {
       return `${el.name} ${k.pos} ${k.neg} ${k.spec}`;
     case "SubcktCall":
       return `${el.name} ${k.ports.join(" ")} ${k.subckt}${writeParams(k.params)}`;
-    case "Ltra":
-      return `${el.name} ${k.pos1} ${k.neg1} ${k.pos2} ${k.neg2} ${k.model}${writeParams(k.params)}`;
     case "Raw":
-      return `${el.name} ${k}`;
-    default:
-      return "";
+      return `${el.name} ${k.value}`;
   }
 }
 
 function writeAnalysis(a: Analysis): string {
-  const key = variantKey(a as any);
-  if (key === "Op") return ".op";
-
-  const d = variantData(a as Record<string, any>)!;
-  switch (key) {
+  switch (a.tag) {
+    case "Op":
+      return ".op";
     case "Dc": {
-      let line = `.dc ${d.src} ${writeExpr(d.start)} ${writeExpr(d.stop)} ${writeExpr(d.step)}`;
-      if (d.src2 != null) {
-        line += ` ${d.src2.src} ${writeExpr(d.src2.start)} ${writeExpr(d.src2.stop)} ${writeExpr(d.src2.step)}`;
+      let line = `.dc ${a.src} ${writeExpr(a.start)} ${writeExpr(a.stop)} ${writeExpr(a.step)}`;
+      if (a.src2 != null) {
+        line += ` ${a.src2.src} ${writeExpr(a.src2.start)} ${writeExpr(a.src2.stop)} ${writeExpr(a.src2.step)}`;
       }
       return line;
     }
     case "Tran": {
-      let line = `.tran ${writeExpr(d.tstep)} ${writeExpr(d.tstop)}`;
-      if (d.tstart != null) line += ` ${writeExpr(d.tstart)}`;
-      if (d.tmax != null) line += ` ${writeExpr(d.tmax)}`;
+      let line = `.tran ${writeExpr(a.tstep)} ${writeExpr(a.tstop)}`;
+      if (a.tstart != null) line += ` ${writeExpr(a.tstart)}`;
+      if (a.tmax != null) line += ` ${writeExpr(a.tmax)}`;
       return line;
     }
     case "Ac":
-      return `.ac ${(d.variation as string).toLowerCase()} ${d.n} ${writeExpr(d.fstart)} ${writeExpr(d.fstop)}`;
+      return `.ac ${a.variation.tag.toLowerCase()} ${a.n} ${writeExpr(a.fstart)} ${writeExpr(a.fstop)}`;
     case "Noise":
-      return `.noise V(${d.output}${d.ref_node != null ? `,${d.ref_node}` : ""}) ${d.src} ${(d.variation as string).toLowerCase()} ${d.n} ${writeExpr(d.fstart)} ${writeExpr(d.fstop)}`;
+      return `.noise V(${a.output}${a.ref_node != null ? `,${a.ref_node}` : ""}) ${a.src} ${a.variation.tag.toLowerCase()} ${a.n} ${writeExpr(a.fstart)} ${writeExpr(a.fstop)}`;
     case "Tf":
-      return `.tf ${d.output} ${d.input}`;
+      return `.tf ${a.output} ${a.input}`;
     case "Sens":
-      return `.sens ${d.output.join(" ")}`;
+      return `.sens ${a.output.join(" ")}`;
     case "Pz":
-      return `.pz ${d.node_i} ${d.node_g} ${d.node_j} ${d.node_k} ${(d.input_type as string).toLowerCase()} ${(d.analysis_type as string).toLowerCase()}`;
-    default:
-      return "";
+      return `.pz ${a.node_i} ${a.node_g} ${a.node_j} ${a.node_k} ${a.input_type.tag.toLowerCase()} ${a.analysis_type.tag.toLowerCase()}`;
   }
 }
 
 function writeItem(item: Item): string {
-  const key = variantKey(item as Record<string, unknown>);
-  const d = variantData(item as Record<string, any>);
-  switch (key) {
+  switch (item.tag) {
     case "Element":
-      return writeElement(d);
+      return writeElement(item.value);
     case "Subckt": {
-      const s = d;
+      const s = item.value;
       const lines = [`.subckt ${s.name} ${s.ports.join(" ")}${writeParams(s.params)}`];
       for (const sub of s.items) lines.push(writeItem(sub));
       lines.push(".ends");
       return lines.join("\n");
     }
     case "Model":
-      return `.model ${d.name} ${d.kind}${writeParams(d.params)}`;
+      return `.model ${item.value.name} ${item.value.kind}${writeParams(item.value.params)}`;
     case "Analysis":
-      return writeAnalysis(d);
+      return writeAnalysis(item.value);
     case "Param":
-      return `.param ${(d as any[]).map((p: any) => `${p.name}=${writeExpr(p.value)}`).join(" ")}`;
+      return `.param ${item.value.map((p) => `${p.name}=${writeExpr(p.value)}`).join(" ")}`;
     case "Include":
-      return `.include ${d}`;
+      return `.include ${item.value}`;
     case "Lib":
-      return `.lib ${d.file}${d.entry != null ? ` ${d.entry}` : ""}`;
+      return `.lib ${item.file}${item.entry != null ? ` ${item.entry}` : ""}`;
     case "Global":
-      return `.global ${(d as string[]).join(" ")}`;
+      return `.global ${item.value.join(" ")}`;
     case "Options":
-      return `.options ${(d as any[]).map((p: any) => `${p.name}=${writeExpr(p.value)}`).join(" ")}`;
+      return `.options ${item.value.map((p) => `${p.name}=${writeExpr(p.value)}`).join(" ")}`;
     case "Save":
-      return `.save ${(d as string[]).join(" ")}`;
+      return `.save ${item.value.join(" ")}`;
     case "Comment":
-      return `* ${d}`;
+      return `* ${item.value}`;
     case "Raw":
-      return d as string;
-    default:
-      return "";
+      return item.value;
   }
 }
 
