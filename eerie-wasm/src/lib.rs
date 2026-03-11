@@ -1,7 +1,7 @@
 #![cfg(target_arch = "wasm32")]
 use eerie_rpc::{
     Capabilities, EerieService, EerieServiceDispatcher, FileContent, FileOpenRequest,
-    FileSaveRequest, FileSaveResult,
+    FileSaveRequest, FileSaveResult, ListProjectRequest, ProjectDir, ProjectListing,
 };
 use roam::DriverCaller;
 use roam_inprocess::JsInProcessLink;
@@ -54,6 +54,14 @@ impl EerieService for WasmService {
     }
 
     async fn file_save(&self, _: FileSaveRequest) -> Result<FileSaveResult, String> {
+        Err("unsupported".to_string())
+    }
+
+    async fn get_project_dir(&self) -> Result<ProjectDir, String> {
+        Err("unsupported".to_string())
+    }
+
+    async fn list_project(&self, _: ListProjectRequest) -> Result<ProjectListing, String> {
         Err("unsupported".to_string())
     }
 }

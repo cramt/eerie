@@ -1,14 +1,24 @@
 use eerie_rpc::{
     Capabilities, EerieService, FileContent, FileOpenRequest, FileSaveRequest, FileSaveResult,
+    ListProjectRequest, ProjectDir, ProjectListing,
 };
+use std::path::PathBuf;
 use thevenin_types::{Netlist, SimResult};
 
 #[derive(Clone)]
-pub struct DaemonService;
+pub struct DaemonService {
+    pub project_dir: PathBuf,
+}
 
 impl EerieService for DaemonService {
     async fn get_capabilities(&self) -> Result<Capabilities, String> {
         Ok(Capabilities { file_io: true })
+    }
+
+    async fn get_project_dir(&self) -> Result<ProjectDir, String> {
+        Ok(ProjectDir {
+            path: self.project_dir.to_string_lossy().into_owned(),
+        })
     }
 
     async fn file_open(&self, req: FileOpenRequest) -> Result<FileContent, String> {
@@ -32,6 +42,28 @@ impl EerieService for DaemonService {
             .map_err(|e| format!("Failed to write {}: {e}", path.display()))?;
         Ok(FileSaveResult {
             path: req.path,
+        })
+    }
+
+    async fn list_project(&self, req: ListProjectRequest) -> Result<ProjectListing, String> {
+        let dir = std::path::Path::new(&req.path);
+        let manifest_yaml = std::fs::read_to_string(dir.join("eerie.yaml"))
+            .map_err(|e| format!("not an eerie project (no eerie.yaml): {e}"))?;
+        let circuits = std::fs::read_dir(dir)
+            .map_err(|e| format!("cannot read directory: {e}"))?
+            .filter_map(|e| e.ok())
+            .filter_map(|e| {
+                let name = e.file_name().to_string_lossy().into_owned();
+                if name != "eerie.yaml" && name.ends_with(".yaml") {
+                    Some(name.trim_end_matches(".yaml").to_string())
+                } else {
+                    None
+                }
+            })
+            .collect();
+        Ok(ProjectListing {
+            manifest_yaml,
+            circuits,
         })
     }
 

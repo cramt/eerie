@@ -27,6 +27,13 @@ Thumbs.db
 .direnv/
 result
 
+# Old circuit format (superseded by project directories with .yaml files)
+*.eerie
+
+# Project manifests and circuits at the repo root (auto-created by daemon)
+/eerie.yaml
+/*.yaml
+
 # Logs
 *.log
 npm-debug.log*

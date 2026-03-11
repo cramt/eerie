@@ -8,6 +8,30 @@ pub struct Capabilities {
     pub file_io: bool,
 }
 
+/// The project directory the daemon was started in.
+#[derive(facet::Facet, Clone, Debug)]
+pub struct ProjectDir {
+    /// Absolute path to the project directory.
+    pub path: String,
+}
+
+/// Request to list the contents of an eerie project directory.
+/// The directory must contain an `eerie.yaml` manifest file.
+#[derive(facet::Facet, Clone, Debug)]
+pub struct ListProjectRequest {
+    /// Absolute path to the project directory.
+    pub path: String,
+}
+
+/// Result of listing a project directory.
+#[derive(facet::Facet, Clone, Debug)]
+pub struct ProjectListing {
+    /// Raw YAML content of the `eerie.yaml` manifest.
+    pub manifest_yaml: String,
+    /// Names of circuits in the project (filename stems, no `.yaml` extension).
+    pub circuits: Vec<String>,
+}
+
 /// Content returned when opening a file via the daemon.
 #[derive(facet::Facet, Clone, Debug)]
 pub struct FileContent {
@@ -47,6 +71,12 @@ pub trait EerieService {
 
     /// Save a file on the host filesystem.
     async fn file_save(&self, req: FileSaveRequest) -> Result<FileSaveResult, String>;
+
+    /// Return the project directory the daemon was started in.
+    async fn get_project_dir(&self) -> Result<ProjectDir, String>;
+
+    /// List the circuits in an eerie project directory (must contain `eerie.yaml`).
+    async fn list_project(&self, req: ListProjectRequest) -> Result<ProjectListing, String>;
 
     /// Run .op analysis.
     async fn simulate_op(&self, netlist: Netlist) -> Result<SimResult, String>;

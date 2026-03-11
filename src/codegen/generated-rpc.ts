@@ -29,6 +29,19 @@ export interface FileSaveResult {
   path: string;
 }
 
+export interface ProjectDir {
+  path: string;
+}
+
+export interface ListProjectRequest {
+  path: string;
+}
+
+export interface ProjectListing {
+  manifest_yaml: string;
+  circuits: string[];
+}
+
 export type Expr =
   | { tag: 'Num'; value: number }
   | { tag: 'Param'; value: string }
@@ -189,6 +202,11 @@ export type FileOpenResponse = { ok: true; value: FileContent } | { ok: false; e
 
 export type FileSaveResponse = { ok: true; value: FileSaveResult } | { ok: false; error: string };
 
+export type GetProjectDirRequest = [];
+export type GetProjectDirResponse = { ok: true; value: ProjectDir } | { ok: false; error: string };
+
+export type ListProjectResponse = { ok: true; value: ProjectListing } | { ok: false; error: string };
+
 export type SimulateOpRequest = [Netlist];
 export type SimulateOpResponse = { ok: true; value: SimResult } | { ok: false; error: string };
 
@@ -221,6 +239,10 @@ export interface EerieServiceCaller {
   fileOpen(req: FileOpenRequest): CallBuilder<{ ok: true; value: FileContent } | { ok: false; error: string }>;
   /** Save a file on the host filesystem. */
   fileSave(req: FileSaveRequest): CallBuilder<{ ok: true; value: FileSaveResult } | { ok: false; error: string }>;
+  /** Return the project directory the daemon was started in. */
+  getProjectDir(): CallBuilder<{ ok: true; value: ProjectDir } | { ok: false; error: string }>;
+  /** List the circuits in an eerie project directory (must contain `eerie.yaml`). */
+  listProject(req: ListProjectRequest): CallBuilder<{ ok: true; value: ProjectListing } | { ok: false; error: string }>;
   /** Run .op analysis. */
   simulateOp(netlist: Netlist): CallBuilder<{ ok: true; value: SimResult } | { ok: false; error: string }>;
   /** Run .dc sweep analysis. */
@@ -313,9 +335,53 @@ export class EerieServiceClient implements EerieServiceCaller {
     });
   }
 
+  /** Return the project directory the daemon was started in. */
+  getProjectDir(): CallBuilder<{ ok: true; value: ProjectDir } | { ok: false; error: string }> {
+    const descriptor = eerieService_descriptor.methods[3];
+    return new CallBuilder(async (metadata) => {
+      try {
+        const value = await this.caller.call({
+          method: "EerieService.getProjectDir",
+          args: {},
+          descriptor,
+          schemaRegistry: eerieService_descriptor.schema_registry,
+          metadata,
+        });
+        return { ok: true, value } as { ok: true; value: ProjectDir } | { ok: false; error: string };
+      } catch (e) {
+        if (e instanceof RpcError && e.isUserError()) {
+          return { ok: false, error: e.userError } as { ok: true; value: ProjectDir } | { ok: false; error: string };
+        }
+        throw e;
+      }
+    });
+  }
+
+  /** List the circuits in an eerie project directory (must contain `eerie.yaml`). */
+  listProject(req: ListProjectRequest): CallBuilder<{ ok: true; value: ProjectListing } | { ok: false; error: string }> {
+    const descriptor = eerieService_descriptor.methods[4];
+    return new CallBuilder(async (metadata) => {
+      try {
+        const value = await this.caller.call({
+          method: "EerieService.listProject",
+          args: { req },
+          descriptor,
+          schemaRegistry: eerieService_descriptor.schema_registry,
+          metadata,
+        });
+        return { ok: true, value } as { ok: true; value: ProjectListing } | { ok: false; error: string };
+      } catch (e) {
+        if (e instanceof RpcError && e.isUserError()) {
+          return { ok: false, error: e.userError } as { ok: true; value: ProjectListing } | { ok: false; error: string };
+        }
+        throw e;
+      }
+    });
+  }
+
   /** Run .op analysis. */
   simulateOp(netlist: Netlist): CallBuilder<{ ok: true; value: SimResult } | { ok: false; error: string }> {
-    const descriptor = eerieService_descriptor.methods[3];
+    const descriptor = eerieService_descriptor.methods[5];
     return new CallBuilder(async (metadata) => {
       try {
         const value = await this.caller.call({
@@ -337,7 +403,7 @@ export class EerieServiceClient implements EerieServiceCaller {
 
   /** Run .dc sweep analysis. */
   simulateDc(netlist: Netlist): CallBuilder<{ ok: true; value: SimResult } | { ok: false; error: string }> {
-    const descriptor = eerieService_descriptor.methods[4];
+    const descriptor = eerieService_descriptor.methods[6];
     return new CallBuilder(async (metadata) => {
       try {
         const value = await this.caller.call({
@@ -359,7 +425,7 @@ export class EerieServiceClient implements EerieServiceCaller {
 
   /** Run .ac frequency sweep analysis. */
   simulateAc(netlist: Netlist): CallBuilder<{ ok: true; value: SimResult } | { ok: false; error: string }> {
-    const descriptor = eerieService_descriptor.methods[5];
+    const descriptor = eerieService_descriptor.methods[7];
     return new CallBuilder(async (metadata) => {
       try {
         const value = await this.caller.call({
@@ -381,7 +447,7 @@ export class EerieServiceClient implements EerieServiceCaller {
 
   /** Run .tran transient analysis. */
   simulateTran(netlist: Netlist): CallBuilder<{ ok: true; value: SimResult } | { ok: false; error: string }> {
-    const descriptor = eerieService_descriptor.methods[6];
+    const descriptor = eerieService_descriptor.methods[8];
     return new CallBuilder(async (metadata) => {
       try {
         const value = await this.caller.call({
@@ -403,7 +469,7 @@ export class EerieServiceClient implements EerieServiceCaller {
 
   /** Run .noise analysis. */
   simulateNoise(netlist: Netlist): CallBuilder<{ ok: true; value: SimResult } | { ok: false; error: string }> {
-    const descriptor = eerieService_descriptor.methods[7];
+    const descriptor = eerieService_descriptor.methods[9];
     return new CallBuilder(async (metadata) => {
       try {
         const value = await this.caller.call({
@@ -425,7 +491,7 @@ export class EerieServiceClient implements EerieServiceCaller {
 
   /** Run .tf transfer function analysis. */
   simulateTf(netlist: Netlist): CallBuilder<{ ok: true; value: SimResult } | { ok: false; error: string }> {
-    const descriptor = eerieService_descriptor.methods[8];
+    const descriptor = eerieService_descriptor.methods[10];
     return new CallBuilder(async (metadata) => {
       try {
         const value = await this.caller.call({
@@ -447,7 +513,7 @@ export class EerieServiceClient implements EerieServiceCaller {
 
   /** Run .sens sensitivity analysis. */
   simulateSens(netlist: Netlist): CallBuilder<{ ok: true; value: SimResult } | { ok: false; error: string }> {
-    const descriptor = eerieService_descriptor.methods[9];
+    const descriptor = eerieService_descriptor.methods[11];
     return new CallBuilder(async (metadata) => {
       try {
         const value = await this.caller.call({
@@ -469,7 +535,7 @@ export class EerieServiceClient implements EerieServiceCaller {
 
   /** Run .pz pole-zero analysis. */
   simulatePz(netlist: Netlist): CallBuilder<{ ok: true; value: SimResult } | { ok: false; error: string }> {
-    const descriptor = eerieService_descriptor.methods[10];
+    const descriptor = eerieService_descriptor.methods[12];
     return new CallBuilder(async (metadata) => {
       try {
         const value = await this.caller.call({
@@ -507,6 +573,8 @@ export interface EerieServiceHandler {
   getCapabilities(): Promise<{ ok: true; value: Capabilities } | { ok: false; error: string }> | { ok: true; value: Capabilities } | { ok: false; error: string };
   fileOpen(req: FileOpenRequest): Promise<{ ok: true; value: FileContent } | { ok: false; error: string }> | { ok: true; value: FileContent } | { ok: false; error: string };
   fileSave(req: FileSaveRequest): Promise<{ ok: true; value: FileSaveResult } | { ok: false; error: string }> | { ok: true; value: FileSaveResult } | { ok: false; error: string };
+  getProjectDir(): Promise<{ ok: true; value: ProjectDir } | { ok: false; error: string }> | { ok: true; value: ProjectDir } | { ok: false; error: string };
+  listProject(req: ListProjectRequest): Promise<{ ok: true; value: ProjectListing } | { ok: false; error: string }> | { ok: true; value: ProjectListing } | { ok: false; error: string };
   simulateOp(netlist: Netlist): Promise<{ ok: true; value: SimResult } | { ok: false; error: string }> | { ok: true; value: SimResult } | { ok: false; error: string };
   simulateDc(netlist: Netlist): Promise<{ ok: true; value: SimResult } | { ok: false; error: string }> | { ok: true; value: SimResult } | { ok: false; error: string };
   simulateAc(netlist: Netlist): Promise<{ ok: true; value: SimResult } | { ok: false; error: string }> | { ok: true; value: SimResult } | { ok: false; error: string };
@@ -543,6 +611,20 @@ export class EerieServiceDispatcher implements ChannelingDispatcher {
     } else if (method.id === 0xe8a14f14479d3d9dn) {
       try {
         const result = await this.handler.fileSave(args[0] as FileSaveRequest);
+        if (result.ok) call.reply(result.value); else call.replyErr(result.error);
+      } catch {
+        call.replyInternalError();
+      }
+    } else if (method.id === 0x5849c8d17e4d583fn) {
+      try {
+        const result = await this.handler.getProjectDir();
+        if (result.ok) call.reply(result.value); else call.replyErr(result.error);
+      } catch {
+        call.replyInternalError();
+      }
+    } else if (method.id === 0xcdd54a6d4374787en) {
+      try {
+        const result = await this.handler.listProject(args[0] as ListProjectRequest);
         if (result.ok) call.reply(result.value); else call.replyErr(result.error);
       } catch {
         call.replyInternalError();
@@ -614,6 +696,9 @@ const eerieService_schema_registry: SchemaRegistry = new Map<string, Schema>([
   ["FileContent", { kind: 'struct', fields: { 'name': { kind: 'string' }, 'content': { kind: 'string' } } }],
   ["FileSaveRequest", { kind: 'struct', fields: { 'path': { kind: 'string' }, 'content': { kind: 'string' } } }],
   ["FileSaveResult", { kind: 'struct', fields: { 'path': { kind: 'string' } } }],
+  ["ProjectDir", { kind: 'struct', fields: { 'path': { kind: 'string' } } }],
+  ["ListProjectRequest", { kind: 'struct', fields: { 'path': { kind: 'string' } } }],
+  ["ProjectListing", { kind: 'struct', fields: { 'manifest_yaml': { kind: 'string' }, 'circuits': { kind: 'vec', element: { kind: 'string' } } } }],
   ["Expr", { kind: 'enum', variants: [{ name: 'Num', fields: { kind: 'f64' } }, { name: 'Param', fields: { kind: 'string' } }, { name: 'Brace', fields: { kind: 'string' } }] }],
   ["Param", { kind: 'struct', fields: { 'name': { kind: 'string' }, 'value': { kind: 'ref', name: 'Expr' } } }],
   ["AcSpec", { kind: 'struct', fields: { 'mag': { kind: 'ref', name: 'Expr' }, 'phase': { kind: 'option', inner: { kind: 'ref', name: 'Expr' } } } }],
@@ -660,6 +745,18 @@ export const eerieService_descriptor: ServiceDescriptor = {
       id: 0xe8a14f14479d3d9dn,
       args: { kind: 'tuple', elements: [{ kind: 'ref', name: 'FileSaveRequest' }] },
       result: { kind: 'enum', variants: [{ name: 'Ok', fields: { kind: 'ref', name: 'FileSaveResult' } }, { name: 'Err', fields: { kind: 'enum', variants: [{ name: 'User', fields: { kind: 'string' } }, { name: 'UnknownMethod', fields: null }, { name: 'InvalidPayload', fields: null }, { name: 'Cancelled', fields: null }] } }] },
+    },
+    {
+      name: 'getProjectDir',
+      id: 0x5849c8d17e4d583fn,
+      args: { kind: 'tuple', elements: [] },
+      result: { kind: 'enum', variants: [{ name: 'Ok', fields: { kind: 'ref', name: 'ProjectDir' } }, { name: 'Err', fields: { kind: 'enum', variants: [{ name: 'User', fields: { kind: 'string' } }, { name: 'UnknownMethod', fields: null }, { name: 'InvalidPayload', fields: null }, { name: 'Cancelled', fields: null }] } }] },
+    },
+    {
+      name: 'listProject',
+      id: 0xcdd54a6d4374787en,
+      args: { kind: 'tuple', elements: [{ kind: 'ref', name: 'ListProjectRequest' }] },
+      result: { kind: 'enum', variants: [{ name: 'Ok', fields: { kind: 'ref', name: 'ProjectListing' } }, { name: 'Err', fields: { kind: 'enum', variants: [{ name: 'User', fields: { kind: 'string' } }, { name: 'UnknownMethod', fields: null }, { name: 'InvalidPayload', fields: null }, { name: 'Cancelled', fields: null }] } }] },
     },
     {
       name: 'simulateOp',

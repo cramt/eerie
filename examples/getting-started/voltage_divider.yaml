@@ -1,17 +1,7 @@
-# Eerie circuit file — plain YAML, designed to be hand-editable.
-#
-# IDs are arbitrary strings; using the label as the id is encouraged.
-# Omit `id` entirely and Eerie will auto-generate one when the file is loaded.
-# Net `component_id` references must match the component `id` fields below.
-#
-# Run `npm run codegen` if Rust types change (rebuilds the TS types).
+# Voltage divider: 5 V source → R1=1 kΩ → R2=2 kΩ → GND
+# Expected DC result: V(VMID) ≈ 3.333 V
 
 name: Voltage Divider
-description: |
-  5 V source → R1=1 kΩ → R2=2 kΩ → GND.
-  Expected DC result: V(VMID) ≈ 3.333 V
-
-version: "0.1"
 
 components:
 
@@ -45,7 +35,6 @@ components:
 nets:
 
   - id: VIN
-    name: VIN
     segments:
       - start: { x: 0, y: -6 }
         end:   { x: 4, y: -6 }
@@ -56,7 +45,6 @@ nets:
         pin_id: p
 
   - id: VMID
-    name: VMID
     segments:
       - start: { x: 4, y: -1 }
         end:   { x: 4, y: 1 }
@@ -72,7 +60,6 @@ nets:
         position: { x: 9, y: 0 }
 
   - id: GND
-    name: GND
     segments:
       - start: { x: 0, y: 5 }
         end:   { x: 4, y: 5 }
@@ -83,7 +70,3 @@ nets:
         pin_id: n
       - component_id: GND1
         pin_id: p
-
-metadata:
-  created_at: "2026-03-01T00:00:00Z"
-  modified_at: "2026-03-01T00:00:00Z"

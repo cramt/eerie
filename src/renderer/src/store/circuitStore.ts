@@ -61,10 +61,11 @@ function simplifySegments(segments: WireSegment[]): WireSegment[] {
 
 interface CircuitStore {
   circuit: Circuit
-  filePath: string | null
+  projectPath: string | null
+  circuitName: string | null
   dirty: boolean
 
-  setCircuit: (circuit: Circuit, filePath?: string) => void
+  setCircuit: (circuit: Circuit, projectPath?: string, circuitName?: string) => void
   setCircuitDirect: (circuit: Circuit) => void
   setDirty: (dirty: boolean) => void
 
@@ -111,12 +112,18 @@ function pushUndo() {
 
 export const useCircuitStore = create<CircuitStore>((set, get) => ({
   circuit: DEFAULT_CIRCUIT,
-  filePath: null,
+  projectPath: null,
+  circuitName: null,
   dirty: false,
 
-  setCircuit: (circuit, filePath) => {
+  setCircuit: (circuit, projectPath, circuitName) => {
     useHistoryStore.setState({ undoStack: [], redoStack: [] })
-    set({ circuit, filePath: filePath ?? get().filePath, dirty: false })
+    set({
+      circuit,
+      projectPath: projectPath ?? get().projectPath,
+      circuitName: circuitName ?? get().circuitName,
+      dirty: false,
+    })
   },
 
   setCircuitDirect: (circuit) => set({ circuit, dirty: true }),

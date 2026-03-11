@@ -48,6 +48,14 @@ async fn main() {
 
     let static_dir = std::env::args().nth(2);
 
+    // Determine the project directory (cwd) and ensure eerie.yaml exists.
+    let project_dir = std::env::current_dir().expect("cannot determine cwd");
+    ensure_project_manifest(&project_dir);
+
+    PROJECT_DIR
+        .set(project_dir)
+        .expect("PROJECT_DIR already set");
+
     let mut app = Router::new()
         .route("/rpc", get(ws_handler))
         .fallback(get(
@@ -70,6 +78,26 @@ async fn main() {
     axum::serve(listener, app).await.unwrap();
 }
 
+/// Creates `eerie.yaml` in `dir` if it does not already exist.
+fn ensure_project_manifest(dir: &std::path::Path) {
+    let manifest = dir.join("eerie.yaml");
+    if manifest.exists() {
+        return;
+    }
+    let name = dir
+        .file_name()
+        .map(|n| n.to_string_lossy().into_owned())
+        .unwrap_or_else(|| "My Project".to_string());
+    let content = format!("name: {name}\ndescription: \"\"\nversion: \"0.1\"\nlicense: MIT\n");
+    if let Err(e) = std::fs::write(&manifest, content) {
+        log::warn!("could not create eerie.yaml: {e}");
+    } else {
+        log::info!("created {}", manifest.display());
+    }
+}
+
+static PROJECT_DIR: std::sync::OnceLock<std::path::PathBuf> = std::sync::OnceLock::new();
+
 async fn ws_handler(ws: WebSocketUpgrade) -> impl IntoResponse {
     ws.on_upgrade(handle_ws)
 }
@@ -77,7 +105,8 @@ async fn ws_handler(ws: WebSocketUpgrade) -> impl IntoResponse {
 async fn handle_ws(ws: axum::extract::ws::WebSocket) {
     // Bridge axum's WebSocket to roam via the message-level adapter
     let link = AxumWsLink { ws };
-    let dispatcher = EerieServiceDispatcher::new(DaemonService);
+    let project_dir = PROJECT_DIR.get().cloned().unwrap_or_default();
+    let dispatcher = EerieServiceDispatcher::new(DaemonService { project_dir });
 
     let result = roam::acceptor(link)
         .establish::<DriverCaller>(dispatcher)

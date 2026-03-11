@@ -1,3 +1,4 @@
+import YAML from "yaml";
 import {
   EerieServiceClient,
   connectEerieService,
@@ -152,30 +153,65 @@ export interface FileContent {
 }
 
 // ── Virtual filesystem (localStorage, used when daemon has no file_io) ───────
+// Projects stored as:
+//   eerie-project:{projectName}         → manifest YAML
+//   eerie-circuit:{projectName}/{circuitName} → circuit YAML
 
-const VFS_PREFIX = "eerie-vfs:";
+const VFS_PROJECT_PREFIX = "eerie-project:";
+const VFS_CIRCUIT_PREFIX = "eerie-circuit:";
 
-export function vfsListFiles(): string[] {
+export function vfsListProjects(): string[] {
   const names: string[] = [];
   for (let i = 0; i < localStorage.length; i++) {
     const key = localStorage.key(i)!;
-    if (key.startsWith(VFS_PREFIX)) {
-      names.push(key.slice(VFS_PREFIX.length));
+    if (key.startsWith(VFS_PROJECT_PREFIX)) {
+      names.push(key.slice(VFS_PROJECT_PREFIX.length));
     }
   }
   return names.sort();
 }
 
-export function vfsReadFile(name: string): string | null {
-  return localStorage.getItem(VFS_PREFIX + name);
+export function vfsReadManifest(project: string): string | null {
+  return localStorage.getItem(VFS_PROJECT_PREFIX + project);
 }
 
-export function vfsWriteFile(name: string, content: string): void {
-  localStorage.setItem(VFS_PREFIX + name, content);
+export function vfsWriteManifest(project: string, content: string): void {
+  localStorage.setItem(VFS_PROJECT_PREFIX + project, content);
 }
 
-export function vfsDeleteFile(name: string): void {
-  localStorage.removeItem(VFS_PREFIX + name);
+export function vfsListCircuits(project: string): string[] {
+  const prefix = VFS_CIRCUIT_PREFIX + project + "/";
+  const names: string[] = [];
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i)!;
+    if (key.startsWith(prefix)) {
+      names.push(key.slice(prefix.length));
+    }
+  }
+  return names.sort();
+}
+
+export function vfsReadCircuit(project: string, circuit: string): string | null {
+  return localStorage.getItem(VFS_CIRCUIT_PREFIX + project + "/" + circuit);
+}
+
+export function vfsWriteCircuit(project: string, circuit: string, content: string): void {
+  localStorage.setItem(VFS_CIRCUIT_PREFIX + project + "/" + circuit, content);
+}
+
+export function vfsDeleteCircuit(project: string, circuit: string): void {
+  localStorage.removeItem(VFS_CIRCUIT_PREFIX + project + "/" + circuit);
+}
+
+export function vfsDeleteProject(project: string): void {
+  localStorage.removeItem(VFS_PROJECT_PREFIX + project);
+  const prefix = VFS_CIRCUIT_PREFIX + project + "/";
+  const keysToDelete: string[] = [];
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i)!;
+    if (key.startsWith(prefix)) keysToDelete.push(key);
+  }
+  for (const key of keysToDelete) localStorage.removeItem(key);
 }
 
 // ── Daemon-side file I/O (used when daemon has file_io capability) ───────────
@@ -193,20 +229,81 @@ async function saveFileDaemon(path: string, content: string): Promise<void> {
   if (!res.ok) throw new Error(res.error);
 }
 
-// ── Public API ───────────────────────────────────────────────────────────────
-// Open/save-as need a UI picker, so the logic lives in App.tsx / a dialog
-// component. These lower-level functions are used by that UI.
+// ── Public file API ───────────────────────────────────────────────────────────
 
 export async function readFile(path: string): Promise<FileContent> {
   const caps = await getCapabilities();
   if (caps.file_io) return openFileDaemon(path);
-  const content = vfsReadFile(path);
-  if (content == null) throw new Error(`File not found: ${path}`);
-  return { path, content };
+  throw new Error("Use vfsReadCircuit for VFS mode");
 }
 
 export async function writeFile(path: string, content: string): Promise<void> {
   const caps = await getCapabilities();
   if (caps.file_io) return saveFileDaemon(path, content);
-  vfsWriteFile(path, content);
+  throw new Error("Use vfsWriteCircuit for VFS mode");
+}
+
+// ── Project API ───────────────────────────────────────────────────────────────
+
+export interface ProjectInfo {
+  name: string;
+  circuits: string[];
+}
+
+/** Return the project directory the daemon was started in (native mode only). */
+export async function getProjectDir(): Promise<string | null> {
+  const caps = await getCapabilities();
+  if (!caps.file_io) return null;
+  try {
+    const client = await getClient();
+    const res = await client.getProjectDir();
+    if (res.ok) return res.value.path;
+  } catch { /* ignore */ }
+  return null;
+}
+
+/** List a project directory (native mode). Reads eerie.yaml + scans .yaml files. */
+export async function listProject(path: string): Promise<ProjectInfo> {
+  const client = await getClient();
+  const res = await client.listProject({ path });
+  if (!res.ok) throw new Error(res.error);
+  let name = path;
+  try {
+    const manifest = YAML.parse(res.value.manifest_yaml) as { name?: string };
+    if (manifest?.name) name = manifest.name;
+  } catch { /* use path as fallback */ }
+  return { name, circuits: res.value.circuits };
+}
+
+/** Read a circuit file (native: full path; VFS: uses vfsReadCircuit). */
+export async function readCircuit(projectPath: string, circuitName: string): Promise<string> {
+  const caps = await getCapabilities();
+  if (caps.file_io) {
+    const file = await openFileDaemon(`${projectPath}/${circuitName}.yaml`);
+    return file.content;
+  }
+  const content = vfsReadCircuit(projectPath, circuitName);
+  if (content == null) throw new Error(`Circuit not found: ${projectPath}/${circuitName}`);
+  return content;
+}
+
+/** Save a circuit file (native: full path; VFS: uses vfsWriteCircuit). */
+export async function saveCircuit(projectPath: string, circuitName: string, content: string): Promise<void> {
+  const caps = await getCapabilities();
+  if (caps.file_io) {
+    await saveFileDaemon(`${projectPath}/${circuitName}.yaml`, content);
+  } else {
+    vfsWriteCircuit(projectPath, circuitName, content);
+  }
+}
+
+/** Create a new project (native: writes eerie.yaml; VFS: writes manifest). */
+export async function createProject(projectPath: string, name: string): Promise<void> {
+  const manifestYaml = `name: ${name}\n`;
+  const caps = await getCapabilities();
+  if (caps.file_io) {
+    await saveFileDaemon(`${projectPath}/eerie.yaml`, manifestYaml);
+  } else {
+    vfsWriteManifest(projectPath, manifestYaml);
+  }
 }

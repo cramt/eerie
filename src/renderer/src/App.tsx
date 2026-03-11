@@ -19,62 +19,77 @@ import './themes/neon.css'
 import type { Circuit, ComponentInstance, Net } from './types'
 
 export default function App() {
-  const { circuit, setCircuit, filePath, dirty, setDirty } = useCircuitStore()
+  const { circuit, setCircuit, projectPath, circuitName, dirty, setDirty } = useCircuitStore()
   const { theme, tool, setTool, setPlacingTypeId, selectedComponentIds, selectedNetIds, setSimPanelOpen, toggleSimPanel } = useUiStore()
   const { undo, redo } = useHistoryStore()
 
   // ── File dialog state ───────────────────────────────────────────────
-  const [fileDialog, setFileDialog] = useState<{ mode: FileDialogMode; suggestedName?: string } | null>(null)
+  const [fileDialog, setFileDialog] = useState<{ mode: FileDialogMode } | null>(null)
 
   // Apply theme to root element
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme)
   }, [theme])
 
+
   // ── File operations ─────────────────────────────────────────────────
 
-  const loadFile = useCallback(async (name: string) => {
+  const loadCircuit = useCallback(async (proj: string, circ: string) => {
     try {
-      const file = await api.readFile(name)
-      const parsed = parseCircuitYaml(file.content)
-      if (parsed) setCircuit(parsed, file.path)
+      const content = await api.readCircuit(proj, circ)
+      const parsed = parseCircuitYaml(content)
+      if (parsed) setCircuit(parsed, proj, circ)
     } catch (err) {
-      console.error('Failed to open file:', err)
+      console.error('Failed to open circuit:', err)
     }
   }, [setCircuit])
 
-  const saveToPath = useCallback(async (path: string) => {
+  const saveCircuit = useCallback(async (proj: string, circ: string) => {
     try {
       const yaml = serializeCircuitYaml(circuit)
-      await api.writeFile(path, yaml)
-      setCircuit(circuit, path)
+      await api.saveCircuit(proj, circ, yaml)
+      setCircuit(circuit, proj, circ)
       setDirty(false)
     } catch (err) {
-      console.error('Failed to save file:', err)
+      console.error('Failed to save circuit:', err)
     }
   }, [circuit, setCircuit, setDirty])
+
+  // Auto-open the daemon's project directory on startup (native mode)
+  useEffect(() => {
+    api.getProjectDir().then(async dir => {
+      if (!dir) return
+      try {
+        const info = await api.listProject(dir)
+        useCircuitStore.setState({ projectPath: dir })
+        if (info.circuits.length === 1) {
+          await loadCircuit(dir, info.circuits[0])
+        }
+      } catch { /* project dir may be empty, that's fine */ }
+    })
+  }, [loadCircuit])
 
   const handleOpen = useCallback(() => {
     setFileDialog({ mode: 'open' })
   }, [])
 
   const handleSave = useCallback(async () => {
-    if (filePath) {
-      await saveToPath(filePath)
+    if (projectPath && circuitName) {
+      await saveCircuit(projectPath, circuitName)
     } else {
-      setFileDialog({ mode: 'save', suggestedName: 'circuit.eerie' })
+      setFileDialog({ mode: 'save' })
     }
-  }, [filePath, saveToPath])
+  }, [projectPath, circuitName, saveCircuit])
 
-  const handleFileDialogConfirm = useCallback(async (name: string) => {
+  const handleFileDialogConfirm = useCallback(async (proj: string, circ: string) => {
     const mode = fileDialog?.mode
     setFileDialog(null)
     if (mode === 'open') {
-      await loadFile(name)
+      await loadCircuit(proj, circ)
     } else if (mode === 'save') {
-      await saveToPath(name)
+      await saveCircuit(proj, circ)
     }
-  }, [fileDialog, loadFile, saveToPath])
+  }, [fileDialog, loadCircuit, saveCircuit])
 
   const handleFileDialogCancel = useCallback(() => {
     setFileDialog(null)
@@ -194,7 +209,7 @@ export default function App() {
       {fileDialog && (
         <FileDialog
           mode={fileDialog.mode}
-          suggestedName={fileDialog.suggestedName}
+          currentProjectPath={projectPath ?? undefined}
           onConfirm={handleFileDialogConfirm}
           onCancel={handleFileDialogCancel}
         />
