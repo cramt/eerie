@@ -2,3 +2,48 @@ name: Getting Started
 description: Example circuits to get started with Eerie.
 version: "0.1"
 license: MIT
+
+components:
+  - name: 1kΩ Resistor
+    type_id: resistor
+    name_prefix: R
+    properties:
+      resistance: 1000
+
+  - name: 2kΩ Resistor
+    type_id: resistor
+    name_prefix: R
+    properties:
+      resistance: 2000
+
+  - name: 1µF Capacitor
+    type_id: capacitor
+    name_prefix: C
+    properties:
+      capacitance: 0.000001
+
+  - name: 5V DC Source
+    type_id: dc_voltage
+    name_prefix: V
+    properties:
+      voltage: 5
+      source_type: DC
+
+  - name: Pulse Source
+    type_id: dc_voltage
+    name_prefix: V
+    properties:
+      voltage: 5
+      source_type: Pulse
+      v1: 0
+      v2: 5
+      td: 0
+      tr: 0.000001
+      tf: 0.000001
+      pw: 0.0005
+      per: 0.001
+
+  - name: Ground
+    type_id: ground
+    name_prefix: GND
+    properties: {}

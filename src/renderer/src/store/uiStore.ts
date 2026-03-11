@@ -4,6 +4,8 @@ import type { Point, Tool, Theme } from '../types'
 interface UiStore {
   tool: Tool
   placingTypeId: string | null
+  /** When placing a project component, the preset properties + optional prefix */
+  placingPreset: { properties: Record<string, unknown>; namePrefix?: string } | null
   selectedComponentIds: Set<string>
   selectedNetIds: Set<string>
   theme: Theme
@@ -13,6 +15,7 @@ interface UiStore {
 
   setTool: (tool: Tool) => void
   setPlacingTypeId: (typeId: string | null) => void
+  setPlacingPreset: (preset: { properties: Record<string, unknown>; namePrefix?: string } | null) => void
   setSimPanelOpen: (open: boolean) => void
   toggleSimPanel: () => void
   selectComponent: (id: string | null) => void
@@ -31,6 +34,7 @@ interface UiStore {
 export const useUiStore = create<UiStore>((set, get) => ({
   tool: 'select',
   placingTypeId: null,
+  placingPreset: null,
   selectedComponentIds: new Set<string>(),
   selectedNetIds: new Set<string>(),
   theme: 'neon',
@@ -42,6 +46,7 @@ export const useUiStore = create<UiStore>((set, get) => ({
   setSimPanelOpen: (open) => set({ simPanelOpen: open }),
   toggleSimPanel: () => set((s) => ({ simPanelOpen: !s.simPanelOpen })),
   setPlacingTypeId: (typeId) => set({ placingTypeId: typeId }),
+  setPlacingPreset: (preset) => set({ placingPreset: preset }),
   selectComponent: (id) => set({
     selectedComponentIds: id ? new Set([id]) : new Set(),
     selectedNetIds: new Set(),

@@ -19,17 +19,16 @@ const SPICE_PREFIX: Record<string, string> = {
   opamp: 'U',
 }
 
-/** Generate the next available label for a component type (e.g. R1, R2, ...) */
-function nextLabel(typeId: string, components: ComponentInstance[]): string | undefined {
-  const prefix = SPICE_PREFIX[typeId]
-  if (!prefix) return undefined
+/** Generate the next available label for a given prefix (e.g. "R" → R1, R2, ...) */
+function nextLabel(prefix: string, components: ComponentInstance[]): string {
+  const UP = prefix.toUpperCase()
   const existing = new Set(
     components
-      .filter((c) => c.label?.toUpperCase().startsWith(prefix))
+      .filter((c) => c.label?.toUpperCase().startsWith(UP))
       .map((c) => c.label!.toUpperCase())
   )
   for (let i = 1; ; i++) {
-    const candidate = `${prefix}${i}`
+    const candidate = `${UP}${i}`
     if (!existing.has(candidate)) return candidate
   }
 }
@@ -69,7 +68,7 @@ interface CircuitStore {
   setCircuitDirect: (circuit: Circuit) => void
   setDirty: (dirty: boolean) => void
 
-  addComponent: (typeId: string, x: number, y: number) => void
+  addComponent: (typeId: string, x: number, y: number, preset?: { properties: Record<string, unknown>; namePrefix?: string }) => void
   updateComponent: (id: string, updates: Partial<ComponentInstance>) => void
   updateComponentProperty: (id: string, key: string, value: unknown) => void
   removeComponent: (id: string) => void
@@ -129,17 +128,19 @@ export const useCircuitStore = create<CircuitStore>((set, get) => ({
   setCircuitDirect: (circuit) => set({ circuit, dirty: true }),
   setDirty: (dirty) => set({ dirty }),
 
-  addComponent: (typeId, x, y) => {
+  addComponent: (typeId, x, y, preset) => {
     pushUndo()
     const { circuit } = get()
+    const prefix = preset?.namePrefix ?? SPICE_PREFIX[typeId]
+    const label = prefix ? nextLabel(prefix, circuit.components) : undefined
     const comp: ComponentInstance = {
       id: newId(),
       type_id: typeId,
-      label: nextLabel(typeId, circuit.components),
+      label,
       position: { x, y },
       rotation: 0,
       flip_x: false,
-      properties: getDefaultProperties(typeId),
+      properties: preset?.properties ?? getDefaultProperties(typeId),
     }
     set({
       circuit: { ...circuit, components: [...circuit.components, comp] },

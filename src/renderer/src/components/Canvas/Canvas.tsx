@@ -30,7 +30,7 @@ export default function Canvas() {
   const marqueeRef = useRef<{ start: Point; active: boolean }>({ start: { x: 0, y: 0 }, active: false })
 
   const { circuit, addComponent, removeComponent, removeComponents, updateComponent, removeNet, removeNets } = useCircuitStore()
-  const { tool, placingTypeId, selectedComponentIds, selectedNetIds, theme } = useUiStore()
+  const { tool, placingTypeId, placingPreset, selectedComponentIds, selectedNetIds, theme } = useUiStore()
   const selectComponent = useUiStore((s) => s.selectComponent)
   const selectComponents = useUiStore((s) => s.selectComponents)
   const selectNet = useUiStore((s) => s.selectNet)
@@ -78,10 +78,10 @@ export default function Canvas() {
     const gp = screenToGrid(pointer.x, pointer.y)
     const isBackground = e.target === stage
 
-    if (tool === 'place' && placingTypeId && isBackground) { addComponent(placingTypeId, gp.x, gp.y); return }
+    if (tool === 'place' && placingTypeId && isBackground) { addComponent(placingTypeId, gp.x, gp.y, placingPreset ?? undefined); return }
     if (tool === 'wire') { handleWireClick(gp); return }
     if (tool === 'select' && isBackground) { clearSelection() }
-  }, [tool, placingTypeId, screenToGrid, addComponent, handleWireClick, clearSelection])
+  }, [tool, placingTypeId, placingPreset, screenToGrid, addComponent, handleWireClick, clearSelection])
 
   const handleMouseMove = useCallback((e: any) => {
     const stage = e.target.getStage()

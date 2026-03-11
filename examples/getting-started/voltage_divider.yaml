@@ -1,68 +1,68 @@
-# Voltage divider: 5 V source → R1=1 kΩ → R2=2 kΩ → GND
-# Expected DC result: V(VMID) ≈ 3.333 V
-
 name: Voltage Divider
-
 components:
-
   - id: V1
     type_id: dc_voltage
     label: V1
-    position: { x: 0, y: 0 }
+    position:
+      x: 0
+      y: 0
     properties:
-      voltage: { Float: 5.0 }
-
+      voltage: 5
   - id: R1
     type_id: resistor
     label: R1
-    position: { x: 4, y: -3 }
+    position:
+      x: 4
+      y: -3
     rotation: 90
     properties:
-      resistance: { Float: 1000.0 }
-
+      resistance: 1000
   - id: R2
     type_id: resistor
     label: R2
-    position: { x: 4, y: 3 }
+    position:
+      x: 4
+      y: 3
     rotation: 90
     properties:
-      resistance: { Float: 2000.0 }
-
+      resistance: 2000
   - id: GND1
     type_id: ground
-    position: { x: 0, y: 6 }
-
+    position:
+      x: 0
+      y: 6
+    properties: {}
 nets:
-
   - id: VIN
     segments:
-      - start: { x: 0, y: -6 }
-        end:   { x: 4, y: -6 }
+      - start: &a1
+          x: 0
+          y: -6
+        end: &a2
+          x: 4
+          y: -6
+      - start: *a1
+        end:
+          x: 0
+          y: -2
+      - start: *a2
+        end:
+          x: 4
+          y: -5
     pins:
       - component_id: V1
         pin_id: p
       - component_id: R1
         pin_id: p
-
-  - id: VMID
-    segments:
-      - start: { x: 4, y: -1 }
-        end:   { x: 4, y: 1 }
-      - start: { x: 4, y: 0 }
-        end:   { x: 8, y: 0 }
-    pins:
-      - component_id: R1
-        pin_id: n
-      - component_id: R2
-        pin_id: p
-    labels:
-      - name: VMID
-        position: { x: 9, y: 0 }
-
+    labels: []
   - id: GND
     segments:
-      - start: { x: 0, y: 5 }
-        end:   { x: 4, y: 5 }
+      - start:
+          x: 0
+          y: 5
+        end:
+          x: 4
+          y: 5
     pins:
       - component_id: V1
         pin_id: n
@@ -70,3 +70,32 @@ nets:
         pin_id: n
       - component_id: GND1
         pin_id: p
+    labels: []
+  - id: 527c3110-3c9f-48b5-ac0f-738a5ede569d
+    segments:
+      - start:
+          x: 0
+          y: 2
+        end:
+          x: 0
+          y: 5
+    pins:
+      - component_id: V1
+        pin_id: n
+      - component_id: GND1
+        pin_id: p
+    labels: []
+  - id: 0ceff15d-6cdc-4420-897a-37554b7f9273
+    segments:
+      - start:
+          x: 4
+          y: -1
+        end:
+          x: 4
+          y: 1
+    pins:
+      - component_id: R1
+        pin_id: n
+      - component_id: R2
+        pin_id: p
+    labels: []

@@ -245,9 +245,18 @@ export async function writeFile(path: string, content: string): Promise<void> {
 
 // ── Project API ───────────────────────────────────────────────────────────────
 
+export interface ProjectComponent {
+  name: string;
+  type_id: string;
+  name_prefix?: string;
+  properties: Record<string, unknown>;
+}
+
 export interface ProjectInfo {
   name: string;
   circuits: string[];
+  /** Component library from eerie.yaml, or null if not defined. */
+  components: ProjectComponent[] | null;
 }
 
 /** Return the project directory the daemon was started in (native mode only). */
@@ -262,17 +271,42 @@ export async function getProjectDir(): Promise<string | null> {
   return null;
 }
 
+/** Parse the `components` array from a manifest YAML string. */
+function parseManifestComponents(manifestYaml: string): ProjectComponent[] | null {
+  try {
+    const manifest = YAML.parse(manifestYaml) as { components?: unknown[] };
+    if (!Array.isArray(manifest?.components)) return null;
+    return manifest.components.map((c: any) => ({
+      name: c.name ?? c.type_id,
+      type_id: c.type_id,
+      name_prefix: c.name_prefix,
+      properties: c.properties ?? {},
+    }));
+  } catch {
+    return null;
+  }
+}
+
 /** List a project directory (native mode). Reads eerie.yaml + scans .yaml files. */
 export async function listProject(path: string): Promise<ProjectInfo> {
   const client = await getClient();
   const res = await client.listProject({ path });
   if (!res.ok) throw new Error(res.error);
   let name = path;
+  let components: ProjectComponent[] | null = null;
   try {
     const manifest = YAML.parse(res.value.manifest_yaml) as { name?: string };
     if (manifest?.name) name = manifest.name;
+    components = parseManifestComponents(res.value.manifest_yaml);
   } catch { /* use path as fallback */ }
-  return { name, circuits: res.value.circuits };
+  return { name, circuits: res.value.circuits, components };
+}
+
+/** Get the component library for a VFS project (reads its manifest from localStorage). */
+export function vfsGetProjectComponents(project: string): ProjectComponent[] | null {
+  const manifestYaml = vfsReadManifest(project);
+  if (!manifestYaml) return null;
+  return parseManifestComponents(manifestYaml);
 }
 
 /** Read a circuit file (native: full path; VFS: uses vfsReadCircuit). */

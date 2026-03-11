@@ -3,6 +3,7 @@ import YAML from 'yaml'
 import { useCircuitStore } from './store/circuitStore'
 import { useUiStore } from './store/uiStore'
 import { useHistoryStore } from './store/historyStore'
+import { useProjectStore } from './store/projectStore'
 import Toolbar from './components/Toolbar/Toolbar'
 import Canvas from './components/Canvas/Canvas'
 import ComponentPanel from './components/ComponentPanel/ComponentPanel'
@@ -22,6 +23,7 @@ export default function App() {
   const { circuit, setCircuit, projectPath, circuitName, dirty, setDirty } = useCircuitStore()
   const { theme, tool, setTool, setPlacingTypeId, selectedComponentIds, selectedNetIds, setSimPanelOpen, toggleSimPanel } = useUiStore()
   const { undo, redo } = useHistoryStore()
+  const { setComponents } = useProjectStore()
 
   // ── File dialog state ───────────────────────────────────────────────
   const [fileDialog, setFileDialog] = useState<{ mode: FileDialogMode } | null>(null)
@@ -34,15 +36,30 @@ export default function App() {
 
   // ── File operations ─────────────────────────────────────────────────
 
+  const openProject = useCallback(async (proj: string) => {
+    try {
+      const caps = await api.getCapabilities()
+      if (caps.file_io) {
+        const info = await api.listProject(proj)
+        setComponents(info.components)
+      } else {
+        setComponents(api.vfsGetProjectComponents(proj))
+      }
+    } catch {
+      setComponents(null)
+    }
+  }, [setComponents])
+
   const loadCircuit = useCallback(async (proj: string, circ: string) => {
     try {
+      await openProject(proj)
       const content = await api.readCircuit(proj, circ)
       const parsed = parseCircuitYaml(content)
       if (parsed) setCircuit(parsed, proj, circ)
     } catch (err) {
       console.error('Failed to open circuit:', err)
     }
-  }, [setCircuit])
+  }, [openProject, setCircuit])
 
   const saveCircuit = useCallback(async (proj: string, circ: string) => {
     try {
@@ -61,13 +78,14 @@ export default function App() {
       if (!dir) return
       try {
         const info = await api.listProject(dir)
+        setComponents(info.components)
         useCircuitStore.setState({ projectPath: dir })
         if (info.circuits.length === 1) {
           await loadCircuit(dir, info.circuits[0])
         }
       } catch { /* project dir may be empty, that's fine */ }
     })
-  }, [loadCircuit])
+  }, [loadCircuit, setComponents])
 
   const handleOpen = useCallback(() => {
     setFileDialog({ mode: 'open' })
