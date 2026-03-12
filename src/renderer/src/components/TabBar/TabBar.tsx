@@ -1,5 +1,5 @@
 import React from 'react'
-import { useTabsStore } from '../../store/tabsStore'
+import { useTabsStore, tabDisplayName } from '../../store/tabsStore'
 import styles from './TabBar.module.css'
 
 interface Props {
@@ -15,16 +15,17 @@ export default function TabBar({ onCloseTab }: Props) {
     <div className={styles.tabBar}>
       {tabs.map((tab) => {
         const isActive = tab.id === activeTabId
+        const label = tabDisplayName(tab)
         return (
           <div
             key={tab.id}
             className={`${styles.tab} ${isActive ? styles.active : ''}`}
             onClick={() => switchToTab(tab.id)}
-            title={`${tab.projectPath}/${tab.circuitName}`}
+            title={`${tab.projectPath}/${tabDisplayName(tab)}`}
           >
             <span className={styles.tabName}>
               {tab.dirty && <span className={styles.dirtyDot}>●</span>}
-              {tab.circuitName}
+              {label}
             </span>
             <button
               className={styles.closeBtn}

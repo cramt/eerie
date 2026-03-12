@@ -46,7 +46,9 @@ export default function Canvas() {
     [circuit.components]
   )
 
-  const { viewOffset, zoom, screenToGrid, handleWheel, handlePanStart, handlePanMove, handlePanEnd } = useCanvasView()
+  const circuitName = useCircuitStore((s) => s.circuitName)
+
+  const { viewOffset, zoom, screenToGrid, fitToCircuit, handleWheel, handlePanStart, handlePanMove, handlePanEnd } = useCanvasView()
   const { wireStart, mouseGridPos, hoveredPin, snapIndicator, handleWireClick, handleWireMouseMove, handleNonWireMouseMove, cancelWire } = useWireDrawing(absolutePins, screenToGrid)
   const { handleComponentClick, handleDragStart, handleDragMove, handleDragEnd } = useComponentDrag()
 
@@ -58,6 +60,15 @@ export default function Canvas() {
     setSize({ width: el.clientWidth, height: el.clientHeight })
     return () => ro.disconnect()
   }, [])
+
+  // Fit the view when a different circuit is loaded
+  const prevCircuitRef = useRef<string | null>(null)
+  useEffect(() => {
+    if (circuitName !== prevCircuitRef.current) {
+      prevCircuitRef.current = circuitName
+      fitToCircuit(circuit, size.width, size.height)
+    }
+  }, [circuitName, circuit, size, fitToCircuit])
 
   const handleNetClick = useCallback((netId: string, e: any) => {
     if (tool !== 'select') return

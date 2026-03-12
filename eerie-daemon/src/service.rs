@@ -49,21 +49,29 @@ impl EerieService for DaemonService {
         let dir = std::path::Path::new(&req.path);
         let manifest_yaml = std::fs::read_to_string(dir.join("eerie.yaml"))
             .map_err(|e| format!("not an eerie project (no eerie.yaml): {e}"))?;
-        let circuits = std::fs::read_dir(dir)
+        let mut circuits = Vec::new();
+        let mut files = Vec::new();
+        for entry in std::fs::read_dir(dir)
             .map_err(|e| format!("cannot read directory: {e}"))?
             .filter_map(|e| e.ok())
-            .filter_map(|e| {
-                let name = e.file_name().to_string_lossy().into_owned();
-                if name != "eerie.yaml" && name.ends_with(".yaml") {
-                    Some(name.trim_end_matches(".yaml").to_string())
-                } else {
-                    None
-                }
-            })
-            .collect();
+        {
+            // Skip directories
+            if entry.file_type().map_or(true, |ft| ft.is_dir()) {
+                continue;
+            }
+            let name = entry.file_name().to_string_lossy().into_owned();
+            if name.ends_with(".eerie") {
+                circuits.push(name);
+            } else if name != "eerie.yaml" {
+                files.push(name);
+            }
+        }
+        circuits.sort();
+        files.sort();
         Ok(ProjectListing {
             manifest_yaml,
             circuits,
+            files,
         })
     }
 

@@ -1,6 +1,6 @@
 import { useState, useRef, useCallback } from 'react'
 import { useUiStore } from '../../store/uiStore'
-import type { Point } from '../../types'
+import type { Point, Circuit } from '../../types'
 import { GRID } from '../../constants'
 const MIN_ZOOM = 0.15
 const MAX_ZOOM = 8
@@ -59,8 +59,72 @@ export function useCanvasView() {
     isPanningRef.current = false
   }, [])
 
+  /** Set view so that the entire circuit fits within the given canvas size. */
+  const fitToCircuit = useCallback((circuit: Circuit, canvasWidth: number, canvasHeight: number) => {
+    if (canvasWidth <= 0 || canvasHeight <= 0) return
+
+    // Collect all points that contribute to the bounding box (in grid units)
+    let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity
+    let hasContent = false
+
+    for (const comp of circuit.components) {
+      hasContent = true
+      minX = Math.min(minX, comp.position.x)
+      minY = Math.min(minY, comp.position.y)
+      maxX = Math.max(maxX, comp.position.x)
+      maxY = Math.max(maxY, comp.position.y)
+    }
+
+    for (const net of circuit.nets) {
+      for (const seg of net.segments) {
+        hasContent = true
+        minX = Math.min(minX, seg.start.x, seg.end.x)
+        minY = Math.min(minY, seg.start.y, seg.end.y)
+        maxX = Math.max(maxX, seg.start.x, seg.end.x)
+        maxY = Math.max(maxY, seg.start.y, seg.end.y)
+      }
+    }
+
+    if (!hasContent) {
+      // Empty circuit — reset to default centered view
+      setZoomState(1)
+      setViewOffset({ x: canvasWidth / 2, y: canvasHeight / 2 })
+      setZoom(1)
+      return
+    }
+
+    // Add padding in grid units (so components at the edge aren't clipped)
+    const PAD = 4
+    minX -= PAD
+    minY -= PAD
+    maxX += PAD
+    maxY += PAD
+
+    // Convert bounding box to pixels
+    const boxWidthPx = (maxX - minX) * GRID
+    const boxHeightPx = (maxY - minY) * GRID
+
+    // Calculate zoom to fit
+    const newZoom = Math.min(
+      MAX_ZOOM,
+      Math.max(MIN_ZOOM, Math.min(canvasWidth / boxWidthPx, canvasHeight / boxHeightPx)),
+    )
+
+    // Calculate offset to center the bounding box
+    const centerXPx = ((minX + maxX) / 2) * GRID
+    const centerYPx = ((minY + maxY) / 2) * GRID
+    const newOffset = {
+      x: canvasWidth / (2 * newZoom) - centerXPx,
+      y: canvasHeight / (2 * newZoom) - centerYPx,
+    }
+
+    setZoomState(newZoom)
+    setViewOffset(newOffset)
+    setZoom(newZoom)
+  }, [setZoom])
+
   return {
-    viewOffset, zoom, screenToGrid,
+    viewOffset, zoom, screenToGrid, fitToCircuit,
     handleWheel, handlePanStart, handlePanMove, handlePanEnd,
   }
 }

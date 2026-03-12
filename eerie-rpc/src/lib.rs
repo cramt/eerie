@@ -28,8 +28,10 @@ pub struct ListProjectRequest {
 pub struct ProjectListing {
     /// Raw YAML content of the `eerie.yaml` manifest.
     pub manifest_yaml: String,
-    /// Names of circuits in the project (filename stems, no `.yaml` extension).
+    /// Circuit filenames in the project (full filenames including `.eerie` extension).
     pub circuits: Vec<String>,
+    /// Other (non-circuit) files in the project directory, with full filenames.
+    pub files: Vec<String>,
 }
 
 /// Content returned when opening a file via the daemon.

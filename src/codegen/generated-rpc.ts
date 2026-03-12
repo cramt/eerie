@@ -40,6 +40,7 @@ export interface ListProjectRequest {
 export interface ProjectListing {
   manifest_yaml: string;
   circuits: string[];
+  files: string[];
 }
 
 export type Expr =
@@ -698,7 +699,7 @@ const eerieService_schema_registry: SchemaRegistry = new Map<string, Schema>([
   ["FileSaveResult", { kind: 'struct', fields: { 'path': { kind: 'string' } } }],
   ["ProjectDir", { kind: 'struct', fields: { 'path': { kind: 'string' } } }],
   ["ListProjectRequest", { kind: 'struct', fields: { 'path': { kind: 'string' } } }],
-  ["ProjectListing", { kind: 'struct', fields: { 'manifest_yaml': { kind: 'string' }, 'circuits': { kind: 'vec', element: { kind: 'string' } } } }],
+  ["ProjectListing", { kind: 'struct', fields: { 'manifest_yaml': { kind: 'string' }, 'circuits': { kind: 'vec', element: { kind: 'string' } }, 'files': { kind: 'vec', element: { kind: 'string' } } } }],
   ["Expr", { kind: 'enum', variants: [{ name: 'Num', fields: { kind: 'f64' } }, { name: 'Param', fields: { kind: 'string' } }, { name: 'Brace', fields: { kind: 'string' } }] }],
   ["Param", { kind: 'struct', fields: { 'name': { kind: 'string' }, 'value': { kind: 'ref', name: 'Expr' } } }],
   ["AcSpec", { kind: 'struct', fields: { 'mag': { kind: 'ref', name: 'Expr' }, 'phase': { kind: 'option', inner: { kind: 'ref', name: 'Expr' } } } }],

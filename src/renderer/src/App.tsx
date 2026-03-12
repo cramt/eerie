@@ -14,6 +14,7 @@ import StatusBar from './components/StatusBar/StatusBar'
 import FileDialog, { type FileDialogMode } from './components/FileDialog/FileDialog'
 import TabBar from './components/TabBar/TabBar'
 import FileExplorer from './components/FileExplorer/FileExplorer'
+import TextEditor from './components/TextEditor/TextEditor'
 import { filePinToUi, uiPinToFile } from './utils/netlistBuilder'
 import * as api from './api'
 
@@ -27,7 +28,7 @@ export default function App() {
   const { theme, tool, setTool, setPlacingTypeId, selectedComponentIds, selectedNetIds, setSimPanelOpen } = useUiStore()
   const { undo, redo } = useHistoryStore()
   const { setComponents } = useProjectStore()
-  const { openTab, closeTab } = useTabsStore()
+  const { tabs, activeTabId, openTab, openTextTab, updateTextContent, closeTab } = useTabsStore()
 
   // ── File dialog state ───────────────────────────────────────────────
   const [fileDialog, setFileDialog] = useState<{ mode: FileDialogMode } | null>(null)
@@ -77,7 +78,8 @@ export default function App() {
   }, [circuit, setCircuit, setDirty])
 
   const createAndOpenCircuit = useCallback(async (proj: string, circ: string) => {
-    const newCircuit: Circuit = { name: circ, components: [], nets: [] }
+    const displayName = circ.replace(/\.eerie$/, '')
+    const newCircuit: Circuit = { name: displayName, components: [], nets: [] }
     try {
       const yaml = serializeCircuitYaml(newCircuit)
       await api.saveCircuit(proj, circ, yaml)
@@ -86,6 +88,35 @@ export default function App() {
       console.error('Failed to create circuit:', err)
     }
   }, [openTab])
+
+  const createAndOpenFile = useCallback(async (proj: string, fileName: string) => {
+    try {
+      await api.writeFile(`${proj}/${fileName}`, '')
+      openTextTab(proj, fileName, '')
+    } catch (err) {
+      console.error('Failed to create file:', err)
+    }
+  }, [openTextTab])
+
+  const loadTextFile = useCallback(async (proj: string, fileName: string) => {
+    try {
+      const file = await api.readFile(`${proj}/${fileName}`)
+      openTextTab(proj, fileName, file.content)
+    } catch (err) {
+      console.error('Failed to open file:', err)
+    }
+  }, [openTextTab])
+
+  const saveTextTab = useCallback(async (tabId: string, proj: string, fileName: string, content: string) => {
+    try {
+      await api.writeFile(`${proj}/${fileName}`, content)
+      useTabsStore.setState((s) => ({
+        tabs: s.tabs.map((t) => t.id === tabId ? { ...t, dirty: false } : t),
+      }))
+    } catch (err) {
+      console.error('Failed to save file:', err)
+    }
+  }, [])
 
   // Auto-open the daemon's project directory on startup (native mode)
   useEffect(() => {
@@ -107,12 +138,18 @@ export default function App() {
   }, [])
 
   const handleSave = useCallback(async () => {
+    // Check if active tab is a text tab
+    const activeTab = tabs.find((t) => t.id === activeTabId)
+    if (activeTab?.kind === 'text') {
+      await saveTextTab(activeTab.id, activeTab.projectPath, activeTab.fileName, activeTab.content)
+      return
+    }
     if (projectPath && circuitName) {
       await saveCircuit(projectPath, circuitName)
     } else {
       setFileDialog({ mode: 'save' })
     }
-  }, [projectPath, circuitName, saveCircuit])
+  }, [projectPath, circuitName, saveCircuit, saveTextTab, tabs, activeTabId])
 
   const handleFileDialogConfirm = useCallback(async (proj: string, circ: string) => {
     const mode = fileDialog?.mode
@@ -258,7 +295,9 @@ export default function App() {
         <div className="file-explorer-wrap">
           <FileExplorer
             onOpenCircuit={loadCircuit}
+            onOpenFile={loadTextFile}
             onNewCircuit={createAndOpenCircuit}
+            onNewFile={createAndOpenFile}
           />
         </div>
         <div className="component-panel-wrap">
@@ -269,7 +308,20 @@ export default function App() {
         <TabBar onCloseTab={handleCloseTab} />
       </div>
       <div className="canvas-area">
-        <Canvas />
+        {(() => {
+          const activeTab = tabs.find((t) => t.id === activeTabId)
+          if (activeTab?.kind === 'text') {
+            return (
+              <TextEditor
+                fileName={activeTab.fileName}
+                content={activeTab.content}
+                onChange={(value) => updateTextContent(activeTab.id, value)}
+                onSave={handleSave}
+              />
+            )
+          }
+          return <Canvas />
+        })()}
       </div>
       <div className="plot-area">
         <SimulationPanel />

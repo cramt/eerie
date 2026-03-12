@@ -255,6 +255,8 @@ export interface ProjectComponent {
 export interface ProjectInfo {
   name: string;
   circuits: string[];
+  /** Other (non-circuit) files in the project directory, with full filenames. */
+  files: string[];
   /** Component library from eerie.yaml, or null if not defined. */
   components: ProjectComponent[] | null;
 }
@@ -287,7 +289,7 @@ function parseManifestComponents(manifestYaml: string): ProjectComponent[] | nul
   }
 }
 
-/** List a project directory (native mode). Reads eerie.yaml + scans .yaml files. */
+/** List a project directory (native mode). Reads eerie.yaml + scans .eerie files. */
 export async function listProject(path: string): Promise<ProjectInfo> {
   const client = await getClient();
   const res = await client.listProject({ path });
@@ -299,7 +301,7 @@ export async function listProject(path: string): Promise<ProjectInfo> {
     if (manifest?.name) name = manifest.name;
     components = parseManifestComponents(res.value.manifest_yaml);
   } catch { /* use path as fallback */ }
-  return { name, circuits: res.value.circuits, components };
+  return { name, circuits: res.value.circuits, files: res.value.files, components };
 }
 
 /** Get the component library for a VFS project (reads its manifest from localStorage). */
@@ -333,7 +335,7 @@ export async function saveManifest(projectPath: string, content: string): Promis
 export async function readCircuit(projectPath: string, circuitName: string): Promise<string> {
   const caps = await getCapabilities();
   if (caps.file_io) {
-    const file = await openFileDaemon(`${projectPath}/${circuitName}.yaml`);
+    const file = await openFileDaemon(`${projectPath}/${circuitName}`);
     return file.content;
   }
   const content = vfsReadCircuit(projectPath, circuitName);
@@ -345,7 +347,7 @@ export async function readCircuit(projectPath: string, circuitName: string): Pro
 export async function saveCircuit(projectPath: string, circuitName: string, content: string): Promise<void> {
   const caps = await getCapabilities();
   if (caps.file_io) {
-    await saveFileDaemon(`${projectPath}/${circuitName}.yaml`, content);
+    await saveFileDaemon(`${projectPath}/${circuitName}`, content);
   } else {
     vfsWriteCircuit(projectPath, circuitName, content);
   }

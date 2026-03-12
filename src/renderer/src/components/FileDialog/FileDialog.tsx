@@ -126,8 +126,10 @@ export default function FileDialog({ mode, currentProjectPath, onConfirm, onCanc
     if (mode === 'open' && selectedCircuit) {
       onConfirm(projectPath, selectedCircuit)
     } else if (mode === 'save') {
-      const name = circuitNameInput.trim()
-      if (name) onConfirm(projectPath, name)
+      const raw = circuitNameInput.trim()
+      if (!raw) return
+      const name = raw.endsWith('.eerie') ? raw : raw + '.eerie'
+      onConfirm(projectPath, name)
     }
   }
 
@@ -279,7 +281,7 @@ export default function FileDialog({ mode, currentProjectPath, onConfirm, onCanc
                   onClick={() => handleSelectCircuit(c)}
                   onDoubleClick={() => { handleSelectCircuit(c); if (mode === 'open') onConfirm(projectPath, c) }}
                 >
-                  <span>{c}.yaml</span>
+                  <span>{c}</span>
                   {!isNative && (
                     <button className={s.deleteBtn} onClick={(e) => handleDeleteCircuit(c, e)} title="Delete">del</button>
                   )}
