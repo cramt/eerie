@@ -147,15 +147,49 @@ pub struct ListProjectRequest {
     pub path: String,
 }
 
+/// A flat entry in the project file tree.
+/// The daemon emits these in depth-first order (parent dirs before their children),
+/// so a tree can be reconstructed by processing entries in order.
+#[derive(facet::Facet, Clone, Debug)]
+pub struct TreeEntry {
+    /// Path relative to the project root, using `/` as separator.
+    pub path: String,
+    /// Filename only (last path component).
+    pub name: String,
+    /// One of `"circuit"`, `"file"`, or `"dir"`.
+    pub kind: String,
+}
+
+/// Request to rename a file or directory.
+#[derive(facet::Facet, Clone, Debug)]
+pub struct RenameRequest {
+    pub from: String,
+    pub to: String,
+}
+
+/// Request to delete a file or directory (recursive for directories).
+#[derive(facet::Facet, Clone, Debug)]
+pub struct DeleteRequest {
+    pub path: String,
+}
+
+/// Request to create a directory (including any missing parents).
+#[derive(facet::Facet, Clone, Debug)]
+pub struct CreateFolderRequest {
+    pub path: String,
+}
+
 /// Result of listing a project directory.
 #[derive(facet::Facet, Clone, Debug)]
 pub struct ProjectListing {
     /// Raw YAML content of the `eerie.yaml` manifest.
     pub manifest_yaml: String,
-    /// Circuit filenames in the project (full filenames including `.eerie` extension).
+    /// Root-level circuit filenames (`.eerie` extension). Used for auto-open logic.
     pub circuits: Vec<String>,
-    /// Other (non-circuit) files in the project directory, with full filenames.
+    /// Root-level non-circuit filenames. Used for auto-open logic.
     pub files: Vec<String>,
+    /// Full file tree as a flat depth-first list (parent dirs before their children).
+    pub tree: Vec<TreeEntry>,
 }
 
 /// Content returned when opening a file via the daemon.
@@ -233,4 +267,13 @@ pub trait EerieService {
 
     /// List component definitions from the `components/` directory in the workspace.
     async fn list_component_defs(&self) -> Result<Vec<ComponentDef>, String>;
+
+    /// Rename a file or directory.
+    async fn rename_path(&self, req: RenameRequest) -> Result<bool, String>;
+
+    /// Delete a file (or recursively delete a directory).
+    async fn delete_path(&self, req: DeleteRequest) -> Result<bool, String>;
+
+    /// Create a directory (and any missing parents).
+    async fn create_folder(&self, req: CreateFolderRequest) -> Result<bool, String>;
 }

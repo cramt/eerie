@@ -433,7 +433,7 @@ simulation:
           />
         </div>
         <div className="component-panel-wrap">
-          <ComponentPanel onNewComponent={createAndOpenComponent} />
+          <ComponentPanel />
         </div>
       </div>
       <div className="tabs-area">

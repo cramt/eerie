@@ -9,9 +9,10 @@ import {
   type AiChatRequest,
   type AiChatResponse,
   type ComponentDef,
+  type TreeEntry,
 } from "../../codegen/generated-rpc";
 
-export type { SimResult, Netlist, Capabilities, AiChatRequest, AiChatResponse, ComponentDef };
+export type { SimResult, Netlist, Capabilities, AiChatRequest, AiChatResponse, ComponentDef, TreeEntry };
 
 export type SimulateResponse =
   | { ok: true; value: SimResult }
@@ -279,6 +280,8 @@ export interface ProjectInfo {
   circuits: string[];
   /** Other (non-circuit) files in the project directory, with full filenames. */
   files: string[];
+  /** Full recursive file tree (flat depth-first list from daemon). */
+  tree: TreeEntry[];
   /** Component library from eerie.yaml, or null if not defined. */
   components: ProjectComponent[] | null;
 }
@@ -323,7 +326,7 @@ export async function listProject(path: string): Promise<ProjectInfo> {
     if (manifest?.name) name = manifest.name;
     components = parseManifestComponents(res.value.manifest_yaml);
   } catch { /* use path as fallback */ }
-  return { name, circuits: res.value.circuits, files: res.value.files, components };
+  return { name, circuits: res.value.circuits, files: res.value.files, tree: res.value.tree, components };
 }
 
 /** Get the component library for a VFS project (reads its manifest from localStorage). */
@@ -373,6 +376,27 @@ export async function saveCircuit(projectPath: string, circuitName: string, cont
   } else {
     vfsWriteCircuit(projectPath, circuitName, content);
   }
+}
+
+/** Rename a file or directory (absolute paths). */
+export async function renamePath(from: string, to: string): Promise<void> {
+  const client = await getClient();
+  const res = await client.renamePath({ from, to });
+  if (!res.ok) throw new Error(res.error);
+}
+
+/** Delete a file or directory (recursive). */
+export async function deletePath(path: string): Promise<void> {
+  const client = await getClient();
+  const res = await client.deletePath({ path });
+  if (!res.ok) throw new Error(res.error);
+}
+
+/** Create a directory (and any missing parents). */
+export async function createFolder(path: string): Promise<void> {
+  const client = await getClient();
+  const res = await client.createFolder({ path });
+  if (!res.ok) throw new Error(res.error);
 }
 
 /** Create a new project (native: writes eerie.yaml; VFS: writes manifest). */

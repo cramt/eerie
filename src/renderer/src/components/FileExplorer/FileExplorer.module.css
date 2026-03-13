@@ -126,3 +126,56 @@
   font-size: 12px;
   color: var(--text-muted);
 }
+
+.folderArrow {
+  font-size: 9px;
+  color: var(--text-muted);
+  flex-shrink: 0;
+  width: 10px;
+  text-align: center;
+}
+
+/* ── Context menu ──────────────────────────────────────────────── */
+
+.contextMenu {
+  position: fixed;
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45);
+  z-index: 9999;
+  min-width: 148px;
+  padding: 4px 0;
+  user-select: none;
+}
+
+.contextMenuItem {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 6px 14px;
+  font-size: 12px;
+  text-align: left;
+  color: var(--text-secondary);
+  border-radius: 0;
+}
+
+.contextMenuItem:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.contextMenuDanger {
+  color: #e06c75;
+}
+
+.contextMenuDanger:hover {
+  background: rgba(224, 108, 117, 0.12);
+  color: #e06c75;
+}
+
+.contextMenuSep {
+  height: 1px;
+  background: var(--border);
+  margin: 4px 0;
+}

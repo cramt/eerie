@@ -100,13 +100,14 @@ async function persistComponents(projectPath: string, components: ProjectCompone
 
 interface Props {
   onClose: () => void
+  initialView?: 'list' | 'form'
 }
 
-export default function ComponentLibraryDialog({ onClose }: Props) {
+export default function ComponentLibraryDialog({ onClose, initialView = 'list' }: Props) {
   const { components, setComponents } = useProjectStore()
   const { projectPath } = useCircuitStore()
 
-  const [view, setView] = useState<'list' | 'form'>('list')
+  const [view, setView] = useState<'list' | 'form'>(initialView)
   const [editingIdx, setEditingIdx] = useState<number | null>(null) // null = add new
   const [form, setForm] = useState<FormState>(() => defaultForm('resistor'))
   const [saving, setSaving] = useState(false)

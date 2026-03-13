@@ -7,16 +7,12 @@ import styles from './ComponentPanel.module.css'
 
 const GENERIC_LIBRARY = getLibraryCategories()
 
-interface ComponentPanelProps {
-  onNewComponent?: () => void
-}
-
-export default function ComponentPanel({ onNewComponent }: ComponentPanelProps = {}) {
+export default function ComponentPanel() {
   const { setTool, setPlacingTypeId, setPlacingPreset, setPlacingProjectIdx, tool, placingTypeId, placingProjectIdx } = useUiStore()
   const { components: projectComponents } = useProjectStore()
   const [search, setSearch] = useState('')
   const [collapsed, setCollapsed] = useState<Record<string, boolean>>({})
-  const [showLibEditor, setShowLibEditor] = useState(false)
+  const [showLibEditor, setShowLibEditor] = useState<'list' | 'form' | false>(false)
 
   const filter = search.toLowerCase()
 
@@ -60,15 +56,13 @@ export default function ComponentPanel({ onNewComponent }: ComponentPanelProps =
 
     return (
       <>
-        {showLibEditor && <ComponentLibraryDialog onClose={() => setShowLibEditor(false)} />}
+        {showLibEditor && <ComponentLibraryDialog initialView={showLibEditor} onClose={() => setShowLibEditor(false)} />}
         <div className={styles.panel}>
           <div className={styles.header}>
             <span>Components</span>
             <div style={{ display: 'flex', gap: 4 }}>
-              {onNewComponent && (
-                <button className={styles.editLibBtn} onClick={onNewComponent} title="New component definition">+ New</button>
-              )}
-              <button className={styles.editLibBtn} onClick={() => setShowLibEditor(true)} title="Edit component library">✎ Edit</button>
+              <button className={styles.editLibBtn} onClick={() => setShowLibEditor('form')} title="New component in library">+ New</button>
+              <button className={styles.editLibBtn} onClick={() => setShowLibEditor('list')} title="Edit component library">✎ Edit</button>
             </div>
           </div>
           <input
@@ -122,15 +116,12 @@ export default function ComponentPanel({ onNewComponent }: ComponentPanelProps =
 
   return (
     <>
-      {showLibEditor && <ComponentLibraryDialog onClose={() => setShowLibEditor(false)} />}
+      {showLibEditor && <ComponentLibraryDialog initialView={showLibEditor} onClose={() => setShowLibEditor(false)} />}
       <div className={styles.panel}>
       <div className={styles.header}>
         <span>Components</span>
         <div style={{ display: 'flex', gap: 4 }}>
-          {onNewComponent && (
-            <button className={styles.editLibBtn} onClick={onNewComponent} title="New component definition">+ New</button>
-          )}
-          <button className={styles.editLibBtn} onClick={() => setShowLibEditor(true)} title="Set up component library">✎ Set up</button>
+          <button className={styles.editLibBtn} onClick={() => setShowLibEditor('list')} title="Set up component library">✎ Set up</button>
         </div>
       </div>
       <input

@@ -38,10 +38,17 @@ export interface ListProjectRequest {
   path: string;
 }
 
+export interface TreeEntry {
+  path: string;
+  name: string;
+  kind: string;
+}
+
 export interface ProjectListing {
   manifest_yaml: string;
   circuits: string[];
   files: string[];
+  tree: TreeEntry[];
 }
 
 export type Expr =
@@ -280,6 +287,19 @@ export interface ComponentDef {
   pins: PinLocation[];
 }
 
+export interface RenameRequest {
+  from: string;
+  to: string;
+}
+
+export interface DeleteRequest {
+  path: string;
+}
+
+export interface CreateFolderRequest {
+  path: string;
+}
+
 // Request/Response type aliases
 export type GetCapabilitiesRequest = [];
 export type GetCapabilitiesResponse = { ok: true; value: Capabilities } | { ok: false; error: string };
@@ -321,6 +341,14 @@ export type SimulatePzResponse = { ok: true; value: SimResult } | { ok: false; e
 export type ListComponentDefsRequest = [];
 export type ListComponentDefsResponse = { ok: true; value: ComponentDef[] } | { ok: false; error: string };
 
+export type RenamePathRequest = [RenameRequest];
+export type RenamePathResponse = { ok: true; value: boolean } | { ok: false; error: string };
+
+export type DeletePathRequest = [DeleteRequest];
+export type DeletePathResponse = { ok: true; value: boolean } | { ok: false; error: string };
+
+export type CreateFolderResponse = { ok: true; value: boolean } | { ok: false; error: string };
+
 // Caller interface for EerieService
 export interface EerieServiceCaller {
   /** Query what this backend supports. */
@@ -353,6 +381,12 @@ export interface EerieServiceCaller {
   aiChat(req: AiChatRequest): CallBuilder<{ ok: true; value: AiChatResponse } | { ok: false; error: string }>;
   /** List component definitions from the `components/` directory in the workspace. */
   listComponentDefs(): CallBuilder<{ ok: true; value: ComponentDef[] } | { ok: false; error: string }>;
+  /** Rename a file or directory. */
+  renamePath(req: RenameRequest): CallBuilder<{ ok: true; value: boolean } | { ok: false; error: string }>;
+  /** Delete a file (or recursively delete a directory). */
+  deletePath(req: DeleteRequest): CallBuilder<{ ok: true; value: boolean } | { ok: false; error: string }>;
+  /** Create a directory (and any missing parents). */
+  createFolder(req: CreateFolderRequest): CallBuilder<{ ok: true; value: boolean } | { ok: false; error: string }>;
 }
 
 // Client implementation for EerieService
@@ -693,6 +727,72 @@ export class EerieServiceClient implements EerieServiceCaller {
     });
   }
 
+  /** Rename a file or directory. */
+  renamePath(req: RenameRequest): CallBuilder<{ ok: true; value: boolean } | { ok: false; error: string }> {
+    const descriptor = eerieService_descriptor.methods[15];
+    return new CallBuilder(async (metadata) => {
+      try {
+        const value = await this.caller.call({
+          method: "EerieService.renamePath",
+          args: { req },
+          descriptor,
+          schemaRegistry: eerieService_descriptor.schema_registry,
+          metadata,
+        });
+        return { ok: true, value } as { ok: true; value: boolean } | { ok: false; error: string };
+      } catch (e) {
+        if (e instanceof RpcError && e.isUserError()) {
+          return { ok: false, error: e.userError } as { ok: true; value: boolean } | { ok: false; error: string };
+        }
+        throw e;
+      }
+    });
+  }
+
+  /** Delete a file (or recursively delete a directory). */
+  deletePath(req: DeleteRequest): CallBuilder<{ ok: true; value: boolean } | { ok: false; error: string }> {
+    const descriptor = eerieService_descriptor.methods[16];
+    return new CallBuilder(async (metadata) => {
+      try {
+        const value = await this.caller.call({
+          method: "EerieService.deletePath",
+          args: { req },
+          descriptor,
+          schemaRegistry: eerieService_descriptor.schema_registry,
+          metadata,
+        });
+        return { ok: true, value } as { ok: true; value: boolean } | { ok: false; error: string };
+      } catch (e) {
+        if (e instanceof RpcError && e.isUserError()) {
+          return { ok: false, error: e.userError } as { ok: true; value: boolean } | { ok: false; error: string };
+        }
+        throw e;
+      }
+    });
+  }
+
+  /** Create a directory (and any missing parents). */
+  createFolder(req: CreateFolderRequest): CallBuilder<{ ok: true; value: boolean } | { ok: false; error: string }> {
+    const descriptor = eerieService_descriptor.methods[17];
+    return new CallBuilder(async (metadata) => {
+      try {
+        const value = await this.caller.call({
+          method: "EerieService.createFolder",
+          args: { req },
+          descriptor,
+          schemaRegistry: eerieService_descriptor.schema_registry,
+          metadata,
+        });
+        return { ok: true, value } as { ok: true; value: boolean } | { ok: false; error: string };
+      } catch (e) {
+        if (e instanceof RpcError && e.isUserError()) {
+          return { ok: false, error: e.userError } as { ok: true; value: boolean } | { ok: false; error: string };
+        }
+        throw e;
+      }
+    });
+  }
+
 }
 
 /**
@@ -723,6 +823,9 @@ export interface EerieServiceHandler {
   simulatePz(netlist: Netlist): Promise<{ ok: true; value: SimResult } | { ok: false; error: string }> | { ok: true; value: SimResult } | { ok: false; error: string };
   aiChat(req: AiChatRequest): Promise<{ ok: true; value: AiChatResponse } | { ok: false; error: string }> | { ok: true; value: AiChatResponse } | { ok: false; error: string };
   listComponentDefs(): Promise<{ ok: true; value: ComponentDef[] } | { ok: false; error: string }> | { ok: true; value: ComponentDef[] } | { ok: false; error: string };
+  renamePath(req: RenameRequest): Promise<{ ok: true; value: boolean } | { ok: false; error: string }> | { ok: true; value: boolean } | { ok: false; error: string };
+  deletePath(req: DeleteRequest): Promise<{ ok: true; value: boolean } | { ok: false; error: string }> | { ok: true; value: boolean } | { ok: false; error: string };
+  createFolder(req: CreateFolderRequest): Promise<{ ok: true; value: boolean } | { ok: false; error: string }> | { ok: true; value: boolean } | { ok: false; error: string };
 }
 
 // Dispatcher for EerieService
@@ -839,6 +942,27 @@ export class EerieServiceDispatcher implements ChannelingDispatcher {
       } catch {
         call.replyInternalError();
       }
+    } else if (method.id === 0x280d447b2d361279n) {
+      try {
+        const result = await this.handler.renamePath(args[0] as RenameRequest);
+        if (result.ok) call.reply(result.value); else call.replyErr(result.error);
+      } catch {
+        call.replyInternalError();
+      }
+    } else if (method.id === 0x0e275db478055febn) {
+      try {
+        const result = await this.handler.deletePath(args[0] as DeleteRequest);
+        if (result.ok) call.reply(result.value); else call.replyErr(result.error);
+      } catch {
+        call.replyInternalError();
+      }
+    } else if (method.id === 0xc48f1ec53be0cc76n) {
+      try {
+        const result = await this.handler.createFolder(args[0] as CreateFolderRequest);
+        if (result.ok) call.reply(result.value); else call.replyErr(result.error);
+      } catch {
+        call.replyInternalError();
+      }
     }
   }
 }
@@ -852,7 +976,8 @@ const eerieService_schema_registry: SchemaRegistry = new Map<string, Schema>([
   ["FileSaveResult", { kind: 'struct', fields: { 'path': { kind: 'string' } } }],
   ["ProjectDir", { kind: 'struct', fields: { 'path': { kind: 'string' } } }],
   ["ListProjectRequest", { kind: 'struct', fields: { 'path': { kind: 'string' } } }],
-  ["ProjectListing", { kind: 'struct', fields: { 'manifest_yaml': { kind: 'string' }, 'circuits': { kind: 'vec', element: { kind: 'string' } }, 'files': { kind: 'vec', element: { kind: 'string' } } } }],
+  ["TreeEntry", { kind: 'struct', fields: { 'path': { kind: 'string' }, 'name': { kind: 'string' }, 'kind': { kind: 'string' } } }],
+  ["ProjectListing", { kind: 'struct', fields: { 'manifest_yaml': { kind: 'string' }, 'circuits': { kind: 'vec', element: { kind: 'string' } }, 'files': { kind: 'vec', element: { kind: 'string' } }, 'tree': { kind: 'vec', element: { kind: 'ref', name: 'TreeEntry' } } } }],
   ["Expr", { kind: 'enum', variants: [{ name: 'Num', fields: { kind: 'f64' } }, { name: 'Param', fields: { kind: 'string' } }, { name: 'Brace', fields: { kind: 'string' } }] }],
   ["Param", { kind: 'struct', fields: { 'name': { kind: 'string' }, 'value': { kind: 'ref', name: 'Expr' } } }],
   ["AcSpec", { kind: 'struct', fields: { 'mag': { kind: 'ref', name: 'Expr' }, 'phase': { kind: 'option', inner: { kind: 'ref', name: 'Expr' } } } }],
@@ -885,6 +1010,9 @@ const eerieService_schema_registry: SchemaRegistry = new Map<string, Schema>([
   ["SymbolGraphics", { kind: 'struct', fields: { 'bounds': { kind: 'ref', name: 'Bounds2d' }, 'graphics': { kind: 'vec', element: { kind: 'ref', name: 'GraphicsElement' } } } }],
   ["PinLocation", { kind: 'struct', fields: { 'id': { kind: 'string' }, 'name': { kind: 'string' }, 'x': { kind: 'f64' }, 'y': { kind: 'f64' } } }],
   ["ComponentDef", { kind: 'struct', fields: { 'id': { kind: 'string' }, 'name': { kind: 'string' }, 'description': { kind: 'string' }, 'category': { kind: 'string' }, 'subcategory': { kind: 'option', inner: { kind: 'string' } }, 'keywords': { kind: 'vec', element: { kind: 'string' } }, 'properties': { kind: 'vec', element: { kind: 'ref', name: 'PropertyDef' } }, 'symbol': { kind: 'option', inner: { kind: 'ref', name: 'SymbolGraphics' } }, 'pins': { kind: 'vec', element: { kind: 'ref', name: 'PinLocation' } } } }],
+  ["RenameRequest", { kind: 'struct', fields: { 'from': { kind: 'string' }, 'to': { kind: 'string' } } }],
+  ["DeleteRequest", { kind: 'struct', fields: { 'path': { kind: 'string' } } }],
+  ["CreateFolderRequest", { kind: 'struct', fields: { 'path': { kind: 'string' } } }],
 ]);
 
 // Service descriptor for runtime schema-driven dispatch
@@ -981,6 +1109,24 @@ export const eerieService_descriptor: ServiceDescriptor = {
       id: 0x8dc6b6a6381339dfn,
       args: { kind: 'tuple', elements: [] },
       result: { kind: 'enum', variants: [{ name: 'Ok', fields: { kind: 'vec', element: { kind: 'ref', name: 'ComponentDef' } } }, { name: 'Err', fields: { kind: 'enum', variants: [{ name: 'User', fields: { kind: 'string' } }, { name: 'UnknownMethod', fields: null }, { name: 'InvalidPayload', fields: null }, { name: 'Cancelled', fields: null }] } }] },
+    },
+    {
+      name: 'renamePath',
+      id: 0x280d447b2d361279n,
+      args: { kind: 'tuple', elements: [{ kind: 'ref', name: 'RenameRequest' }] },
+      result: { kind: 'enum', variants: [{ name: 'Ok', fields: { kind: 'bool' } }, { name: 'Err', fields: { kind: 'enum', variants: [{ name: 'User', fields: { kind: 'string' } }, { name: 'UnknownMethod', fields: null }, { name: 'InvalidPayload', fields: null }, { name: 'Cancelled', fields: null }] } }] },
+    },
+    {
+      name: 'deletePath',
+      id: 0x0e275db478055febn,
+      args: { kind: 'tuple', elements: [{ kind: 'ref', name: 'DeleteRequest' }] },
+      result: { kind: 'enum', variants: [{ name: 'Ok', fields: { kind: 'bool' } }, { name: 'Err', fields: { kind: 'enum', variants: [{ name: 'User', fields: { kind: 'string' } }, { name: 'UnknownMethod', fields: null }, { name: 'InvalidPayload', fields: null }, { name: 'Cancelled', fields: null }] } }] },
+    },
+    {
+      name: 'createFolder',
+      id: 0xc48f1ec53be0cc76n,
+      args: { kind: 'tuple', elements: [{ kind: 'ref', name: 'CreateFolderRequest' }] },
+      result: { kind: 'enum', variants: [{ name: 'Ok', fields: { kind: 'bool' } }, { name: 'Err', fields: { kind: 'enum', variants: [{ name: 'User', fields: { kind: 'string' } }, { name: 'UnknownMethod', fields: null }, { name: 'InvalidPayload', fields: null }, { name: 'Cancelled', fields: null }] } }] },
     },
   ],
 };

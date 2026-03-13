@@ -31,23 +31,25 @@ function eerieDaemon(): Plugin {
       if (mode !== "native") return;
 
       // Use cargo-watch to auto-rebuild and restart on Rust changes.
-      // -w flags scope what's watched; -x runs the cargo subcommand.
+      // -w uses absolute paths so they resolve regardless of spawn cwd.
+      // -s runs a shell command: cd into the example dir first so the
+      //    daemon's current_dir() returns the project path.
+      const projectDir = resolve("examples/getting-started");
       child = spawn(
         "cargo",
         [
           "watch",
           "-w",
-          "eerie-daemon",
+          resolve("eerie-daemon"),
           "-w",
-          "eerie-rpc",
-          "-x",
-          "run -p eerie-daemon",
+          resolve("eerie-rpc"),
+          "-s",
+          `cd ${JSON.stringify(projectDir)} && cargo run --manifest-path ${JSON.stringify(resolve("Cargo.toml"))} -p eerie-daemon`,
         ],
         {
           stdio: ["ignore", "pipe", "inherit"],
           env: {
             ...process.env,
-            EERIE_PROJECT_DIR: resolve("examples/getting-started"),
             EERIE_WORKSPACE: resolve("."),
           },
         },

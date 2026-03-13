@@ -1,7 +1,8 @@
 use eerie_rpc::{
-    AiChatRequest, AiChatResponse, Bounds2d, Capabilities, ComponentDef, EerieService, FileContent,
-    FileOpenRequest, FileSaveRequest, FileSaveResult, GraphicsElement, ListProjectRequest,
-    PinLocation, ProjectDir, ProjectListing, PropertyDef, SymbolGraphics,
+    AiChatRequest, AiChatResponse, Bounds2d, Capabilities, ComponentDef, CreateFolderRequest,
+    DeleteRequest, EerieService, FileContent, FileOpenRequest, FileSaveRequest, FileSaveResult,
+    GraphicsElement, ListProjectRequest, PinLocation, ProjectDir, ProjectListing, PropertyDef,
+    RenameRequest, SymbolGraphics, TreeEntry,
 };
 use std::path::PathBuf;
 use thevenin_types::{Netlist, SimResult};
@@ -54,30 +55,54 @@ impl EerieService for DaemonService {
         let dir = std::path::Path::new(&req.path);
         let manifest_yaml = std::fs::read_to_string(dir.join("eerie.yaml"))
             .map_err(|e| format!("not an eerie project (no eerie.yaml): {e}"))?;
+        // Root-level flat lists (for backward-compat / auto-open logic)
         let mut circuits = Vec::new();
         let mut files = Vec::new();
         for entry in std::fs::read_dir(dir)
             .map_err(|e| format!("cannot read directory: {e}"))?
             .filter_map(|e| e.ok())
         {
-            // Skip directories
             if entry.file_type().map_or(true, |ft| ft.is_dir()) {
                 continue;
             }
             let name = entry.file_name().to_string_lossy().into_owned();
+            if name.starts_with('.') || name == "eerie.yaml" {
+                continue;
+            }
             if name.ends_with(".eerie") {
                 circuits.push(name);
-            } else if name != "eerie.yaml" {
+            } else {
                 files.push(name);
             }
         }
         circuits.sort();
         files.sort();
-        Ok(ProjectListing {
-            manifest_yaml,
-            circuits,
-            files,
-        })
+        // Full recursive tree
+        let tree = build_tree(dir, "");
+        Ok(ProjectListing { manifest_yaml, circuits, files, tree })
+    }
+
+    async fn rename_path(&self, req: RenameRequest) -> Result<bool, String> {
+        std::fs::rename(&req.from, &req.to)
+            .map(|_| true)
+            .map_err(|e| format!("rename failed: {e}"))
+    }
+
+    async fn delete_path(&self, req: DeleteRequest) -> Result<bool, String> {
+        let path = std::path::Path::new(&req.path);
+        if path.is_dir() {
+            std::fs::remove_dir_all(path)
+        } else {
+            std::fs::remove_file(path)
+        }
+        .map(|_| true)
+        .map_err(|e| format!("delete failed: {e}"))
+    }
+
+    async fn create_folder(&self, req: CreateFolderRequest) -> Result<bool, String> {
+        std::fs::create_dir_all(&req.path)
+            .map(|_| true)
+            .map_err(|e| format!("mkdir failed: {e}"))
     }
 
     async fn simulate_op(&self, netlist: Netlist) -> Result<SimResult, String> {
@@ -120,10 +145,7 @@ impl EerieService for DaemonService {
     }
 
     async fn list_component_defs(&self) -> Result<Vec<ComponentDef>, String> {
-        let workspace = std::env::var("EERIE_WORKSPACE")
-            .map(std::path::PathBuf::from)
-            .unwrap_or_else(|_| std::env::current_dir().unwrap_or_default());
-        let components_dir = workspace.join("components");
+        let components_dir = self.project_dir.join("components");
         if !components_dir.exists() {
             return Ok(vec![]);
         }
@@ -132,6 +154,31 @@ impl EerieService for DaemonService {
         defs.sort_by(|a, b| a.name.cmp(&b.name));
         Ok(defs)
     }
+}
+
+/// Recursively build a flat, depth-first list of tree entries.
+/// Parent directories are emitted before their children.
+fn build_tree(dir: &std::path::Path, prefix: &str) -> Vec<TreeEntry> {
+    let Ok(read) = std::fs::read_dir(dir) else { return vec![] };
+    let mut entries: Vec<_> = read.flatten().collect();
+    entries.sort_by_key(|e| e.file_name());
+    let mut out = Vec::new();
+    for entry in entries {
+        let name = entry.file_name().to_string_lossy().into_owned();
+        if name.starts_with('.') { continue; }
+        // At root, skip the manifest itself
+        if prefix.is_empty() && name == "eerie.yaml" { continue; }
+        let path = if prefix.is_empty() { name.clone() } else { format!("{prefix}/{name}") };
+        let ft = entry.file_type();
+        if ft.map_or(false, |ft| ft.is_dir()) {
+            out.push(TreeEntry { path: path.clone(), name: name.clone(), kind: "dir".into() });
+            out.extend(build_tree(&entry.path(), &path));
+        } else {
+            let kind = if name.ends_with(".eerie") { "circuit" } else { "file" };
+            out.push(TreeEntry { path, name, kind: kind.into() });
+        }
+    }
+    out
 }
 
 fn scan_yaml_dir(dir: &std::path::Path, out: &mut Vec<ComponentDef>) {
