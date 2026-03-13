@@ -8,6 +8,7 @@ use thevenin_types::{Netlist, SimResult};
 #[derive(Clone)]
 pub struct DaemonService {
     pub project_dir: PathBuf,
+    pub port: u16,
 }
 
 impl EerieService for DaemonService {
@@ -113,6 +114,7 @@ impl EerieService for DaemonService {
     async fn ai_chat(&self, req: AiChatRequest) -> Result<AiChatResponse, String> {
         let api_key = std::env::var("ANTHROPIC_API_KEY")
             .map_err(|_| "ANTHROPIC_API_KEY not set".to_string())?;
-        crate::ai::run_chat(&api_key, req).await
+        let mcp_url = format!("http://127.0.0.1:{}/mcp", self.port);
+        crate::ai::run_chat(&api_key, req, &mcp_url).await
     }
 }

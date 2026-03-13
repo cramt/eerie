@@ -48,6 +48,7 @@ function eerieDaemon(): Plugin {
           env: {
             ...process.env,
             EERIE_PROJECT_DIR: resolve("examples/getting-started"),
+            EERIE_WORKSPACE: resolve("."),
           },
         },
       );
