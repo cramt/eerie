@@ -5,4 +5,19 @@
   overflow: hidden;
   background: var(--bg-canvas);
   outline: none;
+  position: relative;
+}
+
+.labelInput {
+  position: absolute;
+  background: var(--bg-canvas, #06060a);
+  color: var(--text, #e8e0f0);
+  border: 1px solid var(--selection, #f06aff);
+  border-radius: 2px;
+  font-family: monospace;
+  font-size: 11px;
+  padding: 1px 3px;
+  outline: none;
+  min-width: 40px;
+  z-index: 10;
 }

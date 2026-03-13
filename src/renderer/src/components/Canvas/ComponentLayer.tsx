@@ -16,12 +16,13 @@ interface Props {
   onDragEnd: (id: string, x: number, y: number) => void
   onDragMove: (id: string, e: any) => void
   onClick: (id: string, e: any) => void
+  onLabelDblClick?: (id: string, screenPos: { x: number; y: number }) => void
   tool: Tool
   hoveredPin: AbsolutePin | null
 }
 
 export default function ComponentLayer({
-  components, selectedIds, colors, onDragStart, onDragEnd, onDragMove, onClick, tool, hoveredPin
+  components, selectedIds, colors, onDragStart, onDragEnd, onDragMove, onClick, onLabelDblClick, tool, hoveredPin
 }: Props) {
   const { componentDefs } = useProjectStore()
 
@@ -144,7 +145,14 @@ export default function ComponentLayer({
                 fontSize={11}
                 fill={colors.text}
                 fontFamily="monospace"
-                listening={false}
+                listening={!!onLabelDblClick}
+                onDblClick={(e) => {
+                  if (!onLabelDblClick) return
+                  e.cancelBubble = true
+                  const stage = e.target.getStage()
+                  const ptr = stage?.getPointerPosition()
+                  if (ptr) onLabelDblClick(comp.id, ptr)
+                }}
               />
             )}
             {sym && valueText && (

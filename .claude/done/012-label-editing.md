@@ -1,6 +1,6 @@
 # 012 — Component Label Editing
 
-Status: open
+Status: done
 Priority: low
 
 ## Goal

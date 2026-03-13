@@ -30,6 +30,7 @@ export default function Canvas() {
   const [size, setSize] = useState({ width: 800, height: 600 })
   const [contextMenu, setContextMenu] = useState<ContextMenuState | null>(null)
   const [marquee, setMarquee] = useState<{ start: Point; end: Point } | null>(null)
+  const [editingLabel, setEditingLabel] = useState<{ compId: string; x: number; y: number; value: string } | null>(null)
   const marqueeRef = useRef<{ start: Point; active: boolean }>({ start: { x: 0, y: 0 }, active: false })
 
   const { circuit, addComponent, removeComponent, removeComponents, updateComponent, removeNet, removeNets } = useCircuitStore()
@@ -263,6 +264,18 @@ export default function Canvas() {
 
   const closeContextMenu = useCallback(() => setContextMenu(null), [])
 
+  const handleLabelDblClick = useCallback((compId: string, screenPos: { x: number; y: number }) => {
+    const comp = circuit.components.find(c => c.id === compId)
+    if (!comp) return
+    setEditingLabel({ compId, x: screenPos.x, y: screenPos.y, value: comp.label ?? '' })
+  }, [circuit.components])
+
+  const commitLabelEdit = useCallback(() => {
+    if (!editingLabel) return
+    updateComponent(editingLabel.compId, { label: editingLabel.value || undefined })
+    setEditingLabel(null)
+  }, [editingLabel, updateComponent])
+
   const cursorStyle = tool === 'wire' ? 'crosshair' : tool === 'place' ? 'copy' : 'default'
   const snapTarget = snapIndicator ?? null
 
@@ -276,12 +289,27 @@ export default function Canvas() {
         <WireLayer nets={circuit.nets} selectedNetIds={selectedNetIds} wireStart={wireStart} mousePos={mouseGridPos}
           isWiring={tool === 'wire'} colors={colors} snapTarget={snapTarget} onNetClick={handleNetClick} />
         <ComponentLayer components={circuit.components} selectedIds={selectedComponentIds} colors={colors}
-          onDragStart={handleDragStart} onDragEnd={handleDragEnd} onDragMove={handleDragMove} onClick={handleComponentClick} tool={tool} hoveredPin={hoveredPin} />
+          onDragStart={handleDragStart} onDragEnd={handleDragEnd} onDragMove={handleDragMove} onClick={handleComponentClick}
+          onLabelDblClick={handleLabelDblClick} tool={tool} hoveredPin={hoveredPin} />
         <OverlayLayer placingTypeId={placingTypeId} mousePos={mouseGridPos} isPlacing={tool === 'place'} colors={colors} selectionRect={marquee} />
         <SimOverlayLayer nets={circuit.nets} result={result} netNodeMap={netNodeMap} color={colors.pin} />
       </Stage>
       {contextMenu && (
         <ContextMenu x={contextMenu.x} y={contextMenu.y} items={contextMenu.items} onClose={closeContextMenu} />
+      )}
+      {editingLabel && (
+        <input
+          className={styles.labelInput}
+          style={{ left: editingLabel.x, top: editingLabel.y - 10 }}
+          value={editingLabel.value}
+          autoFocus
+          onChange={(e) => setEditingLabel({ ...editingLabel, value: e.target.value })}
+          onBlur={commitLabelEdit}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') commitLabelEdit()
+            if (e.key === 'Escape') setEditingLabel(null)
+          }}
+        />
       )}
     </div>
   )
