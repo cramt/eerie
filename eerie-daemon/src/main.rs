@@ -1,5 +1,3 @@
-mod ai;
-mod mcp;
 mod service;
 
 use std::net::SocketAddr;
@@ -10,12 +8,11 @@ use axum::{
     extract::WebSocketUpgrade,
     http::{Response, StatusCode, Uri, header},
     response::IntoResponse,
-    routing::{get, post},
+    routing::get,
 };
 use roam::DriverCaller;
 use tower_http::services::ServeDir;
 
-use crate::mcp::McpState;
 use crate::service::DaemonService;
 use eerie_rpc::EerieServiceDispatcher;
 
@@ -58,18 +55,11 @@ async fn main() {
     ensure_project_manifest(&project_dir);
 
     PROJECT_DIR
-        .set(project_dir.clone())
+        .set(project_dir)
         .expect("PROJECT_DIR already set");
-
-    let mcp_state = McpState { project_dir };
-
-    let mcp_router = Router::new()
-        .route("/mcp", post(mcp::mcp_handler).options(mcp::mcp_handler))
-        .with_state(mcp_state);
 
     let mut app = Router::new()
         .route("/rpc", get(ws_handler))
-        .merge(mcp_router)
         .fallback(get(
             |x: Uri| async move { embedded_handler(x.path()).await },
         ));
@@ -81,10 +71,6 @@ async fn main() {
     let addr = SocketAddr::from(([127, 0, 0, 1], port));
     let listener = tokio::net::TcpListener::bind(addr).await.unwrap();
     let local_addr = listener.local_addr().unwrap();
-
-    LOCAL_PORT
-        .set(local_addr.port())
-        .expect("LOCAL_PORT already set");
 
     // Print port for the vite plugin to read
     println!("PORT {}", local_addr.port());
@@ -113,7 +99,6 @@ fn ensure_project_manifest(dir: &std::path::Path) {
 }
 
 static PROJECT_DIR: std::sync::OnceLock<std::path::PathBuf> = std::sync::OnceLock::new();
-static LOCAL_PORT: std::sync::OnceLock<u16> = std::sync::OnceLock::new();
 
 async fn ws_handler(ws: WebSocketUpgrade) -> impl IntoResponse {
     ws.on_upgrade(handle_ws)
@@ -123,8 +108,7 @@ async fn handle_ws(ws: axum::extract::ws::WebSocket) {
     // Bridge axum's WebSocket to roam via the message-level adapter
     let link = AxumWsLink { ws };
     let project_dir = PROJECT_DIR.get().cloned().unwrap_or_default();
-    let port = LOCAL_PORT.get().copied().unwrap_or(0);
-    let dispatcher = EerieServiceDispatcher::new(DaemonService { project_dir, port });
+    let dispatcher = EerieServiceDispatcher::new(DaemonService { project_dir });
 
     let result = roam::acceptor(link)
         .establish::<DriverCaller>(dispatcher)

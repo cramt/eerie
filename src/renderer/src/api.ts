@@ -6,13 +6,11 @@ import {
   type SimResult,
   type Netlist,
   type Capabilities,
-  type AiChatRequest,
-  type AiChatResponse,
   type ComponentDef,
   type TreeEntry,
 } from "../../codegen/generated-rpc";
 
-export type { SimResult, Netlist, Capabilities, AiChatRequest, AiChatResponse, ComponentDef, TreeEntry };
+export type { SimResult, Netlist, Capabilities, ComponentDef, TreeEntry };
 
 export type SimulateResponse =
   | { ok: true; value: SimResult }
@@ -126,15 +124,6 @@ export async function simulate(netlist: Netlist): Promise<SimulateResponse> {
   }
 }
 
-// ── AI Chat ──────────────────────────────────────────────────────────────────
-
-export async function aiChat(req: AiChatRequest): Promise<AiChatResponse> {
-  const client = await getClient();
-  const res = await client.aiChat(req);
-  if (!res.ok) throw new Error(res.error);
-  return res.value;
-}
-
 // ── Capabilities ─────────────────────────────────────────────────────────────
 // Queried once on first use. Tells us what the backend can do (e.g. file I/O,
 // and in the future: python xspice modules, etc.)
@@ -152,7 +141,7 @@ export function getCapabilities(): Promise<Capabilities> {
         /* fall through */
       }
       // WASM or unreachable daemon — no native capabilities
-      return { file_io: false, anthropic_api_key: null };
+      return { file_io: false };
     })();
   }
   return capabilitiesPromise;

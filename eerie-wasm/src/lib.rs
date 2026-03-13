@@ -1,7 +1,7 @@
 #![cfg(target_arch = "wasm32")]
 use std::collections::{BTreeMap, BTreeSet};
 use eerie_rpc::{
-    AiChatRequest, AiChatResponse, Capabilities, ComponentDef, CreateFolderRequest,
+    Capabilities, ComponentDef, CreateFolderRequest,
     DeleteRequest, EerieService, EerieServiceDispatcher, FileContent, FileOpenRequest,
     FileSaveRequest, FileSaveResult, ListProjectRequest, ProjectDir, ProjectListing,
     RenameRequest, TreeEntry,
@@ -99,7 +99,7 @@ impl EerieService for WasmService {
     // ── Capabilities & project dir ───────────────────────────────────────────
 
     async fn get_capabilities(&self) -> Result<Capabilities, String> {
-        Ok(Capabilities { file_io: true, anthropic_api_key: None })
+        Ok(Capabilities { file_io: true })
     }
 
     /// Virtual project root is always "/".
@@ -279,12 +279,6 @@ impl EerieService for WasmService {
     async fn create_folder(&self, req: CreateFolderRequest) -> Result<bool, String> {
         ls_set(&format!("{VFS_DIR}{}", req.path), "");
         Ok(true)
-    }
-
-    // ── AI chat (native daemon only) ─────────────────────────────────────────
-
-    async fn ai_chat(&self, _req: AiChatRequest) -> Result<AiChatResponse, String> {
-        Err("AI chat requires native daemon".to_string())
     }
 
     // ── Component defs ───────────────────────────────────────────────────────

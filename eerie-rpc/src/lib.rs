@@ -86,50 +86,12 @@ pub struct ComponentDef {
     pub pins: Vec<PinLocation>,
 }
 
-/// A single turn in the AI conversation (human-readable text only).
-#[derive(facet::Facet, Clone, Debug)]
-pub struct AiMessage {
-    pub role: String,
-    pub content: String,
-}
-
-/// A mutation to apply to the circuit after the AI responds.
-#[derive(facet::Facet, Clone, Debug)]
-#[repr(C)]
-pub enum CircuitMutation {
-    UpdateProperty { component_id: String, property: String, value: f64 },
-    AddComponent { type_id: String, label: Option<String>, properties: Vec<(String, f64)> },
-    RemoveComponent { component_id: String },
-    SetIntent { intent: Option<String> },
-    SetParameter { name: String, value: f64 },
-    RemoveParameter { name: String },
-}
-
-#[derive(facet::Facet, Clone, Debug)]
-pub struct AiChatRequest {
-    pub messages: Vec<AiMessage>,
-    /// Current circuit serialized as .eerie YAML.
-    pub circuit_yaml: String,
-    /// Pre-built SPICE netlist (for the run_simulation tool).
-    pub spice_netlist: String,
-}
-
-#[derive(facet::Facet, Clone, Debug)]
-pub struct AiChatResponse {
-    pub message: String,
-    pub mutations: Vec<CircuitMutation>,
-}
-
 /// Describes what the backend can do. The frontend queries this once on
 /// connect and adapts its behaviour accordingly.
 #[derive(facet::Facet, Clone, Debug)]
 pub struct Capabilities {
     /// Backend can read/write files on the host filesystem.
     pub file_io: bool,
-    /// Anthropic API key available in the daemon's environment (from
-    /// `ANTHROPIC_API_KEY`). When present the frontend can use it directly
-    /// instead of asking the user to paste a key.
-    pub anthropic_api_key: Option<String>,
 }
 
 /// The project directory the daemon was started in.
@@ -261,9 +223,6 @@ pub trait EerieService {
 
     /// Run .pz pole-zero analysis.
     async fn simulate_pz(&self, netlist: Netlist) -> Result<SimResult, String>;
-
-    /// Run AI chat with agentic circuit editing loop (server-side Anthropic API call).
-    async fn ai_chat(&self, req: AiChatRequest) -> Result<AiChatResponse, String>;
 
     /// List component definitions from the `components/` directory in the workspace.
     async fn list_component_defs(&self) -> Result<Vec<ComponentDef>, String>;

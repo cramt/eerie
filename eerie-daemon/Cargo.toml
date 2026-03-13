@@ -24,4 +24,3 @@ mime_guess = "2"
 yaml-rust2 = "0.9"
 facet.workspace      = true
 facet-json.workspace = true
-reqwest = { version = "0.12", default-features = false, features = ["rustls-tls"] }

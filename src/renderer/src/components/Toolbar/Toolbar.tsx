@@ -18,7 +18,7 @@ const TOOLS: { id: Tool; label: string; icon: string; key: string }[] = [
 ]
 
 export default function Toolbar({ onOpen, onSave, onExportSpice }: Props) {
-  const { tool, setTool, simPanelOpen, toggleSimPanel, aiPanelOpen, toggleAiPanel } = useUiStore()
+  const { tool, setTool, simPanelOpen, toggleSimPanel } = useUiStore()
   const { dirty } = useCircuitStore()
   const { undo, redo, undoStack, redoStack } = useHistoryStore()
 
@@ -64,13 +64,6 @@ export default function Toolbar({ onOpen, onSave, onExportSpice }: Props) {
           title="Simulation Panel (F5)"
         >
           Sim
-        </button>
-        <button
-          className={`${styles.btn} ${styles.simBtn} ${aiPanelOpen ? styles.simBtnActive : ''}`}
-          onClick={toggleAiPanel}
-          title="AI Assistant"
-        >
-          ✦ AI
         </button>
       </div>
     </div>

@@ -9,7 +9,6 @@ import { RpcError } from "@bearcove/roam-core";
 // Named type definitions
 export interface Capabilities {
   file_io: boolean;
-  anthropic_api_key: string | null;
 }
 
 export interface FileOpenRequest {
@@ -203,30 +202,6 @@ export interface SimResult {
   plots: SimPlot[];
 }
 
-export interface AiMessage {
-  role: string;
-  content: string;
-}
-
-export interface AiChatRequest {
-  messages: AiMessage[];
-  circuit_yaml: string;
-  spice_netlist: string;
-}
-
-export type CircuitMutation =
-  | { tag: 'UpdateProperty'; component_id: string; property: string; value: number }
-  | { tag: 'AddComponent'; type_id: string; label: string | null; properties: [string, number][] }
-  | { tag: 'RemoveComponent'; component_id: string }
-  | { tag: 'SetIntent'; intent: string | null }
-  | { tag: 'SetParameter'; name: string; value: number }
-  | { tag: 'RemoveParameter'; name: string };
-
-export interface AiChatResponse {
-  message: string;
-  mutations: CircuitMutation[];
-}
-
 export interface PropertyDef {
   id: string;
   label: string;
@@ -337,7 +312,6 @@ export type SimulateSensResponse = { ok: true; value: SimResult } | { ok: false;
 export type SimulatePzRequest = [Netlist];
 export type SimulatePzResponse = { ok: true; value: SimResult } | { ok: false; error: string };
 
-
 export type ListComponentDefsRequest = [];
 export type ListComponentDefsResponse = { ok: true; value: ComponentDef[] } | { ok: false; error: string };
 
@@ -377,8 +351,6 @@ export interface EerieServiceCaller {
   simulateSens(netlist: Netlist): CallBuilder<{ ok: true; value: SimResult } | { ok: false; error: string }>;
   /** Run .pz pole-zero analysis. */
   simulatePz(netlist: Netlist): CallBuilder<{ ok: true; value: SimResult } | { ok: false; error: string }>;
-  /** Run AI chat with agentic circuit editing loop (server-side Anthropic API call). */
-  aiChat(req: AiChatRequest): CallBuilder<{ ok: true; value: AiChatResponse } | { ok: false; error: string }>;
   /** List component definitions from the `components/` directory in the workspace. */
   listComponentDefs(): CallBuilder<{ ok: true; value: ComponentDef[] } | { ok: false; error: string }>;
   /** Rename a file or directory. */
@@ -683,31 +655,9 @@ export class EerieServiceClient implements EerieServiceCaller {
     });
   }
 
-  /** Run AI chat with agentic circuit editing loop (server-side Anthropic API call). */
-  aiChat(req: AiChatRequest): CallBuilder<{ ok: true; value: AiChatResponse } | { ok: false; error: string }> {
-    const descriptor = eerieService_descriptor.methods[13];
-    return new CallBuilder(async (metadata) => {
-      try {
-        const value = await this.caller.call({
-          method: "EerieService.aiChat",
-          args: { req },
-          descriptor,
-          schemaRegistry: eerieService_descriptor.schema_registry,
-          metadata,
-        });
-        return { ok: true, value } as { ok: true; value: AiChatResponse } | { ok: false; error: string };
-      } catch (e) {
-        if (e instanceof RpcError && e.isUserError()) {
-          return { ok: false, error: e.userError } as { ok: true; value: AiChatResponse } | { ok: false; error: string };
-        }
-        throw e;
-      }
-    });
-  }
-
   /** List component definitions from the `components/` directory in the workspace. */
   listComponentDefs(): CallBuilder<{ ok: true; value: ComponentDef[] } | { ok: false; error: string }> {
-    const descriptor = eerieService_descriptor.methods[14];
+    const descriptor = eerieService_descriptor.methods[13];
     return new CallBuilder(async (metadata) => {
       try {
         const value = await this.caller.call({
@@ -729,7 +679,7 @@ export class EerieServiceClient implements EerieServiceCaller {
 
   /** Rename a file or directory. */
   renamePath(req: RenameRequest): CallBuilder<{ ok: true; value: boolean } | { ok: false; error: string }> {
-    const descriptor = eerieService_descriptor.methods[15];
+    const descriptor = eerieService_descriptor.methods[14];
     return new CallBuilder(async (metadata) => {
       try {
         const value = await this.caller.call({
@@ -751,7 +701,7 @@ export class EerieServiceClient implements EerieServiceCaller {
 
   /** Delete a file (or recursively delete a directory). */
   deletePath(req: DeleteRequest): CallBuilder<{ ok: true; value: boolean } | { ok: false; error: string }> {
-    const descriptor = eerieService_descriptor.methods[16];
+    const descriptor = eerieService_descriptor.methods[15];
     return new CallBuilder(async (metadata) => {
       try {
         const value = await this.caller.call({
@@ -773,7 +723,7 @@ export class EerieServiceClient implements EerieServiceCaller {
 
   /** Create a directory (and any missing parents). */
   createFolder(req: CreateFolderRequest): CallBuilder<{ ok: true; value: boolean } | { ok: false; error: string }> {
-    const descriptor = eerieService_descriptor.methods[17];
+    const descriptor = eerieService_descriptor.methods[16];
     return new CallBuilder(async (metadata) => {
       try {
         const value = await this.caller.call({
@@ -821,7 +771,6 @@ export interface EerieServiceHandler {
   simulateTf(netlist: Netlist): Promise<{ ok: true; value: SimResult } | { ok: false; error: string }> | { ok: true; value: SimResult } | { ok: false; error: string };
   simulateSens(netlist: Netlist): Promise<{ ok: true; value: SimResult } | { ok: false; error: string }> | { ok: true; value: SimResult } | { ok: false; error: string };
   simulatePz(netlist: Netlist): Promise<{ ok: true; value: SimResult } | { ok: false; error: string }> | { ok: true; value: SimResult } | { ok: false; error: string };
-  aiChat(req: AiChatRequest): Promise<{ ok: true; value: AiChatResponse } | { ok: false; error: string }> | { ok: true; value: AiChatResponse } | { ok: false; error: string };
   listComponentDefs(): Promise<{ ok: true; value: ComponentDef[] } | { ok: false; error: string }> | { ok: true; value: ComponentDef[] } | { ok: false; error: string };
   renamePath(req: RenameRequest): Promise<{ ok: true; value: boolean } | { ok: false; error: string }> | { ok: true; value: boolean } | { ok: false; error: string };
   deletePath(req: DeleteRequest): Promise<{ ok: true; value: boolean } | { ok: false; error: string }> | { ok: true; value: boolean } | { ok: false; error: string };
@@ -928,13 +877,6 @@ export class EerieServiceDispatcher implements ChannelingDispatcher {
       } catch {
         call.replyInternalError();
       }
-    } else if (method.id === 0x88a9ea20fe956f57n) {
-      try {
-        const result = await this.handler.aiChat(args[0] as AiChatRequest);
-        if (result.ok) call.reply(result.value); else call.replyErr(result.error);
-      } catch {
-        call.replyInternalError();
-      }
     } else if (method.id === 0x8dc6b6a6381339dfn) {
       try {
         const result = await this.handler.listComponentDefs();
@@ -969,7 +911,7 @@ export class EerieServiceDispatcher implements ChannelingDispatcher {
 
 // Named schema registry (for recursive / shared named types)
 const eerieService_schema_registry: SchemaRegistry = new Map<string, Schema>([
-  ["Capabilities", { kind: 'struct', fields: { 'file_io': { kind: 'bool' }, 'anthropic_api_key': { kind: 'option', inner: { kind: 'string' } } } }],
+  ["Capabilities", { kind: 'struct', fields: { 'file_io': { kind: 'bool' } } }],
   ["FileOpenRequest", { kind: 'struct', fields: { 'path': { kind: 'string' } } }],
   ["FileContent", { kind: 'struct', fields: { 'name': { kind: 'string' }, 'content': { kind: 'string' } } }],
   ["FileSaveRequest", { kind: 'struct', fields: { 'path': { kind: 'string' }, 'content': { kind: 'string' } } }],
@@ -1000,10 +942,6 @@ const eerieService_schema_registry: SchemaRegistry = new Map<string, Schema>([
   ["SimVector", { kind: 'struct', fields: { 'name': { kind: 'string' }, 'real': { kind: 'vec', element: { kind: 'f64' } }, 'complex': { kind: 'vec', element: { kind: 'ref', name: 'Complex' } } } }],
   ["SimPlot", { kind: 'struct', fields: { 'name': { kind: 'string' }, 'vecs': { kind: 'vec', element: { kind: 'ref', name: 'SimVector' } } } }],
   ["SimResult", { kind: 'struct', fields: { 'plots': { kind: 'vec', element: { kind: 'ref', name: 'SimPlot' } } } }],
-  ["AiMessage", { kind: 'struct', fields: { 'role': { kind: 'string' }, 'content': { kind: 'string' } } }],
-  ["AiChatRequest", { kind: 'struct', fields: { 'messages': { kind: 'vec', element: { kind: 'ref', name: 'AiMessage' } }, 'circuit_yaml': { kind: 'string' }, 'spice_netlist': { kind: 'string' } } }],
-  ["CircuitMutation", { kind: 'enum', variants: [{ name: 'UpdateProperty', fields: { 'component_id': { kind: 'string' }, 'property': { kind: 'string' }, 'value': { kind: 'f64' } } }, { name: 'AddComponent', fields: { 'type_id': { kind: 'string' }, 'label': { kind: 'option', inner: { kind: 'string' } }, 'properties': { kind: 'vec', element: { kind: 'tuple', elements: [{ kind: 'string' }, { kind: 'f64' }] } } } }, { name: 'RemoveComponent', fields: { 'component_id': { kind: 'string' } } }, { name: 'SetIntent', fields: { 'intent': { kind: 'option', inner: { kind: 'string' } } } }, { name: 'SetParameter', fields: { 'name': { kind: 'string' }, 'value': { kind: 'f64' } } }, { name: 'RemoveParameter', fields: { 'name': { kind: 'string' } } }] }],
-  ["AiChatResponse", { kind: 'struct', fields: { 'message': { kind: 'string' }, 'mutations': { kind: 'vec', element: { kind: 'ref', name: 'CircuitMutation' } } } }],
   ["PropertyDef", { kind: 'struct', fields: { 'id': { kind: 'string' }, 'label': { kind: 'string' }, 'unit': { kind: 'option', inner: { kind: 'string' } }, 'default': { kind: 'f64' } } }],
   ["Bounds2d", { kind: 'struct', fields: { 'x': { kind: 'f64' }, 'y': { kind: 'f64' }, 'width': { kind: 'f64' }, 'height': { kind: 'f64' } } }],
   ["GraphicsElement", { kind: 'struct', fields: { 'kind': { kind: 'string' }, 'x1': { kind: 'option', inner: { kind: 'f64' } }, 'y1': { kind: 'option', inner: { kind: 'f64' } }, 'x2': { kind: 'option', inner: { kind: 'f64' } }, 'y2': { kind: 'option', inner: { kind: 'f64' } }, 'cx': { kind: 'option', inner: { kind: 'f64' } }, 'cy': { kind: 'option', inner: { kind: 'f64' } }, 'r': { kind: 'option', inner: { kind: 'f64' } }, 'start_angle': { kind: 'option', inner: { kind: 'f64' } }, 'end_angle': { kind: 'option', inner: { kind: 'f64' } }, 'x': { kind: 'option', inner: { kind: 'f64' } }, 'y': { kind: 'option', inner: { kind: 'f64' } }, 'width': { kind: 'option', inner: { kind: 'f64' } }, 'height': { kind: 'option', inner: { kind: 'f64' } }, 'points': { kind: 'vec', element: { kind: 'f64' } }, 'filled': { kind: 'option', inner: { kind: 'bool' } }, 'stroke_width': { kind: 'option', inner: { kind: 'f64' } }, 'text': { kind: 'option', inner: { kind: 'string' } }, 'font_size': { kind: 'option', inner: { kind: 'f64' } } } }],
@@ -1097,12 +1035,6 @@ export const eerieService_descriptor: ServiceDescriptor = {
       id: 0xbf7851855b7cc2bbn,
       args: { kind: 'tuple', elements: [{ kind: 'ref', name: 'Netlist' }] },
       result: { kind: 'enum', variants: [{ name: 'Ok', fields: { kind: 'ref', name: 'SimResult' } }, { name: 'Err', fields: { kind: 'enum', variants: [{ name: 'User', fields: { kind: 'string' } }, { name: 'UnknownMethod', fields: null }, { name: 'InvalidPayload', fields: null }, { name: 'Cancelled', fields: null }] } }] },
-    },
-    {
-      name: 'aiChat',
-      id: 0x88a9ea20fe956f57n,
-      args: { kind: 'tuple', elements: [{ kind: 'ref', name: 'AiChatRequest' }] },
-      result: { kind: 'enum', variants: [{ name: 'Ok', fields: { kind: 'ref', name: 'AiChatResponse' } }, { name: 'Err', fields: { kind: 'enum', variants: [{ name: 'User', fields: { kind: 'string' } }, { name: 'UnknownMethod', fields: null }, { name: 'InvalidPayload', fields: null }, { name: 'Cancelled', fields: null }] } }] },
     },
     {
       name: 'listComponentDefs',

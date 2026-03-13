@@ -1,5 +1,5 @@
 use eerie_rpc::{
-    AiChatRequest, AiChatResponse, Bounds2d, Capabilities, ComponentDef, CreateFolderRequest,
+    Bounds2d, Capabilities, ComponentDef, CreateFolderRequest,
     DeleteRequest, EerieService, FileContent, FileOpenRequest, FileSaveRequest, FileSaveResult,
     GraphicsElement, ListProjectRequest, PinLocation, ProjectDir, ProjectListing, PropertyDef,
     RenameRequest, SymbolGraphics, TreeEntry,
@@ -10,15 +10,11 @@ use thevenin_types::{Netlist, SimResult};
 #[derive(Clone)]
 pub struct DaemonService {
     pub project_dir: PathBuf,
-    pub port: u16,
 }
 
 impl EerieService for DaemonService {
     async fn get_capabilities(&self) -> Result<Capabilities, String> {
-        Ok(Capabilities {
-            file_io: true,
-            anthropic_api_key: std::env::var("ANTHROPIC_API_KEY").ok(),
-        })
+        Ok(Capabilities { file_io: true })
     }
 
     async fn get_project_dir(&self) -> Result<ProjectDir, String> {
@@ -135,13 +131,6 @@ impl EerieService for DaemonService {
 
     async fn simulate_pz(&self, netlist: Netlist) -> Result<SimResult, String> {
         thevenin::simulate_pz(&netlist).map_err(|e| e.to_string())
-    }
-
-    async fn ai_chat(&self, req: AiChatRequest) -> Result<AiChatResponse, String> {
-        let api_key = std::env::var("ANTHROPIC_API_KEY")
-            .map_err(|_| "ANTHROPIC_API_KEY not set".to_string())?;
-        let mcp_url = format!("http://127.0.0.1:{}/mcp", self.port);
-        crate::ai::run_chat(&api_key, req, &mcp_url).await
     }
 
     async fn list_component_defs(&self) -> Result<Vec<ComponentDef>, String> {

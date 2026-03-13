@@ -15,14 +15,12 @@ import FileDialog, { type FileDialogMode } from './components/FileDialog/FileDia
 import TabBar from './components/TabBar/TabBar'
 import FileExplorer from './components/FileExplorer/FileExplorer'
 import TextEditor from './components/TextEditor/TextEditor'
-import AiPanel from './components/AiPanel/AiPanel'
 import ToastContainer from './components/Toast/Toast'
 import { toastError, toastSuccess } from './store/toastStore'
 import { filePinToUi, uiPinToFile, buildNetlist } from './utils/netlistBuilder'
 import { netlistToSpice } from './utils/spiceWriter'
 import { useSimulationStore } from './store/simulationStore'
 import * as api from './api'
-import { useAiStore } from './store/aiStore'
 
 // Theme CSS
 import './themes/neon.css'
@@ -31,12 +29,11 @@ import type { Circuit, ComponentInstance, Net } from './types'
 
 export default function App() {
   const { circuit, setCircuit, projectPath, circuitName, dirty, setDirty } = useCircuitStore()
-  const { theme, tool, setTool, setPlacingTypeId, selectedComponentIds, selectedNetIds, setSimPanelOpen, aiPanelOpen } = useUiStore()
+  const { theme, tool, setTool, setPlacingTypeId, selectedComponentIds, selectedNetIds, setSimPanelOpen } = useUiStore()
   const { undo, redo } = useHistoryStore()
   const { analysis } = useSimulationStore()
   const { setComponents, setComponentDefs } = useProjectStore()
   const { tabs, activeTabId, openTab, openTextTab, updateTextContent, closeTab } = useTabsStore()
-  const { initDaemonKey } = useAiStore()
 
   // ── File dialog state ───────────────────────────────────────────────
   const [fileDialog, setFileDialog] = useState<{ mode: FileDialogMode } | null>(null)
@@ -212,9 +209,6 @@ simulation:
       toastError(`Failed to save file: ${err}`)
     }
   }, [setComponentDefs, setComponents])
-
-  // Load daemon API key on startup
-  useEffect(() => { initDaemonKey() }, [initDaemonKey])
 
   // Auto-open the daemon's project directory on startup (native mode)
   useEffect(() => {
@@ -406,7 +400,7 @@ simulation:
       selectedComponentIds, selectedNetIds, setSimPanelOpen])
 
   return (
-    <div className="app-layout" data-ai-open={aiPanelOpen ? 'true' : undefined}>
+    <div className="app-layout">
       {fileDialog && (
         <FileDialog
           mode={fileDialog.mode}
@@ -466,9 +460,6 @@ simulation:
       </div>
       <div className="props-area">
         <PropertyEditor />
-      </div>
-      <div className="ai-area">
-        {aiPanelOpen && <AiPanel />}
       </div>
       <div className="status-area">
         <StatusBar />

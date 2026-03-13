@@ -33,8 +33,6 @@
     "vite": "^7.3.1"
   },
   "dependencies": {
-    "@anthropic-ai/claude-agent-sdk": "^0.2.75",
-    "@anthropic-ai/sdk": "^0.78.0",
     "@bearcove/roam-core": "^7.3.0",
     "@bearcove/roam-inprocess": "7.3.0",
     "@bearcove/roam-postcard": "^7.3.0",
@@ -50,7 +48,6 @@
     "react-konva": "^19.2.3",
     "uplot": "^1.6.32",
     "yaml": "^2.8.2",
-    "zod": "^4.3.6",
     "zustand": "^5.0.11"
   }
 }

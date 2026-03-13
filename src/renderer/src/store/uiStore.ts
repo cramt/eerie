@@ -14,7 +14,6 @@ interface UiStore {
   zoom: number
   mouseGridPos: Point
   simPanelOpen: boolean
-  aiPanelOpen: boolean
 
   setTool: (tool: Tool) => void
   setPlacingTypeId: (typeId: string | null) => void
@@ -22,8 +21,6 @@ interface UiStore {
   setPlacingProjectIdx: (idx: number | null) => void
   setSimPanelOpen: (open: boolean) => void
   toggleSimPanel: () => void
-  setAiPanelOpen: (open: boolean) => void
-  toggleAiPanel: () => void
   selectComponent: (id: string | null) => void
   toggleSelectComponent: (id: string) => void
   addToSelection: (id: string) => void
@@ -48,13 +45,10 @@ export const useUiStore = create<UiStore>((set, get) => ({
   zoom: 1,
   mouseGridPos: { x: 0, y: 0 },
   simPanelOpen: false,
-  aiPanelOpen: false,
 
   setTool: (tool) => set({ tool }),
   setSimPanelOpen: (open) => set({ simPanelOpen: open }),
   toggleSimPanel: () => set((s) => ({ simPanelOpen: !s.simPanelOpen })),
-  setAiPanelOpen: (open) => set({ aiPanelOpen: open }),
-  toggleAiPanel: () => set((s) => ({ aiPanelOpen: !s.aiPanelOpen })),
   setPlacingTypeId: (typeId) => set({ placingTypeId: typeId }),
   setPlacingPreset: (preset) => set({ placingPreset: preset }),
   setPlacingProjectIdx: (idx) => set({ placingProjectIdx: idx }),
