@@ -51,13 +51,8 @@ export default function App() {
 
   const openProject = useCallback(async (proj: string) => {
     try {
-      const caps = await api.getCapabilities()
-      if (caps.file_io) {
-        const info = await api.listProject(proj)
-        setComponents(info.components)
-      } else {
-        setComponents(api.vfsGetProjectComponents(proj))
-      }
+      const info = await api.listProject(proj)
+      setComponents(info.components)
     } catch {
       setComponents(null)
     }

@@ -87,16 +87,9 @@ export default function FileExplorer({ onOpenCircuit, onOpenFile, onNewCircuit, 
   const refresh = useCallback(async () => {
     if (!projectPath) { setTree([]); setProjectName(null); return }
     try {
-      const caps = await api.getCapabilities()
-      if (caps.file_io) {
-        const info = await api.listProject(projectPath)
-        setTree(buildTree(info.tree))
-        setProjectName(info.name)
-      } else {
-        const circuits = api.vfsListCircuits(projectPath)
-        setTree(circuits.map((c): TreeNode => ({ name: c, path: c, kind: 'circuit', children: [] })))
-        setProjectName(projectPath)
-      }
+      const info = await api.listProject(projectPath)
+      setTree(buildTree(info.tree))
+      setProjectName(info.name)
     } catch {
       setTree([])
     }

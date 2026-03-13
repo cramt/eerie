@@ -15,16 +15,12 @@ interface Props {
 type Step = 'project' | 'circuit'
 
 export default function FileDialog({ mode, currentProjectPath, onConfirm, onCancel }: Props) {
-  const [isNative, setIsNative] = useState(false)
   const [step, setStep] = useState<Step>(() =>
     currentProjectPath ? 'circuit' : 'project'
   )
 
   // Project step state
-  const [vfsProjects, setVfsProjects] = useState<string[]>([])
-  const [nativePathInput, setNativePathInput] = useState('')
-  const [newProjectInput, setNewProjectInput] = useState('')
-  const [showNewProject, setShowNewProject] = useState(false)
+  const [pathInput, setPathInput] = useState('')
 
   // Circuit step state
   const [projectPath, setProjectPath] = useState<string>(currentProjectPath ?? '')
@@ -36,31 +32,22 @@ export default function FileDialog({ mode, currentProjectPath, onConfirm, onCanc
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const nativeInputRef = useRef<HTMLInputElement>(null)
+  const pathInputRef = useRef<HTMLInputElement>(null)
   const circuitInputRef = useRef<HTMLInputElement>(null)
-  const newProjectInputRef = useRef<HTMLInputElement>(null)
 
-  // Determine if we're in native mode, then do initial setup
+  // Load circuits for the current project if one was provided
   useEffect(() => {
-    api.getCapabilities().then(caps => {
-      const native = caps.file_io
-      setIsNative(native)
-      if (!native && step === 'project') {
-        setVfsProjects(api.vfsListProjects())
-      }
-      if (currentProjectPath) {
-        // loadCircuitsForProject uses isNative state, so we pass it directly here
-        loadCircuitsForProjectWithNative(currentProjectPath, native)
-      }
-    })
+    if (currentProjectPath) {
+      loadCircuitsForProject(currentProjectPath)
+    }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   // Focus inputs
   useEffect(() => {
-    if (step === 'project' && isNative) nativeInputRef.current?.focus()
+    if (step === 'project') pathInputRef.current?.focus()
     if (step === 'circuit' && mode === 'save') circuitInputRef.current?.focus()
-  }, [step, isNative, mode])
+  }, [step, mode])
 
   // Close on Escape
   useEffect(() => {
@@ -69,18 +56,13 @@ export default function FileDialog({ mode, currentProjectPath, onConfirm, onCanc
     return () => window.removeEventListener('keydown', onKey)
   }, [onCancel])
 
-  async function loadCircuitsForProjectWithNative(path: string, native: boolean) {
+  async function loadCircuitsForProject(path: string) {
     setLoading(true)
     setError(null)
     try {
-      if (native) {
-        const info = await api.listProject(path)
-        setProjectDisplayName(info.name)
-        setCircuits(info.circuits.sort())
-      } else {
-        setProjectDisplayName(path)
-        setCircuits(api.vfsListCircuits(path).sort())
-      }
+      const info = await api.listProject(path)
+      setProjectDisplayName(info.name)
+      setCircuits(info.circuits.sort())
       setStep('circuit')
     } catch (err) {
       setError(String(err))
@@ -89,32 +71,11 @@ export default function FileDialog({ mode, currentProjectPath, onConfirm, onCanc
     }
   }
 
-  async function loadCircuitsForProject(path: string) {
-    return loadCircuitsForProjectWithNative(path, isNative)
-  }
-
-  async function handleOpenNativeProject() {
-    const path = nativePathInput.trim()
+  async function handleOpenProject() {
+    const path = pathInput.trim()
     if (!path) return
     setProjectPath(path)
-    await loadCircuitsForProjectWithNative(path, true)
-  }
-
-  function handleSelectVfsProject(name: string) {
-    setProjectPath(name)
-    loadCircuitsForProjectWithNative(name, false)
-  }
-
-  async function handleCreateVfsProject() {
-    const name = newProjectInput.trim()
-    if (!name) return
-    await api.createProject(name, name)
-    setProjectPath(name)
-    setVfsProjects(api.vfsListProjects())
-    setCircuits([])
-    setStep('circuit')
-    setShowNewProject(false)
-    setNewProjectInput('')
+    await loadCircuitsForProject(path)
   }
 
   function handleSelectCircuit(name: string) {
@@ -133,18 +94,16 @@ export default function FileDialog({ mode, currentProjectPath, onConfirm, onCanc
     }
   }
 
-  function handleDeleteCircuit(name: string, e: React.MouseEvent) {
+  async function handleDeleteCircuit(name: string, e: React.MouseEvent) {
     e.stopPropagation()
-    if (isNative) return // can't delete in native mode from UI
-    api.vfsDeleteCircuit(projectPath, name)
-    setCircuits(api.vfsListCircuits(projectPath).sort())
-    if (selectedCircuit === name) setSelectedCircuit(null)
-  }
-
-  function handleDeleteProject(name: string, e: React.MouseEvent) {
-    e.stopPropagation()
-    api.vfsDeleteProject(name)
-    setVfsProjects(api.vfsListProjects())
+    try {
+      await api.deletePath(`${projectPath}/${name}`)
+      const info = await api.listProject(projectPath)
+      setCircuits(info.circuits.sort())
+      if (selectedCircuit === name) setSelectedCircuit(null)
+    } catch (err) {
+      console.error('Delete failed:', err)
+    }
   }
 
   const canConfirmCircuit = mode === 'open'
@@ -163,80 +122,27 @@ export default function FileDialog({ mode, currentProjectPath, onConfirm, onCanc
           </div>
 
           <div className={s.body}>
-            {isNative ? (
-              // Native: type a project directory path
-              <div className={s.nativePathSection}>
-                <label className={s.fieldLabel}>Project directory</label>
-                <div className={s.pathRow}>
-                  <input
-                    ref={nativeInputRef}
-                    className={s.nameInput}
-                    value={nativePathInput}
-                    onChange={e => setNativePathInput(e.target.value)}
-                    onKeyDown={e => { if (e.key === 'Enter') handleOpenNativeProject() }}
-                    placeholder="/home/user/my-project"
-                  />
-                  <button
-                    className={`${s.btn} ${s.btnPrimary}`}
-                    disabled={!nativePathInput.trim() || loading}
-                    onClick={handleOpenNativeProject}
-                  >
-                    {loading ? '…' : 'Open'}
-                  </button>
-                </div>
-                {error && <div className={s.errorMsg}>{error}</div>}
+            <div className={s.nativePathSection}>
+              <label className={s.fieldLabel}>Project directory</label>
+              <div className={s.pathRow}>
+                <input
+                  ref={pathInputRef}
+                  className={s.nameInput}
+                  value={pathInput}
+                  onChange={e => setPathInput(e.target.value)}
+                  onKeyDown={e => { if (e.key === 'Enter') handleOpenProject() }}
+                  placeholder="/home/user/my-project"
+                />
+                <button
+                  className={`${s.btn} ${s.btnPrimary}`}
+                  disabled={!pathInput.trim() || loading}
+                  onClick={handleOpenProject}
+                >
+                  {loading ? '…' : 'Open'}
+                </button>
               </div>
-            ) : (
-              // VFS: list projects from localStorage
-              <>
-                {vfsProjects.length === 0 && !showNewProject ? (
-                  <div className={s.empty}>No projects yet.</div>
-                ) : (
-                  <div className={s.fileList}>
-                    {vfsProjects.map(p => (
-                      <div
-                        key={p}
-                        className={s.fileItem}
-                        onClick={() => handleSelectVfsProject(p)}
-                        onDoubleClick={() => handleSelectVfsProject(p)}
-                      >
-                        <span>{p}</span>
-                        <button className={s.deleteBtn} onClick={(e) => handleDeleteProject(p, e)} title="Delete">del</button>
-                      </div>
-                    ))}
-                  </div>
-                )}
-
-                {showNewProject ? (
-                  <div className={s.newProjectRow}>
-                    <input
-                      ref={newProjectInputRef}
-                      className={s.nameInput}
-                      value={newProjectInput}
-                      onChange={e => setNewProjectInput(e.target.value)}
-                      onKeyDown={e => { if (e.key === 'Enter') handleCreateVfsProject() }}
-                      placeholder="project name"
-                      autoFocus
-                    />
-                    <button className={s.btn} onClick={() => setShowNewProject(false)}>×</button>
-                    <button
-                      className={`${s.btn} ${s.btnPrimary}`}
-                      disabled={!newProjectInput.trim()}
-                      onClick={handleCreateVfsProject}
-                    >
-                      Create
-                    </button>
-                  </div>
-                ) : (
-                  <button
-                    className={s.newItemBtn}
-                    onClick={() => { setShowNewProject(true); setTimeout(() => newProjectInputRef.current?.focus(), 0) }}
-                  >
-                    + New project
-                  </button>
-                )}
-              </>
-            )}
+              {error && <div className={s.errorMsg}>{error}</div>}
+            </div>
           </div>
 
           <div className={s.footer}>
@@ -282,9 +188,7 @@ export default function FileDialog({ mode, currentProjectPath, onConfirm, onCanc
                   onDoubleClick={() => { handleSelectCircuit(c); if (mode === 'open') onConfirm(projectPath, c) }}
                 >
                   <span>{c}</span>
-                  {!isNative && (
-                    <button className={s.deleteBtn} onClick={(e) => handleDeleteCircuit(c, e)} title="Delete">del</button>
-                  )}
+                  <button className={s.deleteBtn} onClick={(e) => handleDeleteCircuit(c, e)} title="Delete">del</button>
                 </div>
               ))}
             </div>
