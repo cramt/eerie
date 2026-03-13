@@ -98,30 +98,33 @@ function buildSource(props: Record<string, unknown>, dcKey: string): Source {
 }
 
 /**
- * Convert a UI Circuit into a typed SPICE Netlist for simulation.
+ * Build a mapping from net ID → SPICE node name (e.g. "n001", "0", "VCC").
+ * Ground nets map to "0".
  */
-export function buildNetlist(circuit: Circuit, analysis: Analysis = { tag: 'Op' }): Netlist {
-  // 1. Build node map: each net → SPICE node name
+export function buildNodeMap(circuit: Circuit): Map<string, string> {
   const netNodes = new Map<string, string>();
-  const groundNets = new Set<string>();
-
   for (const net of circuit.nets) {
-    // Check if any pin in this net connects to a ground component
+    let isGround = false;
     for (const pin of net.pins) {
       const comp = circuit.components.find((c) => c.id === pin.component_id);
-      if (comp?.type_id === "ground") {
-        groundNets.add(net.id);
-      }
+      if (comp?.type_id === "ground") { isGround = true; break; }
     }
-
-    if (groundNets.has(net.id)) {
+    if (isGround) {
       netNodes.set(net.id, "0");
     } else {
-      // Use first label, or net name if available, or net id
       const label = net.labels?.[0]?.text;
       netNodes.set(net.id, label ?? net.id);
     }
   }
+  return netNodes;
+}
+
+/**
+ * Convert a UI Circuit into a typed SPICE Netlist for simulation.
+ */
+export function buildNetlist(circuit: Circuit, analysis: Analysis = { tag: 'Op' }): Netlist {
+  // 1. Build node map: each net → SPICE node name
+  const netNodes = buildNodeMap(circuit);
 
   // 2. Build pin→node lookup: (componentId, pinName) → node name
   const pinNode = new Map<string, string>();

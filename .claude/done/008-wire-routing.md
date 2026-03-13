@@ -1,6 +1,6 @@
 # 008 — Wire Routing and Net Connectivity
 
-Status: open
+Status: done
 Priority: high
 
 ## Goal

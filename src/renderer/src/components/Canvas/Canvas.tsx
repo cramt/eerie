@@ -3,6 +3,7 @@ import { Stage } from 'react-konva'
 import { useCircuitStore } from '../../store/circuitStore'
 import { useUiStore } from '../../store/uiStore'
 import { useProjectStore } from '../../store/projectStore'
+import { useSimulationStore } from '../../store/simulationStore'
 import { getThemeColors } from '../../themes/colors'
 import { getAbsolutePins } from '../../utils/pinUtils'
 import { useCanvasView } from './useCanvasView'
@@ -12,6 +13,7 @@ import GridLayer from './GridLayer'
 import WireLayer from './WireLayer'
 import ComponentLayer from './ComponentLayer'
 import OverlayLayer from './OverlayLayer'
+import SimOverlayLayer from './SimOverlayLayer'
 import ContextMenu, { type ContextMenuEntry } from './ContextMenu'
 import { SYMBOL_REGISTRY } from '../../symbols'
 import type { Point } from '../../types'
@@ -42,6 +44,7 @@ export default function Canvas() {
   const setPlacingTypeId = useUiStore((s) => s.setPlacingTypeId)
   const colors = getThemeColors(theme)
   const { componentDefs } = useProjectStore()
+  const { result, netNodeMap } = useSimulationStore()
 
   const absolutePins = useMemo(
     () => getAbsolutePins(circuit.components, componentDefs),
@@ -275,6 +278,7 @@ export default function Canvas() {
         <ComponentLayer components={circuit.components} selectedIds={selectedComponentIds} colors={colors}
           onDragStart={handleDragStart} onDragEnd={handleDragEnd} onDragMove={handleDragMove} onClick={handleComponentClick} tool={tool} hoveredPin={hoveredPin} />
         <OverlayLayer placingTypeId={placingTypeId} mousePos={mouseGridPos} isPlacing={tool === 'place'} colors={colors} selectionRect={marquee} />
+        <SimOverlayLayer nets={circuit.nets} result={result} netNodeMap={netNodeMap} color={colors.pin} />
       </Stage>
       {contextMenu && (
         <ContextMenu x={contextMenu.x} y={contextMenu.y} items={contextMenu.items} onClose={closeContextMenu} />

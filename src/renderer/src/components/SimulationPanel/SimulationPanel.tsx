@@ -4,7 +4,7 @@ import 'uplot/dist/uPlot.min.css'
 import { useCircuitStore } from '../../store/circuitStore'
 import { useUiStore } from '../../store/uiStore'
 import { useSimulationStore } from '../../store/simulationStore'
-import { buildNetlist } from '../../utils/netlistBuilder'
+import { buildNetlist, buildNodeMap } from '../../utils/netlistBuilder'
 import * as api from '../../api'
 import type { Analysis, Expr, SimPlot, SimResult, SimVector } from '../../../../codegen/generated-rpc'
 import styles from './SimulationPanel.module.css'
@@ -100,13 +100,14 @@ export default function SimulationPanel() {
     setError(null)
     setResult(null)
     try {
+      const netNodeMap = buildNodeMap(circuit)
       const netlist = buildNetlist(circuit, analysis)
       const res = await api.simulate(netlist)
       if (!res.ok) {
         setError(res.error.message)
         return
       }
-      setResult(res.value)
+      setResult(res.value, netNodeMap)
     } catch (e) {
       setError(String(e))
     } finally {
