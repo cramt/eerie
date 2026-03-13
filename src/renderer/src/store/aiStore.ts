@@ -1,13 +1,11 @@
 import { create } from 'zustand'
-import Anthropic from '@anthropic-ai/sdk'
-import type { MessageParam, ToolUseBlock, TextBlock } from '@anthropic-ai/sdk/resources/messages'
-import { circuitToContext, COMPONENT_TYPES } from '../utils/circuitContext'
+import YAML from 'yaml'
+import type { AiMessage, CircuitMutation } from '../../../codegen/generated-rpc'
 import { useCircuitStore } from './circuitStore'
-import { useSimulationStore } from './simulationStore'
 import { buildNetlist } from '../utils/netlistBuilder'
+import { netlistToSpice } from '../utils/spiceWriter'
 import * as api from '../api'
-
-const LS_API_KEY = 'eerie-anthropic-key'
+import { uiPinToFile } from '../utils/netlistBuilder'
 
 export interface ChatMessage {
   id: string
@@ -18,21 +16,17 @@ export interface ChatMessage {
 interface AiStore {
   open: boolean
   messages: ChatMessage[]
-  /** Internal Anthropic API history (includes tool use blocks) */
-  _apiHistory: MessageParam[]
+  /** Internal conversation history sent to daemon (text-only turns) */
+  _history: AiMessage[]
   loading: boolean
-  /** User-supplied key from localStorage */
-  apiKey: string | null
-  /** Key provided by daemon (ANTHROPIC_API_KEY env) — preferred over apiKey */
+  /** Key provided by daemon (ANTHROPIC_API_KEY env) */
   daemonApiKey: string | null
 
-  /** True if any API key is available (daemon or user-supplied) */
+  /** True if daemon API key is available */
   hasKey: () => boolean
 
   setOpen: (open: boolean) => void
   toggleOpen: () => void
-  setApiKey: (key: string) => void
-  clearApiKey: () => void
   /** Load daemon-provided key from capabilities (called once on startup) */
   initDaemonKey: () => Promise<void>
   sendMessage: (text: string) => Promise<void>
@@ -43,255 +37,139 @@ function newId() {
   return crypto.randomUUID()
 }
 
-function loadApiKey(): string | null {
-  return localStorage.getItem(LS_API_KEY)
+/** Serialize current circuit to YAML string (same format as App.tsx save) */
+function serializeCircuitYaml(): string {
+  const circuit = useCircuitStore.getState().circuit
+
+  // Build a lookup for component type_id by id
+  const compTypeById = new Map<string, string>()
+  for (const comp of circuit.components) {
+    compTypeById.set(comp.id, comp.type_id)
+  }
+
+  function unwrapProperty(val: unknown): unknown {
+    if (val && typeof val === 'object') {
+      if ('Float' in val) return (val as { Float: number }).Float
+      if ('Int' in val) return (val as { Int: number }).Int
+      if ('String' in val) return (val as { String: string }).String
+      if ('Bool' in val) return (val as { Bool: boolean }).Bool
+    }
+    return val
+  }
+
+  const data: Record<string, unknown> = {
+    name: circuit.name,
+    ...(circuit.intent ? { intent: circuit.intent } : {}),
+    ...(circuit.parameters && Object.keys(circuit.parameters).length > 0
+      ? { parameters: circuit.parameters }
+      : {}),
+    components: circuit.components.map(c => ({
+      id: c.id,
+      type_id: c.type_id,
+      ...(c.label ? { label: c.label } : {}),
+      position: c.position,
+      ...(c.rotation ? { rotation: c.rotation } : {}),
+      ...(c.flip_x ? { flip_x: c.flip_x } : {}),
+      properties: Object.fromEntries(
+        Object.entries(c.properties).map(([k, v]) => [k, unwrapProperty(v)])
+      ),
+    })),
+    nets: circuit.nets.map(n => ({
+      id: n.id,
+      segments: n.segments,
+      pins: n.pins.map(p => {
+        const typeId = compTypeById.get(p.component_id) ?? ''
+        return {
+          component_id: p.component_id,
+          pin_id: uiPinToFile(typeId, p.pin_name),
+        }
+      }),
+      labels: n.labels.map(l => ({
+        name: l.text,
+        position: l.position,
+      })),
+    })),
+  }
+  return YAML.stringify(data)
 }
 
-const SYSTEM_PROMPT = (circuitContext: string) => `\
-You are an expert circuit design assistant embedded in Eerie, a SPICE-based circuit design tool.
-
-You help users design, analyze, and debug analog and digital circuits. You can:
-- Explain circuit behavior and theory
-- Suggest component values and circuit topologies
-- Analyze simulation results and identify issues
-- Modify the circuit by calling tools (add components, update values, etc.)
-
-Available component types:
-${COMPONENT_TYPES.map(c => `  - ${c.type_id}: ${c.description}`).join('\n')}
-
-Current circuit state:
-${circuitContext}
-
-When modifying the circuit, prefer making targeted changes and explain what you changed and why.
-After making changes, suggest running a simulation to verify the design.
-Pin names for connections: resistor/capacitor/inductor use (a, b); voltage/current sources use (positive, negative); BJT uses (collector, base, emitter); MOSFET uses (drain, gate, source); diode uses (anode, cathode).`
-
-const TOOLS: Anthropic.Tool[] = [
-  {
-    name: 'update_component_property',
-    description: 'Update a numeric property of a circuit component (e.g. change resistance, voltage, capacitance).',
-    input_schema: {
-      type: 'object',
-      properties: {
-        component_id: {
-          type: 'string',
-          description: 'The label/ID of the component (e.g. R1, V1, C2)',
-        },
-        property: {
-          type: 'string',
-          description: 'Property name (e.g. resistance, voltage, capacitance, inductance, current)',
-        },
-        value: {
-          type: 'number',
-          description: 'New value in base SI units (ohms, volts, farads, henries, amps)',
-        },
-      },
-      required: ['component_id', 'property', 'value'],
-    },
-  },
-  {
-    name: 'add_component',
-    description: 'Add a new component to the circuit. It will appear at the canvas center for the user to position.',
-    input_schema: {
-      type: 'object',
-      properties: {
-        type_id: {
-          type: 'string',
-          enum: COMPONENT_TYPES.map(c => c.type_id) as string[],
-          description: 'Component type',
-        },
-        label: {
-          type: 'string',
-          description: 'Optional label (e.g. R3). Leave empty to auto-generate.',
-        },
-        properties: {
-          type: 'object',
-          description: 'Key-value pairs of numeric properties. E.g. {"resistance": 4700} or {"voltage": 12}',
-          additionalProperties: { type: 'number' },
-        },
-      },
-      required: ['type_id'],
-    },
-  },
-  {
-    name: 'remove_component',
-    description: 'Remove a component from the circuit.',
-    input_schema: {
-      type: 'object',
-      properties: {
-        component_id: {
-          type: 'string',
-          description: 'The label/ID of the component to remove (e.g. R1, V1)',
-        },
-      },
-      required: ['component_id'],
-    },
-  },
-  {
-    name: 'run_simulation',
-    description: 'Run a DC operating point simulation and return the results.',
-    input_schema: {
-      type: 'object',
-      properties: {},
-      required: [],
-    },
-  },
-  {
-    name: 'set_circuit_intent',
-    description: 'Set or update the design intent description for this circuit. This documents what the circuit does, its design goals, and any constraints. It helps you and other agents understand the circuit\'s purpose.',
-    input_schema: {
-      type: 'object',
-      properties: {
-        intent: {
-          type: 'string',
-          description: 'Human-readable description of the circuit\'s purpose, design goals, and constraints.',
-        },
-      },
-      required: ['intent'],
-    },
-  },
-  {
-    name: 'set_parameter',
-    description: 'Define or update a named circuit parameter. Parameters are named numeric values that can be referenced by component properties for parametric design (e.g. set R_load=1000, then reference it in a component).',
-    input_schema: {
-      type: 'object',
-      properties: {
-        name: {
-          type: 'string',
-          description: 'Parameter name (e.g. R_load, cutoff_freq, supply_voltage)',
-        },
-        value: {
-          type: 'number',
-          description: 'Numeric value in base SI units',
-        },
-      },
-      required: ['name', 'value'],
-    },
-  },
-  {
-    name: 'remove_parameter',
-    description: 'Remove a named circuit parameter.',
-    input_schema: {
-      type: 'object',
-      properties: {
-        name: { type: 'string', description: 'Parameter name to remove' },
-      },
-      required: ['name'],
-    },
-  },
-]
-
-/** Execute a single tool call and return a result string */
-async function executeTool(name: string, input: Record<string, unknown>): Promise<string> {
+/** Apply a list of CircuitMutation objects to the circuit store */
+function applyMutations(mutations: CircuitMutation[]) {
   const store = useCircuitStore.getState()
 
-  switch (name) {
-    case 'update_component_property': {
-      const { component_id, property, value } = input as {
-        component_id: string; property: string; value: number
-      }
-      // Find component by label or id
-      const comp = store.circuit.components.find(
-        c => c.label === component_id || c.id === component_id
-      )
-      if (!comp) return `Error: component "${component_id}" not found`
-      store.updateComponentProperty(comp.id, property, { Float: value })
-      return `Updated ${comp.label ?? comp.id}.${property} = ${value}`
-    }
-
-    case 'add_component': {
-      const { type_id, label, properties } = input as {
-        type_id: string; label?: string; properties?: Record<string, number>
-      }
-      const props = properties
-        ? Object.fromEntries(Object.entries(properties).map(([k, v]) => [k, { Float: v }]))
-        : {}
-      store.addComponent(type_id, 0, 0, {
-        properties: props,
-        ...(label ? { namePrefix: label } : {}),
-      })
-      const added = store.circuit.components.at(-1)
-      return `Added ${added?.label ?? type_id} (${type_id})`
-    }
-
-    case 'remove_component': {
-      const { component_id } = input as { component_id: string }
-      const comp = store.circuit.components.find(
-        c => c.label === component_id || c.id === component_id
-      )
-      if (!comp) return `Error: component "${component_id}" not found`
-      store.removeComponent(comp.id)
-      return `Removed ${comp.label ?? comp.id}`
-    }
-
-    case 'run_simulation': {
-      try {
-        const netlist = buildNetlist(store.circuit)
-        const result = await api.simulate(netlist)
-        if (!result.ok) return `Simulation error: ${result.error.message}`
-        useSimulationStore.getState().setResult(result.value)
-        // Format key results
-        const lines: string[] = []
-        for (const plot of result.value.plots) {
-          for (const vec of plot.vecs) {
-            if (vec.real?.length === 1) {
-              lines.push(`${vec.name} = ${vec.real[0].toPrecision(4)}`)
-            }
-          }
+  for (const mutation of mutations) {
+    switch (mutation.tag) {
+      case 'UpdateProperty': {
+        const comp = store.circuit.components.find(
+          c => c.label === mutation.component_id || c.id === mutation.component_id
+        )
+        if (comp) {
+          store.updateComponentProperty(comp.id, mutation.property, { Float: mutation.value })
         }
-        return lines.length > 0
-          ? `Simulation complete:\n${lines.join('\n')}`
-          : 'Simulation complete (no scalar results)'
-      } catch (e) {
-        return `Simulation error: ${String(e)}`
+        break
+      }
+
+      case 'AddComponent': {
+        const props = mutation.properties
+          ? Object.fromEntries(mutation.properties.map(([k, v]) => [k, { Float: v }]))
+          : {}
+        // Place near the centroid of existing components, or origin
+        const comps = store.circuit.components
+        let cx = 0, cy = 0
+        if (comps.length > 0) {
+          cx = comps.reduce((s, c) => s + c.position.x, 0) / comps.length
+          cy = comps.reduce((s, c) => s + c.position.y, 0) / comps.length
+          cx += (Math.random() - 0.5) * 4
+          cy += (Math.random() - 0.5) * 4
+        }
+        cx = Math.round(cx)
+        cy = Math.round(cy)
+        store.addComponent(mutation.type_id, cx, cy, {
+          properties: props,
+          ...(mutation.label ? { namePrefix: mutation.label } : {}),
+        })
+        break
+      }
+
+      case 'RemoveComponent': {
+        const comp = store.circuit.components.find(
+          c => c.label === mutation.component_id || c.id === mutation.component_id
+        )
+        if (comp) {
+          store.removeComponent(comp.id)
+        }
+        break
+      }
+
+      case 'SetIntent': {
+        store.setCircuitIntent(mutation.intent ?? undefined)
+        break
+      }
+
+      case 'SetParameter': {
+        store.setParameter(mutation.name, mutation.value)
+        break
+      }
+
+      case 'RemoveParameter': {
+        store.removeParameter(mutation.name)
+        break
       }
     }
-
-    case 'set_circuit_intent': {
-      const { intent } = input as { intent: string }
-      store.setCircuitIntent(intent.trim() || undefined)
-      return `Circuit intent updated`
-    }
-
-    case 'set_parameter': {
-      const { name, value } = input as { name: string; value: number }
-      store.setParameter(name, value)
-      return `Parameter ${name} = ${value}`
-    }
-
-    case 'remove_parameter': {
-      const { name } = input as { name: string }
-      store.removeParameter(name)
-      return `Removed parameter ${name}`
-    }
-
-    default:
-      return `Unknown tool: ${name}`
   }
 }
 
 export const useAiStore = create<AiStore>((set, get) => ({
   open: false,
   messages: [],
-  _apiHistory: [],
+  _history: [],
   loading: false,
-  apiKey: loadApiKey(),
   daemonApiKey: null,
 
-  hasKey: () => !!(get().daemonApiKey ?? get().apiKey),
+  hasKey: () => !!get().daemonApiKey,
 
   setOpen: (open) => set({ open }),
   toggleOpen: () => set(s => ({ open: !s.open })),
-
-  setApiKey: (key) => {
-    localStorage.setItem(LS_API_KEY, key)
-    set({ apiKey: key })
-  },
-
-  clearApiKey: () => {
-    localStorage.removeItem(LS_API_KEY)
-    set({ apiKey: null })
-  },
 
   initDaemonKey: async () => {
     try {
@@ -302,89 +180,60 @@ export const useAiStore = create<AiStore>((set, get) => ({
     } catch { /* daemon not available, ignore */ }
   },
 
-  clearMessages: () => set({ messages: [], _apiHistory: [] }),
+  clearMessages: () => set({ messages: [], _history: [] }),
 
   sendMessage: async (text: string) => {
-    const apiKey = get().daemonApiKey ?? get().apiKey
-    if (!apiKey) return
-    const { _apiHistory } = get()
+    if (!get().daemonApiKey) return
+    const { _history } = get()
 
     const userMsg: ChatMessage = { id: newId(), role: 'user', content: text }
-    const history: MessageParam[] = [..._apiHistory, { role: 'user', content: text }]
+    const newHistory: AiMessage[] = [..._history, { role: 'user', content: text }]
 
     set(s => ({
       messages: [...s.messages, userMsg],
-      _apiHistory: history,
+      _history: newHistory,
       loading: true,
     }))
 
     try {
-      const client = new Anthropic({ apiKey, dangerouslyAllowBrowser: true })
-
+      // Build circuit YAML and SPICE netlist
+      const circuit_yaml = serializeCircuitYaml()
       const circuit = useCircuitStore.getState().circuit
-      const simResult = useSimulationStore.getState().result
-      const systemPrompt = SYSTEM_PROMPT(circuitToContext(circuit, simResult))
-
-      let currentHistory = history
-
-      // Agentic loop: keep going until no more tool calls
-      while (true) {
-        const response = await client.messages.create({
-          model: 'claude-opus-4-6',
-          max_tokens: 4096,
-          system: systemPrompt,
-          tools: TOOLS,
-          messages: currentHistory,
-        })
-
-        if (response.stop_reason === 'tool_use') {
-          // Execute all tool calls in this response
-          const toolResults: Anthropic.ToolResultBlockParam[] = []
-          for (const block of response.content) {
-            if (block.type === 'tool_use') {
-              const toolBlock = block as ToolUseBlock
-              const result = await executeTool(
-                toolBlock.name,
-                toolBlock.input as Record<string, unknown>
-              )
-              toolResults.push({
-                type: 'tool_result',
-                tool_use_id: toolBlock.id,
-                content: result,
-              })
-            }
-          }
-
-          // Add assistant message + tool results to history
-          currentHistory = [
-            ...currentHistory,
-            { role: 'assistant', content: response.content },
-            { role: 'user', content: toolResults },
-          ]
-        } else {
-          // Final response — extract text
-          const textBlocks = response.content.filter(b => b.type === 'text') as TextBlock[]
-          const assistantText = textBlocks.map(b => b.text).join('\n').trim()
-
-          const assistantMsg: ChatMessage = {
-            id: newId(),
-            role: 'assistant',
-            content: assistantText || '(no response)',
-          }
-
-          const finalHistory: MessageParam[] = [
-            ...currentHistory,
-            { role: 'assistant', content: response.content },
-          ]
-
-          set(s => ({
-            messages: [...s.messages, assistantMsg],
-            _apiHistory: finalHistory,
-            loading: false,
-          }))
-          break
-        }
+      let spice_netlist = ''
+      try {
+        const netlist = buildNetlist(circuit)
+        spice_netlist = netlistToSpice(netlist)
+      } catch {
+        // Circuit may be incomplete; that's OK
       }
+
+      const response = await api.aiChat({
+        messages: newHistory,
+        circuit_yaml,
+        spice_netlist,
+      })
+
+      // Apply any circuit mutations
+      if (response.mutations.length > 0) {
+        applyMutations(response.mutations)
+      }
+
+      const assistantMsg: ChatMessage = {
+        id: newId(),
+        role: 'assistant',
+        content: response.message || '(no response)',
+      }
+
+      const finalHistory: AiMessage[] = [
+        ...newHistory,
+        { role: 'assistant', content: response.message },
+      ]
+
+      set(s => ({
+        messages: [...s.messages, assistantMsg],
+        _history: finalHistory,
+        loading: false,
+      }))
     } catch (e) {
       const errMsg: ChatMessage = {
         id: newId(),

@@ -196,6 +196,30 @@ export interface SimResult {
   plots: SimPlot[];
 }
 
+export interface AiMessage {
+  role: string;
+  content: string;
+}
+
+export interface AiChatRequest {
+  messages: AiMessage[];
+  circuit_yaml: string;
+  spice_netlist: string;
+}
+
+export type CircuitMutation =
+  | { tag: 'UpdateProperty'; component_id: string; property: string; value: number }
+  | { tag: 'AddComponent'; type_id: string; label: string | null; properties: [string, number][] }
+  | { tag: 'RemoveComponent'; component_id: string }
+  | { tag: 'SetIntent'; intent: string | null }
+  | { tag: 'SetParameter'; name: string; value: number }
+  | { tag: 'RemoveParameter'; name: string };
+
+export interface AiChatResponse {
+  message: string;
+  mutations: CircuitMutation[];
+}
+
 // Request/Response type aliases
 export type GetCapabilitiesRequest = [];
 export type GetCapabilitiesResponse = { ok: true; value: Capabilities } | { ok: false; error: string };
@@ -233,6 +257,7 @@ export type SimulateSensResponse = { ok: true; value: SimResult } | { ok: false;
 export type SimulatePzRequest = [Netlist];
 export type SimulatePzResponse = { ok: true; value: SimResult } | { ok: false; error: string };
 
+
 // Caller interface for EerieService
 export interface EerieServiceCaller {
   /** Query what this backend supports. */
@@ -261,6 +286,8 @@ export interface EerieServiceCaller {
   simulateSens(netlist: Netlist): CallBuilder<{ ok: true; value: SimResult } | { ok: false; error: string }>;
   /** Run .pz pole-zero analysis. */
   simulatePz(netlist: Netlist): CallBuilder<{ ok: true; value: SimResult } | { ok: false; error: string }>;
+  /** Run AI chat with agentic circuit editing loop (server-side Anthropic API call). */
+  aiChat(req: AiChatRequest): CallBuilder<{ ok: true; value: AiChatResponse } | { ok: false; error: string }>;
 }
 
 // Client implementation for EerieService
@@ -557,6 +584,28 @@ export class EerieServiceClient implements EerieServiceCaller {
     });
   }
 
+  /** Run AI chat with agentic circuit editing loop (server-side Anthropic API call). */
+  aiChat(req: AiChatRequest): CallBuilder<{ ok: true; value: AiChatResponse } | { ok: false; error: string }> {
+    const descriptor = eerieService_descriptor.methods[13];
+    return new CallBuilder(async (metadata) => {
+      try {
+        const value = await this.caller.call({
+          method: "EerieService.aiChat",
+          args: { req },
+          descriptor,
+          schemaRegistry: eerieService_descriptor.schema_registry,
+          metadata,
+        });
+        return { ok: true, value } as { ok: true; value: AiChatResponse } | { ok: false; error: string };
+      } catch (e) {
+        if (e instanceof RpcError && e.isUserError()) {
+          return { ok: false, error: e.userError } as { ok: true; value: AiChatResponse } | { ok: false; error: string };
+        }
+        throw e;
+      }
+    });
+  }
+
 }
 
 /**
@@ -585,6 +634,7 @@ export interface EerieServiceHandler {
   simulateTf(netlist: Netlist): Promise<{ ok: true; value: SimResult } | { ok: false; error: string }> | { ok: true; value: SimResult } | { ok: false; error: string };
   simulateSens(netlist: Netlist): Promise<{ ok: true; value: SimResult } | { ok: false; error: string }> | { ok: true; value: SimResult } | { ok: false; error: string };
   simulatePz(netlist: Netlist): Promise<{ ok: true; value: SimResult } | { ok: false; error: string }> | { ok: true; value: SimResult } | { ok: false; error: string };
+  aiChat(req: AiChatRequest): Promise<{ ok: true; value: AiChatResponse } | { ok: false; error: string }> | { ok: true; value: AiChatResponse } | { ok: false; error: string };
 }
 
 // Dispatcher for EerieService
@@ -687,6 +737,13 @@ export class EerieServiceDispatcher implements ChannelingDispatcher {
       } catch {
         call.replyInternalError();
       }
+    } else if (method.id === 0x88a9ea20fe956f57n) {
+      try {
+        const result = await this.handler.aiChat(args[0] as AiChatRequest);
+        if (result.ok) call.reply(result.value); else call.replyErr(result.error);
+      } catch {
+        call.replyInternalError();
+      }
     }
   }
 }
@@ -723,6 +780,10 @@ const eerieService_schema_registry: SchemaRegistry = new Map<string, Schema>([
   ["SimVector", { kind: 'struct', fields: { 'name': { kind: 'string' }, 'real': { kind: 'vec', element: { kind: 'f64' } }, 'complex': { kind: 'vec', element: { kind: 'ref', name: 'Complex' } } } }],
   ["SimPlot", { kind: 'struct', fields: { 'name': { kind: 'string' }, 'vecs': { kind: 'vec', element: { kind: 'ref', name: 'SimVector' } } } }],
   ["SimResult", { kind: 'struct', fields: { 'plots': { kind: 'vec', element: { kind: 'ref', name: 'SimPlot' } } } }],
+  ["AiMessage", { kind: 'struct', fields: { 'role': { kind: 'string' }, 'content': { kind: 'string' } } }],
+  ["AiChatRequest", { kind: 'struct', fields: { 'messages': { kind: 'vec', element: { kind: 'ref', name: 'AiMessage' } }, 'circuit_yaml': { kind: 'string' }, 'spice_netlist': { kind: 'string' } } }],
+  ["CircuitMutation", { kind: 'enum', variants: [{ name: 'UpdateProperty', fields: { 'component_id': { kind: 'string' }, 'property': { kind: 'string' }, 'value': { kind: 'f64' } } }, { name: 'AddComponent', fields: { 'type_id': { kind: 'string' }, 'label': { kind: 'option', inner: { kind: 'string' } }, 'properties': { kind: 'vec', element: { kind: 'tuple', elements: [{ kind: 'string' }, { kind: 'f64' }] } } } }, { name: 'RemoveComponent', fields: { 'component_id': { kind: 'string' } } }, { name: 'SetIntent', fields: { 'intent': { kind: 'option', inner: { kind: 'string' } } } }, { name: 'SetParameter', fields: { 'name': { kind: 'string' }, 'value': { kind: 'f64' } } }, { name: 'RemoveParameter', fields: { 'name': { kind: 'string' } } }] }],
+  ["AiChatResponse", { kind: 'struct', fields: { 'message': { kind: 'string' }, 'mutations': { kind: 'vec', element: { kind: 'ref', name: 'CircuitMutation' } } } }],
 ]);
 
 // Service descriptor for runtime schema-driven dispatch
@@ -807,6 +868,12 @@ export const eerieService_descriptor: ServiceDescriptor = {
       id: 0xbf7851855b7cc2bbn,
       args: { kind: 'tuple', elements: [{ kind: 'ref', name: 'Netlist' }] },
       result: { kind: 'enum', variants: [{ name: 'Ok', fields: { kind: 'ref', name: 'SimResult' } }, { name: 'Err', fields: { kind: 'enum', variants: [{ name: 'User', fields: { kind: 'string' } }, { name: 'UnknownMethod', fields: null }, { name: 'InvalidPayload', fields: null }, { name: 'Cancelled', fields: null }] } }] },
+    },
+    {
+      name: 'aiChat',
+      id: 0x88a9ea20fe956f57n,
+      args: { kind: 'tuple', elements: [{ kind: 'ref', name: 'AiChatRequest' }] },
+      result: { kind: 'enum', variants: [{ name: 'Ok', fields: { kind: 'ref', name: 'AiChatResponse' } }, { name: 'Err', fields: { kind: 'enum', variants: [{ name: 'User', fields: { kind: 'string' } }, { name: 'UnknownMethod', fields: null }, { name: 'InvalidPayload', fields: null }, { name: 'Cancelled', fields: null }] } }] },
     },
   ],
 };

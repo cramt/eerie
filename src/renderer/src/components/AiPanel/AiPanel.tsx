@@ -2,8 +2,11 @@ import React, { useRef, useEffect, useState } from 'react'
 import { useAiStore } from '../../store/aiStore'
 import styles from './AiPanel.module.css'
 
+const isNativeMode = import.meta.env.VITE_MODE === 'native'
+const mcpUrl = isNativeMode ? `http://${location.host}/mcp` : null
+
 export default function AiPanel() {
-  const { messages, loading, apiKey, daemonApiKey, hasKey, setApiKey, clearApiKey, sendMessage, clearMessages, initDaemonKey } =
+  const { messages, loading, daemonApiKey, hasKey, sendMessage, clearMessages, initDaemonKey } =
     useAiStore()
 
   // Try to get API key from daemon on first mount
@@ -11,8 +14,6 @@ export default function AiPanel() {
     initDaemonKey()
   }, [])
   const [input, setInput] = useState('')
-  const [keyInput, setKeyInput] = useState('')
-  const [showKeyForm, setShowKeyForm] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLTextAreaElement>(null)
 
@@ -35,59 +36,25 @@ export default function AiPanel() {
     }
   }
 
-  const handleSaveKey = () => {
-    const key = keyInput.trim()
-    if (!key) return
-    setApiKey(key)
-    setKeyInput('')
-    setShowKeyForm(false)
-  }
-
-  if (!hasKey() || showKeyForm) {
+  if (!hasKey()) {
     return (
       <div className={styles.panel}>
         <div className={styles.header}>
           <span className={styles.headerTitle}>AI Assistant</span>
-          {apiKey && (
-            <button className={styles.iconBtn} onClick={() => setShowKeyForm(false)} title="Cancel">
-              ✕
-            </button>
-          )}
         </div>
         <div className={styles.setupContent}>
           <div className={styles.setupIcon}>✦</div>
-          <p className={styles.setupTitle}>Claude API key required</p>
+          <p className={styles.setupTitle}>AI not available</p>
           <p className={styles.setupDesc}>
-            Enter your Anthropic API key to enable AI-assisted circuit design.
-            Get one at{' '}
-            <span className={styles.setupLink}>console.anthropic.com</span>
-            {' '}— uses the same account as your Claude Code subscription.
+            AI Assistant requires native mode with <code>ANTHROPIC_API_KEY</code> set.
           </p>
-          <input
-            className={styles.keyInput}
-            type="password"
-            placeholder="sk-ant-..."
-            value={keyInput}
-            onChange={e => setKeyInput(e.target.value)}
-            onKeyDown={e => e.key === 'Enter' && handleSaveKey()}
-            autoFocus
-          />
-          <button
-            className={styles.saveKeyBtn}
-            onClick={handleSaveKey}
-            disabled={!keyInput.trim()}
-          >
-            Save key
-          </button>
-          {daemonApiKey ? (
-            <p className={styles.setupNote}>
-              Using <code>ANTHROPIC_API_KEY</code> from your environment.
-              Enter a different key below to override.
-            </p>
-          ) : (
-            <p className={styles.setupNote}>
-              Key is stored only in your browser's localStorage.
-            </p>
+          {mcpUrl && (
+            <div className={styles.mcpBox}>
+              <p className={styles.mcpTitle}>Connect via Claude Code CLI:</p>
+              <code className={styles.mcpCmd}>
+                claude mcp add eerie {mcpUrl}
+              </code>
+            </div>
           )}
         </div>
       </div>
@@ -99,6 +66,14 @@ export default function AiPanel() {
       <div className={styles.header}>
         <span className={styles.headerTitle}>AI Assistant</span>
         <div className={styles.headerActions}>
+          {mcpUrl && (
+            <span
+              className={styles.mcpBadge}
+              title={`MCP server: claude mcp add eerie ${mcpUrl}`}
+            >
+              MCP
+            </span>
+          )}
           {messages.length > 0 && (
             <button
               className={styles.iconBtn}
@@ -108,13 +83,6 @@ export default function AiPanel() {
               ↺
             </button>
           )}
-          <button
-            className={styles.iconBtn}
-            onClick={() => setShowKeyForm(true)}
-            title="Change API key"
-          >
-            ⚙
-          </button>
         </div>
       </div>
 

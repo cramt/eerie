@@ -1,3 +1,4 @@
+mod ai;
 mod mcp;
 mod service;
 
@@ -9,7 +10,7 @@ use axum::{
     extract::WebSocketUpgrade,
     http::{Response, StatusCode, Uri, header},
     response::IntoResponse,
-    routing::{get, options, post},
+    routing::{get, post},
 };
 use roam::DriverCaller;
 use tower_http::services::ServeDir;
@@ -26,10 +27,10 @@ async fn embedded_handler(path: &str) -> Response<Body> {
     let path = path.strip_prefix('/').unwrap_or(path);
     let path = if path.is_empty() { "index.html" } else { path };
 
-    match Assets::get(&path) {
+    match Assets::get(path) {
         Some(content) => {
             let body = Body::from(content.data.into_owned());
-            let mime = mime_guess::from_path(&path).first_or_octet_stream();
+            let mime = mime_guess::from_path(path).first_or_octet_stream();
             Response::builder()
                 .header(header::CONTENT_TYPE, mime.as_ref())
                 .body(body)

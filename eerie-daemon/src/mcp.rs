@@ -10,7 +10,6 @@
 ///   write_circuit         — write / overwrite a .eerie file
 ///   get_circuit_topology  — geometry-free topology description
 ///   simulate_spice        — parse + run SPICE netlist, return .op results
-
 use axum::{
     body::Bytes,
     extract::State,
@@ -43,7 +42,7 @@ fn json_escape(s: &str) -> String {
 
 /// Extract a JSON string value by key from a flat JSON object.
 /// Only handles one level of nesting; sufficient for MCP params.
-fn extract_str<'a>(json: &'a str, key: &str) -> Option<String> {
+fn extract_str(json: &str, key: &str) -> Option<String> {
     let needle = format!(r#""{key}":"#);
     let start = json.find(needle.as_str())? + needle.len();
     let rest = json[start..].trim_start();
@@ -150,7 +149,7 @@ fn tools_list_json() -> &'static str {
     r#"{"tools":[
   {"name":"get_project_info","description":"Get project metadata: name, directory, and list of circuit (.eerie) and other files.","inputSchema":{"type":"object","properties":{},"required":[]}},
   {"name":"read_circuit","description":"Read a .eerie circuit file and return its raw YAML content. Ignore position/rotation/segment fields — they are layout data. Use get_circuit_topology for a clean logical view.","inputSchema":{"type":"object","properties":{"filename":{"type":"string","description":"Filename relative to project dir, e.g. \"voltage_divider.eerie\""}},"required":["filename"]}},
-  {"name":"write_circuit","description":"Write (create or overwrite) a .eerie circuit file. Provide valid YAML in the eerie format.","inputSchema":{"type":"object","properties":{"filename":{"type":"string"},"content":{"type":"string","description":"Full YAML content"}},"required":["filename","content"]}},
+  {"name":"write_circuit","description":"Write (create or overwrite) a .eerie circuit file. The content must be valid YAML in eerie format. Minimal example:\\nname: My Circuit\\ncomponents:\\n  - id: R1\\n    type_id: resistor\\n    label: R1\\n    position: {x: 0, y: 0}\\n    rotation: 0\\n    flip_x: false\\n    properties:\\n      resistance: !Float 1000\\nnets: []\\nOnly edit component labels/type_id/properties; preserve id/position/rotation/flip_x from read_circuit.","inputSchema":{"type":"object","properties":{"filename":{"type":"string"},"content":{"type":"string","description":"Full YAML content"}},"required":["filename","content"]}},
   {"name":"get_circuit_topology","description":"Read a .eerie file and return a geometry-free topology summary: component labels, types, values, net connections, design intent, and parameters. Use this to understand the circuit logically.","inputSchema":{"type":"object","properties":{"filename":{"type":"string"}},"required":["filename"]}},
   {"name":"simulate_spice","description":"Parse a SPICE netlist and run a DC operating point simulation. Returns node voltages and branch currents.","inputSchema":{"type":"object","properties":{"netlist":{"type":"string","description":"SPICE netlist text (ngspice dialect). Must include .op and end with .end."}},"required":["netlist"]}}
 ]}"#
@@ -357,7 +356,7 @@ fn build_topology(yaml_src: &str) -> Result<String, String> {
                     Yaml::Integer(i) => i.to_string(),
                     Yaml::Real(r)    => r.clone(),
                     Yaml::String(s)  => s.clone(),
-                    _                => format!("{v:?}"),
+                    _ => format!("{v:?}"),
                 };
                 lines.push(format!("  {key} = {val}"));
             }

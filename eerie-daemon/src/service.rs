@@ -1,6 +1,6 @@
 use eerie_rpc::{
-    Capabilities, EerieService, FileContent, FileOpenRequest, FileSaveRequest, FileSaveResult,
-    ListProjectRequest, ProjectDir, ProjectListing,
+    AiChatRequest, AiChatResponse, Capabilities, EerieService, FileContent, FileOpenRequest,
+    FileSaveRequest, FileSaveResult, ListProjectRequest, ProjectDir, ProjectListing,
 };
 use std::path::PathBuf;
 use thevenin_types::{Netlist, SimResult};
@@ -108,5 +108,11 @@ impl EerieService for DaemonService {
 
     async fn simulate_pz(&self, netlist: Netlist) -> Result<SimResult, String> {
         thevenin::simulate_pz(&netlist).map_err(|e| e.to_string())
+    }
+
+    async fn ai_chat(&self, req: AiChatRequest) -> Result<AiChatResponse, String> {
+        let api_key = std::env::var("ANTHROPIC_API_KEY")
+            .map_err(|_| "ANTHROPIC_API_KEY not set".to_string())?;
+        crate::ai::run_chat(&api_key, req).await
     }
 }

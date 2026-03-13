@@ -6,9 +6,11 @@ import {
   type SimResult,
   type Netlist,
   type Capabilities,
+  type AiChatRequest,
+  type AiChatResponse,
 } from "../../codegen/generated-rpc";
 
-export type { SimResult, Netlist, Capabilities };
+export type { SimResult, Netlist, Capabilities, AiChatRequest, AiChatResponse };
 
 export type SimulateResponse =
   | { ok: true; value: SimResult }
@@ -120,6 +122,15 @@ export async function simulate(netlist: Netlist): Promise<SimulateResponse> {
   } catch (e) {
     return { ok: false, error: { message: String(e) } };
   }
+}
+
+// ── AI Chat ──────────────────────────────────────────────────────────────────
+
+export async function aiChat(req: AiChatRequest): Promise<AiChatResponse> {
+  const client = await getClient();
+  const res = await client.aiChat(req);
+  if (!res.ok) throw new Error(res.error);
+  return res.value;
 }
 
 // ── Capabilities ─────────────────────────────────────────────────────────────
