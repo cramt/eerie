@@ -1,310 +1,178 @@
 /// MCP (Model Context Protocol) server — JSON-RPC 2.0 over HTTP POST.
 ///
-/// Exposes circuit file access and simulation as MCP tools so that
-/// Claude Code users can connect their local `claude` instance to eerie:
-///
-///   claude mcp add eerie http://localhost:<PORT>/mcp
+/// No serde. JSON-RPC parsing is done with a tiny hand-rolled extractor
+/// (the protocol is simple enough). Responses are built with format!().
+/// YAML parsing for get_circuit_topology uses yaml-rust2 (no serde).
 ///
 /// Tools exposed:
-///   get_project_info  — project name, directory, list of circuit files
-///   read_circuit      — read a .eerie circuit file (YAML)
-///   write_circuit     — write / overwrite a .eerie circuit file
-///   simulate_spice    — parse and run a SPICE netlist, return .op results
+///   get_project_info      — project name, directory, list of circuit files
+///   read_circuit          — raw .eerie YAML
+///   write_circuit         — write / overwrite a .eerie file
+///   get_circuit_topology  — geometry-free topology description
+///   simulate_spice        — parse + run SPICE netlist, return .op results
 
 use axum::{
-    Json,
+    body::Bytes,
     extract::State,
-    http::{HeaderMap, StatusCode},
-    response::IntoResponse,
+    http::HeaderMap,
+    response::{IntoResponse, Response},
 };
-use serde::{Deserialize, Serialize};
-use serde_json::{Value, json};
 use std::path::PathBuf;
 
-// ── JSON-RPC 2.0 envelope ─────────────────────────────────────────────────
+// ── Minimal JSON helpers ──────────────────────────────────────────────────
 
-#[derive(Deserialize)]
-pub struct JsonRpcRequest {
-    pub jsonrpc: String,
-    pub id: Option<Value>,
-    pub method: String,
-    pub params: Option<Value>,
-}
-
-#[derive(Serialize)]
-pub struct JsonRpcResponse {
-    pub jsonrpc: String,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub id: Option<Value>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub result: Option<Value>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub error: Option<JsonRpcError>,
-}
-
-#[derive(Serialize)]
-pub struct JsonRpcError {
-    pub code: i32,
-    pub message: String,
-}
-
-impl JsonRpcResponse {
-    fn ok(id: Option<Value>, result: Value) -> Self {
-        Self { jsonrpc: "2.0".into(), id, result: Some(result), error: None }
+/// Escape a string value for embedding inside a JSON string literal.
+fn json_escape(s: &str) -> String {
+    let mut out = String::with_capacity(s.len() + 4);
+    for ch in s.chars() {
+        match ch {
+            '"' => out.push_str(r#"\""#),
+            '\\' => out.push_str(r"\\"),
+            '\n' => out.push_str(r"\n"),
+            '\r' => out.push_str(r"\r"),
+            '\t' => out.push_str(r"\t"),
+            c if (c as u32) < 0x20 => {
+                use std::fmt::Write as _;
+                let _ = write!(out, "\\u{:04x}", c as u32);
+            }
+            c => out.push(c),
+        }
     }
+    out
+}
 
-    fn err(id: Option<Value>, code: i32, message: impl Into<String>) -> Self {
-        Self {
-            jsonrpc: "2.0".into(),
-            id,
-            result: None,
-            error: Some(JsonRpcError { code, message: message.into() }),
+/// Extract a JSON string value by key from a flat JSON object.
+/// Only handles one level of nesting; sufficient for MCP params.
+fn extract_str<'a>(json: &'a str, key: &str) -> Option<String> {
+    let needle = format!(r#""{key}":"#);
+    let start = json.find(needle.as_str())? + needle.len();
+    let rest = json[start..].trim_start();
+    if !rest.starts_with('"') {
+        return None;
+    }
+    let rest = &rest[1..];
+    let mut result = String::new();
+    let mut chars = rest.chars();
+    loop {
+        match chars.next()? {
+            '"' => return Some(result),
+            '\\' => match chars.next()? {
+                '"' => result.push('"'),
+                '\\' => result.push('\\'),
+                'n' => result.push('\n'),
+                'r' => result.push('\r'),
+                't' => result.push('\t'),
+                c => result.push(c),
+            },
+            c => result.push(c),
         }
     }
 }
 
-// ── Tool definitions ──────────────────────────────────────────────────────
-
-fn tool_definitions() -> Value {
-    json!([
-        {
-            "name": "get_project_info",
-            "description": "Get project metadata: name, project directory, and list of circuit files (.eerie) and other files.",
-            "inputSchema": {
-                "type": "object",
-                "properties": {},
-                "required": []
+/// Return the raw JSON representation of the `id` field (null / "str" / 123).
+/// Returns `"null"` if the field is absent (notification).
+fn extract_id(json: &str) -> String {
+    let needle = r#""id":"#;
+    let Some(start) = json.find(needle) else {
+        return "null".into();
+    };
+    let rest = json[start + needle.len()..].trim_start();
+    if rest.starts_with("null") {
+        return "null".into();
+    }
+    if rest.starts_with('"') {
+        // Quoted id — find the closing quote (handle escapes)
+        let mut i = 1usize;
+        let bytes = rest.as_bytes();
+        while i < bytes.len() {
+            if bytes[i] == b'"' && (i == 0 || bytes[i - 1] != b'\\') {
+                return rest[..=i].to_string();
             }
-        },
-        {
-            "name": "read_circuit",
-            "description": "Read a .eerie circuit file from the project directory and return its YAML content. The YAML contains components (with type, label, properties) and nets (electrical connections between component pins). Ignore the position/rotation/segment fields — they are layout data for the visual editor.",
-            "inputSchema": {
-                "type": "object",
-                "properties": {
-                    "filename": {
-                        "type": "string",
-                        "description": "Filename relative to project directory, e.g. \"voltage_divider.eerie\""
-                    }
-                },
-                "required": ["filename"]
-            }
-        },
-        {
-            "name": "write_circuit",
-            "description": "Write (create or overwrite) a .eerie circuit file in the project directory. Provide valid YAML that follows the eerie circuit format. Open the file in the browser after writing to see it visually.",
-            "inputSchema": {
-                "type": "object",
-                "properties": {
-                    "filename": {
-                        "type": "string",
-                        "description": "Filename relative to project directory, e.g. \"my_filter.eerie\""
-                    },
-                    "content": {
-                        "type": "string",
-                        "description": "Full YAML content of the circuit file"
-                    }
-                },
-                "required": ["filename", "content"]
-            }
-        },
-        {
-            "name": "get_circuit_topology",
-            "description": "Read a .eerie circuit file and return a clean, geometry-free topology description: component labels, types, values, and which pins connect to which nets. Includes design intent and parameters if defined. Use this instead of read_circuit when you need to understand the circuit logically rather than edit the raw YAML.",
-            "inputSchema": {
-                "type": "object",
-                "properties": {
-                    "filename": {
-                        "type": "string",
-                        "description": "Filename relative to project directory, e.g. \"voltage_divider.eerie\""
-                    }
-                },
-                "required": ["filename"]
-            }
-        },
-        {
-            "name": "simulate_spice",
-            "description": "Parse a SPICE netlist and run a DC operating point (.op) simulation. Returns node voltages and branch currents. Use this to verify a circuit design numerically.",
-            "inputSchema": {
-                "type": "object",
-                "properties": {
-                    "netlist": {
-                        "type": "string",
-                        "description": "SPICE netlist text (ngspice dialect). Must include a .op directive and end with .end. Example:\n  My Circuit\n  V1 in 0 DC 5\n  R1 in out 1k\n  R2 out 0 2k\n  .op\n  .end"
-                    }
-                },
-                "required": ["netlist"]
-            }
+            i += 1;
         }
-    ])
+        return "null".into();
+    }
+    // Numeric id
+    let end = rest
+        .find(|c: char| !c.is_ascii_digit() && c != '-' && c != '.')
+        .unwrap_or(rest.len());
+    rest[..end].to_string()
+}
+
+/// Return true if the request has an `id` field (i.e. is not a notification).
+fn has_id(json: &str) -> bool {
+    json.contains(r#""id":"#)
+}
+
+// ── JSON-RPC response builders ────────────────────────────────────────────
+
+fn ok_response(id: &str, result_json: &str) -> Response {
+    let body = format!(r#"{{"jsonrpc":"2.0","id":{id},"result":{result_json}}}"#);
+    json_body(body)
+}
+
+fn err_response(id: &str, code: i32, message: &str) -> Response {
+    let body = format!(
+        r#"{{"jsonrpc":"2.0","id":{id},"error":{{"code":{code},"message":"{msg}"}}}}"#,
+        msg = json_escape(message)
+    );
+    json_body(body)
+}
+
+fn json_body(body: String) -> Response {
+    axum::response::Response::builder()
+        .status(200)
+        .header("Content-Type", "application/json")
+        .header("Access-Control-Allow-Origin", "*")
+        .body(axum::body::Body::from(body))
+        .unwrap()
+}
+
+// ── Tool result helpers ───────────────────────────────────────────────────
+
+fn tool_ok(text: &str) -> String {
+    format!(
+        r#"{{"content":[{{"type":"text","text":"{}"}}],"isError":false}}"#,
+        json_escape(text)
+    )
+}
+
+fn tool_err(text: &str) -> String {
+    format!(
+        r#"{{"content":[{{"type":"text","text":"{}"}}],"isError":true}}"#,
+        json_escape(text)
+    )
+}
+
+// ── Tool definitions (static JSON string) ────────────────────────────────
+
+fn tools_list_json() -> &'static str {
+    r#"{"tools":[
+  {"name":"get_project_info","description":"Get project metadata: name, directory, and list of circuit (.eerie) and other files.","inputSchema":{"type":"object","properties":{},"required":[]}},
+  {"name":"read_circuit","description":"Read a .eerie circuit file and return its raw YAML content. Ignore position/rotation/segment fields — they are layout data. Use get_circuit_topology for a clean logical view.","inputSchema":{"type":"object","properties":{"filename":{"type":"string","description":"Filename relative to project dir, e.g. \"voltage_divider.eerie\""}},"required":["filename"]}},
+  {"name":"write_circuit","description":"Write (create or overwrite) a .eerie circuit file. Provide valid YAML in the eerie format.","inputSchema":{"type":"object","properties":{"filename":{"type":"string"},"content":{"type":"string","description":"Full YAML content"}},"required":["filename","content"]}},
+  {"name":"get_circuit_topology","description":"Read a .eerie file and return a geometry-free topology summary: component labels, types, values, net connections, design intent, and parameters. Use this to understand the circuit logically.","inputSchema":{"type":"object","properties":{"filename":{"type":"string"}},"required":["filename"]}},
+  {"name":"simulate_spice","description":"Parse a SPICE netlist and run a DC operating point simulation. Returns node voltages and branch currents.","inputSchema":{"type":"object","properties":{"netlist":{"type":"string","description":"SPICE netlist text (ngspice dialect). Must include .op and end with .end."}},"required":["netlist"]}}
+]}"#
 }
 
 // ── Tool implementations ──────────────────────────────────────────────────
 
-fn tool_content(text: impl Into<String>) -> Value {
-    json!({ "content": [{ "type": "text", "text": text.into() }], "isError": false })
+fn safe_path(project_dir: &PathBuf, filename: &str) -> Result<PathBuf, String> {
+    let path = project_dir.join(filename);
+    if !path.starts_with(project_dir) {
+        return Err("path traversal not allowed".into());
+    }
+    Ok(path)
 }
 
-fn tool_error(text: impl Into<String>) -> Value {
-    json!({ "content": [{ "type": "text", "text": text.into() }], "isError": true })
-}
-
-/// Build a geometry-free topology description from a parsed .eerie YAML value.
-fn format_topology(yaml: &serde_yaml::Value) -> String {
-    use serde_yaml::Value as Y;
-
-    let mut lines: Vec<String> = Vec::new();
-
-    let name = yaml["name"].as_str().unwrap_or("Untitled");
-    lines.push(format!("Circuit: {name}"));
-
-    if let Some(intent) = yaml["intent"].as_str() {
-        lines.push(String::new());
-        lines.push("Intent:".into());
-        for l in intent.trim().lines() {
-            lines.push(format!("  {l}"));
-        }
-    }
-
-    if let Some(params) = yaml["parameters"].as_mapping() {
-        if !params.is_empty() {
-            lines.push(String::new());
-            lines.push("Parameters:".into());
-            for (k, v) in params {
-                let key = k.as_str().unwrap_or("?");
-                let val = if let Some(n) = v.as_f64() {
-                    n.to_string()
-                } else if let Some(s) = v.as_str() {
-                    s.to_string()
-                } else {
-                    format!("{v:?}")
-                };
-                lines.push(format!("  {key} = {val}"));
-            }
-        }
-    }
-
-    // Build component id → (label, type_id) map
-    let mut comp_label: std::collections::HashMap<&str, &str> = Default::default();
-    let mut comp_type: std::collections::HashMap<&str, &str> = Default::default();
-
-    let empty_seq = Y::Sequence(vec![]);
-    let components = yaml["components"].as_sequence().unwrap_or(
-        if let Y::Sequence(s) = &empty_seq { s } else { unreachable!() }
-    );
-
-    lines.push(String::new());
-    lines.push("Components:".into());
-    for comp in components {
-        let id = comp["id"].as_str().unwrap_or("?");
-        let type_id = comp["type_id"].as_str().unwrap_or("?");
-        let label = comp["label"].as_str().unwrap_or(id);
-        comp_label.insert(id, label);
-        comp_type.insert(id, type_id);
-
-        // Format properties (skip geometry)
-        let mut prop_parts: Vec<String> = Vec::new();
-        if let Some(props) = comp["properties"].as_mapping() {
-            for (k, v) in props {
-                let key = k.as_str().unwrap_or("?");
-                let val = match v {
-                    Y::Number(_) => {
-                        let fv = v.as_f64().unwrap_or(0.0);
-                        if fv.abs() >= 1e6 { format!("{:.3}M", fv / 1e6) }
-                        else if fv.abs() >= 1e3 { format!("{:.3}k", fv / 1e3) }
-                        else if fv.abs() >= 1.0 { format!("{fv:.3}") }
-                        else if fv.abs() >= 1e-3 { format!("{:.3}m", fv * 1e3) }
-                        else if fv.abs() >= 1e-6 { format!("{:.3}µ", fv * 1e6) }
-                        else if fv.abs() >= 1e-9 { format!("{:.3}n", fv * 1e9) }
-                        else { format!("{:.3}p", fv * 1e12) }
-                    }
-                    Y::String(s) => s.clone(),
-                    Y::Mapping(m) => {
-                        // Facet-style {Float: 1000} or {String: "x"}
-                        if let Some(fv) = m.get("Float").and_then(Y::as_f64) {
-                            if fv.abs() >= 1e6 { format!("{:.3}M", fv / 1e6) }
-                            else if fv.abs() >= 1e3 { format!("{:.3}k", fv / 1e3) }
-                            else { format!("{fv}") }
-                        } else if let Some(sv) = m.get("String").and_then(Y::as_str) {
-                            sv.to_string()
-                        } else {
-                            format!("{m:?}")
-                        }
-                    }
-                    other => format!("{other:?}"),
-                };
-                prop_parts.push(format!("{key}={val}"));
-            }
-        }
-        let props_str = if prop_parts.is_empty() {
-            String::new()
-        } else {
-            format!(": {}", prop_parts.join(", "))
-        };
-        lines.push(format!("  {label} ({type_id}){props_str}"));
-    }
-
-    // Net connections
-    let nets = yaml["nets"].as_sequence().unwrap_or(
-        if let Y::Sequence(s) = &empty_seq { s } else { unreachable!() }
-    );
-    if !nets.is_empty() {
-        lines.push(String::new());
-        lines.push("Connections:".into());
-        for net in nets {
-            let net_id = net["id"].as_str().unwrap_or("?");
-            // Prefer first label text, then name field, then id
-            let net_name = net["labels"]
-                .as_sequence()
-                .and_then(|ls| ls.first())
-                .and_then(|l| l["name"].as_str())
-                .or_else(|| net["name"].as_str())
-                .unwrap_or(net_id);
-
-            let pins = net["pins"].as_sequence();
-            if pins.map_or(true, |p| p.is_empty()) {
-                continue;
-            }
-            let pin_parts: Vec<String> = pins.unwrap().iter().map(|p| {
-                let cid = p["component_id"].as_str().unwrap_or("?");
-                let raw_pin = p["pin_id"].as_str()
-                    .or_else(|| p["pin_name"].as_str())
-                    .unwrap_or("?");
-                let type_id = comp_type.get(cid).copied().unwrap_or("");
-                let label = comp_label.get(cid).copied().unwrap_or(cid);
-                // Try canonical; fall back to raw
-                let canon = match (type_id, raw_pin) {
-                    ("resistor" | "capacitor" | "inductor", "p") => "a",
-                    ("resistor" | "capacitor" | "inductor", "n") => "b",
-                    ("dc_voltage" | "dc_current", "p") => "positive",
-                    ("dc_voltage" | "dc_current", "n") => "negative",
-                    ("diode", "p") => "anode",
-                    ("diode", "n") => "cathode",
-                    ("npn" | "pnp", "c") => "collector",
-                    ("npn" | "pnp", "b") => "base",
-                    ("npn" | "pnp", "e") => "emitter",
-                    ("nmos" | "pmos", "d") => "drain",
-                    ("nmos" | "pmos", "g") => "gate",
-                    ("nmos" | "pmos", "s") => "source",
-                    _ => raw_pin,
-                };
-                format!("{label}({canon})")
-            }).collect();
-            lines.push(format!("  {net_name}: {}", pin_parts.join(" ↔ ")));
-        }
-    }
-
-    lines.join("\n")
-}
-
-async fn call_tool(project_dir: &PathBuf, name: &str, args: &Value) -> Value {
+async fn call_tool(project_dir: &PathBuf, name: &str, json: &str) -> String {
     match name {
         "get_project_info" => {
             let manifest_path = project_dir.join("eerie.yaml");
             let project_name = std::fs::read_to_string(&manifest_path)
                 .ok()
                 .and_then(|yaml| {
-                    // Extract name: field with simple line scan (no YAML parser needed)
                     yaml.lines()
                         .find(|l| l.starts_with("name:"))
                         .map(|l| l["name:".len()..].trim().to_string())
@@ -338,106 +206,251 @@ async fn call_tool(project_dir: &PathBuf, name: &str, args: &Value) -> Value {
                 "Project: {project_name}\nDirectory: {dir}\nCircuits: {circuits}\nOther files: {other}",
                 dir = project_dir.display(),
                 circuits = if circuits.is_empty() { "(none)".into() } else { circuits.join(", ") },
-                other = if other_files.is_empty() { "(none)".into() } else { other_files.join(", ") },
+                other   = if other_files.is_empty() { "(none)".into() } else { other_files.join(", ") },
             );
-            tool_content(text)
+            tool_ok(&text)
         }
 
         "read_circuit" => {
-            let filename = match args.get("filename").and_then(Value::as_str) {
-                Some(f) => f,
-                None => return tool_error("missing argument: filename"),
+            let Some(filename) = extract_str(json, "filename") else {
+                return tool_err("missing argument: filename");
             };
-            // Safety: only allow filenames within the project directory
-            let path = project_dir.join(filename);
-            if !path.starts_with(project_dir) {
-                return tool_error("path traversal not allowed");
-            }
-            match std::fs::read_to_string(&path) {
-                Ok(content) => tool_content(content),
-                Err(e) => tool_error(format!("cannot read {filename}: {e}")),
+            match safe_path(project_dir, &filename) {
+                Err(e) => tool_err(&e),
+                Ok(path) => match std::fs::read_to_string(&path) {
+                    Ok(content) => tool_ok(&content),
+                    Err(e) => tool_err(&format!("cannot read {filename}: {e}")),
+                },
             }
         }
 
         "write_circuit" => {
-            let filename = match args.get("filename").and_then(Value::as_str) {
-                Some(f) => f,
-                None => return tool_error("missing argument: filename"),
+            let Some(filename) = extract_str(json, "filename") else {
+                return tool_err("missing argument: filename");
             };
-            let content = match args.get("content").and_then(Value::as_str) {
-                Some(c) => c,
-                None => return tool_error("missing argument: content"),
+            let Some(content) = extract_str(json, "content") else {
+                return tool_err("missing argument: content");
             };
-            let path = project_dir.join(filename);
-            if !path.starts_with(project_dir) {
-                return tool_error("path traversal not allowed");
-            }
-            match std::fs::write(&path, content) {
-                Ok(()) => tool_content(format!("Written {filename} ({} bytes)", content.len())),
-                Err(e) => tool_error(format!("cannot write {filename}: {e}")),
+            match safe_path(project_dir, &filename) {
+                Err(e) => tool_err(&e),
+                Ok(path) => match std::fs::write(&path, &content) {
+                    Ok(()) => tool_ok(&format!("Written {filename} ({} bytes)", content.len())),
+                    Err(e) => tool_err(&format!("cannot write {filename}: {e}")),
+                },
             }
         }
 
         "get_circuit_topology" => {
-            let filename = match args.get("filename").and_then(Value::as_str) {
-                Some(f) => f,
-                None => return tool_error("missing argument: filename"),
+            let Some(filename) = extract_str(json, "filename") else {
+                return tool_err("missing argument: filename");
             };
-            let path = project_dir.join(filename);
-            if !path.starts_with(project_dir) {
-                return tool_error("path traversal not allowed");
+            match safe_path(project_dir, &filename) {
+                Err(e) => tool_err(&e),
+                Ok(path) => match std::fs::read_to_string(&path) {
+                    Err(e) => tool_err(&format!("cannot read {filename}: {e}")),
+                    Ok(content) => match build_topology(&content) {
+                        Ok(text) => tool_ok(&text),
+                        Err(e) => tool_err(&format!("YAML parse error: {e}")),
+                    },
+                },
             }
-            let content = match std::fs::read_to_string(&path) {
-                Ok(c) => c,
-                Err(e) => return tool_error(format!("cannot read {filename}: {e}")),
-            };
-            let yaml: serde_yaml::Value = match serde_yaml::from_str(&content) {
-                Ok(v) => v,
-                Err(e) => return tool_error(format!("YAML parse error: {e}")),
-            };
-            tool_content(format_topology(&yaml))
         }
 
         "simulate_spice" => {
-            let netlist_text = match args.get("netlist").and_then(Value::as_str) {
-                Some(s) => s,
-                None => return tool_error("missing argument: netlist"),
+            let Some(netlist_text) = extract_str(json, "netlist") else {
+                return tool_err("missing argument: netlist");
             };
-            let netlist = match thevenin_types::parse::parse(netlist_text) {
-                Ok(n) => n,
-                Err(e) => return tool_error(format!("SPICE parse error: {e}")),
-            };
-            match thevenin::simulate_op(&netlist) {
-                Ok(sim_result) => {
-                    let mut lines = Vec::new();
-                    for plot in &sim_result.plots {
-                        for vec in &plot.vecs {
-                            if vec.real.len() == 1 {
-                                lines.push(format!("  {} = {:.6}", vec.name, vec.real[0]));
-                            } else if !vec.real.is_empty() {
-                                lines.push(format!(
-                                    "  {} = [{} .. {}] ({} points)",
-                                    vec.name,
-                                    vec.real[0],
-                                    vec.real[vec.real.len() - 1],
-                                    vec.real.len()
-                                ));
+            match thevenin_types::parse::parse(&netlist_text) {
+                Err(e) => tool_err(&format!("SPICE parse error: {e}")),
+                Ok(netlist) => match thevenin::simulate_op(&netlist) {
+                    Err(e) => tool_err(&format!("Simulation error: {e}")),
+                    Ok(result) => {
+                        let mut lines = Vec::new();
+                        for plot in &result.plots {
+                            for vec in &plot.vecs {
+                                if vec.real.len() == 1 {
+                                    lines.push(format!("  {} = {:.6}", vec.name, vec.real[0]));
+                                } else if !vec.real.is_empty() {
+                                    lines.push(format!(
+                                        "  {} = [{:.4} .. {:.4}] ({} pts)",
+                                        vec.name,
+                                        vec.real[0],
+                                        vec.real[vec.real.len() - 1],
+                                        vec.real.len()
+                                    ));
+                                }
                             }
                         }
+                        let text = if lines.is_empty() {
+                            "Simulation complete (no scalar results)".into()
+                        } else {
+                            format!("Simulation results:\n{}", lines.join("\n"))
+                        };
+                        tool_ok(&text)
                     }
-                    let text = if lines.is_empty() {
-                        "Simulation complete (no scalar results)".into()
-                    } else {
-                        format!("Simulation results:\n{}", lines.join("\n"))
-                    };
-                    tool_content(text)
-                }
-                Err(e) => tool_error(format!("Simulation error: {e}")),
+                },
             }
         }
 
-        _ => tool_error(format!("unknown tool: {name}")),
+        other => tool_err(&format!("unknown tool: {other}")),
     }
+}
+
+// ── Topology builder (yaml-rust2, no serde) ───────────────────────────────
+
+fn eng(f: f64) -> String {
+    let a = f.abs();
+    if a == 0.0 { return "0".into(); }
+    if a >= 1e6 { format!("{:.3}M", f / 1e6) }
+    else if a >= 1e3 { format!("{:.3}k", f / 1e3) }
+    else if a >= 1.0 { format!("{f:.3}") }
+    else if a >= 1e-3 { format!("{:.3}m", f * 1e3) }
+    else if a >= 1e-6 { format!("{:.3}µ", f * 1e6) }
+    else if a >= 1e-9 { format!("{:.3}n", f * 1e9) }
+    else { format!("{:.3}p", f * 1e12) }
+}
+
+fn canonical_pin(type_id: &str, pin: &str) -> &'static str {
+    match (type_id, pin) {
+        ("resistor" | "capacitor" | "inductor", "p") => "a",
+        ("resistor" | "capacitor" | "inductor", "n") => "b",
+        ("dc_voltage" | "dc_current", "p")           => "positive",
+        ("dc_voltage" | "dc_current", "n")           => "negative",
+        ("diode",  "p") => "anode",
+        ("diode",  "n") => "cathode",
+        ("npn" | "pnp", "c") => "collector",
+        ("npn" | "pnp", "b") => "base",
+        ("npn" | "pnp", "e") => "emitter",
+        ("nmos" | "pmos", "d") => "drain",
+        ("nmos" | "pmos", "g") => "gate",
+        ("nmos" | "pmos", "s") => "source",
+        _ => "", // sentinel: use raw value
+    }
+}
+
+fn build_topology(yaml_src: &str) -> Result<String, String> {
+    use yaml_rust2::{Yaml, YamlLoader};
+
+    let docs = YamlLoader::load_from_str(yaml_src).map_err(|e| e.to_string())?;
+    let doc = docs.first().ok_or("empty YAML")?;
+
+    let mut lines: Vec<String> = Vec::new();
+
+    let name = doc["name"].as_str().unwrap_or("Untitled");
+    lines.push(format!("Circuit: {name}"));
+
+    if let Some(intent) = doc["intent"].as_str() {
+        lines.push(String::new());
+        lines.push("Intent:".into());
+        for l in intent.trim().lines() {
+            lines.push(format!("  {l}"));
+        }
+    }
+
+    if let Yaml::Hash(params) = &doc["parameters"] {
+        if !params.is_empty() {
+            lines.push(String::new());
+            lines.push("Parameters:".into());
+            for (k, v) in params {
+                let key = k.as_str().unwrap_or("?");
+                let val = match v {
+                    Yaml::Integer(i) => i.to_string(),
+                    Yaml::Real(r)    => r.clone(),
+                    Yaml::String(s)  => s.clone(),
+                    _                => format!("{v:?}"),
+                };
+                lines.push(format!("  {key} = {val}"));
+            }
+        }
+    }
+
+    // Build component id → (label, type_id) maps
+    let mut comp_label: std::collections::HashMap<&str, &str> = Default::default();
+    let mut comp_type:  std::collections::HashMap<&str, &str> = Default::default();
+
+    if let Yaml::Array(comps) = &doc["components"] {
+        lines.push(String::new());
+        lines.push("Components:".into());
+        for comp in comps {
+            let id      = comp["id"].as_str().unwrap_or("?");
+            let type_id = comp["type_id"].as_str().unwrap_or("?");
+            let label   = comp["label"].as_str().unwrap_or(id);
+            comp_label.insert(id, label);
+            comp_type.insert(id, type_id);
+
+            // Format properties, unwrapping Facet-style {Float: 1000} maps
+            let mut props: Vec<String> = Vec::new();
+            if let Yaml::Hash(pmap) = &comp["properties"] {
+                for (pk, pv) in pmap {
+                    let key = pk.as_str().unwrap_or("?");
+                    let val = match pv {
+                        Yaml::Integer(i) => i.to_string(),
+                        Yaml::Real(r)    => r.parse::<f64>().map(eng).unwrap_or_else(|_| r.clone()),
+                        Yaml::String(s)  => s.clone(),
+                        // Facet external-tagged: {Float: 1000} stored as Hash
+                        Yaml::Hash(h) => {
+                            let fk = Yaml::String("Float".into());
+                            let sk = Yaml::String("String".into());
+                            if let Some(Yaml::Integer(i)) = h.get(&fk) {
+                                eng(*i as f64)
+                            } else if let Some(Yaml::Real(r)) = h.get(&fk) {
+                                r.parse::<f64>().map(eng).unwrap_or_else(|_| r.clone())
+                            } else if let Some(Yaml::String(s)) = h.get(&sk) {
+                                s.clone()
+                            } else {
+                                format!("{h:?}")
+                            }
+                        }
+                        _ => continue,
+                    };
+                    props.push(format!("{key}={val}"));
+                }
+            }
+            let props_str = if props.is_empty() {
+                String::new()
+            } else {
+                format!(": {}", props.join(", "))
+            };
+            lines.push(format!("  {label} ({type_id}){props_str}"));
+        }
+    }
+
+    if let Yaml::Array(nets) = &doc["nets"] {
+        lines.push(String::new());
+        lines.push("Connections:".into());
+        for net in nets {
+            let net_id = net["id"].as_str().unwrap_or("?");
+
+            // Net name: first label text, then explicit name field, then id
+            let net_name = net["labels"]
+                .as_vec()
+                .and_then(|v| v.first())
+                .and_then(|l| l["name"].as_str())
+                .or_else(|| net["name"].as_str())
+                .unwrap_or(net_id);
+
+            let Some(pins) = net["pins"].as_vec() else { continue };
+            if pins.is_empty() { continue; }
+
+            let pin_parts: Vec<String> = pins
+                .iter()
+                .map(|p| {
+                    let cid     = p["component_id"].as_str().unwrap_or("?");
+                    let raw_pin = p["pin_id"].as_str()
+                        .or_else(|| p["pin_name"].as_str())
+                        .unwrap_or("?");
+                    let type_id = comp_type.get(cid).copied().unwrap_or("");
+                    let label   = comp_label.get(cid).copied().unwrap_or(cid);
+                    let canon   = canonical_pin(type_id, raw_pin);
+                    let pin_str = if canon.is_empty() { raw_pin } else { canon };
+                    format!("{label}({pin_str})")
+                })
+                .collect();
+            lines.push(format!("  {net_name}: {}", pin_parts.join(" ↔ ")));
+        }
+    }
+
+    Ok(lines.join("\n"))
 }
 
 // ── Axum handler ─────────────────────────────────────────────────────────
@@ -450,87 +463,61 @@ pub struct McpState {
 pub async fn mcp_handler(
     State(state): State<McpState>,
     headers: HeaderMap,
-    body: axum::body::Bytes,
+    body: Bytes,
 ) -> impl IntoResponse {
-    // MCP uses POST for all requests; handle CORS preflight
-    if headers
-        .get("access-control-request-method")
-        .is_some()
-    {
-        return (
-            StatusCode::NO_CONTENT,
-            [
-                ("Access-Control-Allow-Origin", "*"),
-                ("Access-Control-Allow-Methods", "POST, OPTIONS"),
-                ("Access-Control-Allow-Headers", "Content-Type"),
-            ],
-            axum::body::Body::empty(),
-        )
-            .into_response();
+    // CORS preflight
+    if headers.contains_key("access-control-request-method") {
+        return axum::response::Response::builder()
+            .status(204)
+            .header("Access-Control-Allow-Origin", "*")
+            .header("Access-Control-Allow-Methods", "POST, OPTIONS")
+            .header("Access-Control-Allow-Headers", "Content-Type")
+            .body(axum::body::Body::empty())
+            .unwrap();
     }
 
-    let req: JsonRpcRequest = match serde_json::from_slice(&body) {
-        Ok(r) => r,
-        Err(e) => {
-            let resp = JsonRpcResponse::err(None, -32700, format!("Parse error: {e}"));
-            return json_response(resp);
-        }
+    let json = match std::str::from_utf8(&body) {
+        Ok(s) => s,
+        Err(_) => return err_response("null", -32700, "invalid UTF-8"),
     };
 
-    let id = req.id.clone();
+    let id = extract_id(json);
+    let is_notification = !has_id(json);
 
-    // Notifications have no id and must not receive a response
-    let is_notification = id.is_none();
+    let method = extract_str(json, "method").unwrap_or_default();
 
-    let result = handle_method(&state, &req.method, req.params).await;
+    let result = dispatch(&state, &method, json).await;
 
     if is_notification {
-        // Return 202 Accepted with empty body for notifications
-        return (StatusCode::ACCEPTED, axum::body::Body::empty()).into_response();
+        return axum::response::Response::builder()
+            .status(202)
+            .body(axum::body::Body::empty())
+            .unwrap();
     }
 
     match result {
-        Ok(value) => json_response(JsonRpcResponse::ok(id, value)),
-        Err(msg) => json_response(JsonRpcResponse::err(id, -32603, msg)),
+        Ok(result_json)  => ok_response(&id, &result_json),
+        Err(msg) => err_response(&id, -32603, &msg),
     }
 }
 
-async fn handle_method(
-    state: &McpState,
-    method: &str,
-    params: Option<Value>,
-) -> Result<Value, String> {
+async fn dispatch(state: &McpState, method: &str, json: &str) -> Result<String, String> {
     match method {
-        "initialize" => Ok(json!({
-            "protocolVersion": "2024-11-05",
-            "capabilities": { "tools": {} },
-            "serverInfo": { "name": "eerie", "version": env!("CARGO_PKG_VERSION") }
-        })),
+        "initialize" => Ok(format!(
+            r#"{{"protocolVersion":"2024-11-05","capabilities":{{"tools":{{}}}},"serverInfo":{{"name":"eerie","version":"{}"}}}}"#,
+            env!("CARGO_PKG_VERSION")
+        )),
 
-        "notifications/initialized" | "ping" => Ok(json!({})),
+        "notifications/initialized" | "ping" => Ok("{}".into()),
 
-        "tools/list" => Ok(json!({ "tools": tool_definitions() })),
+        "tools/list" => Ok(tools_list_json().into()),
 
         "tools/call" => {
-            let params = params.unwrap_or_default();
-            let name = params
-                .get("name")
-                .and_then(Value::as_str)
-                .ok_or("missing tool name")?;
-            let args = params.get("arguments").cloned().unwrap_or_default();
-            Ok(call_tool(&state.project_dir, name, &args).await)
+            let tool_name = extract_str(json, "name")
+                .ok_or_else(|| "missing tool name".to_string())?;
+            Ok(call_tool(&state.project_dir, &tool_name, json).await)
         }
 
         other => Err(format!("method not found: {other}")),
     }
-}
-
-fn json_response(resp: JsonRpcResponse) -> axum::response::Response {
-    let body = serde_json::to_vec(&resp).unwrap_or_default();
-    axum::response::Response::builder()
-        .status(200)
-        .header("Content-Type", "application/json")
-        .header("Access-Control-Allow-Origin", "*")
-        .body(axum::body::Body::from(body))
-        .unwrap()
 }
