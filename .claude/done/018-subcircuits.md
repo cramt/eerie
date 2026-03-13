@@ -1,6 +1,6 @@
 # 018 — Subcircuit / Hierarchical Design
 
-Status: open
+Status: done
 Priority: medium
 
 ## Goal

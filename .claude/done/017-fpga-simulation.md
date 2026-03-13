@@ -1,6 +1,6 @@
 # 017 — FPGA Simulation
 
-Status: open
+Status: done
 Priority: low
 
 ## Goal

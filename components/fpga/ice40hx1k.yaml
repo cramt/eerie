@@ -1,0 +1,68 @@
+id: ice40hx1k
+name: iCE40 HX1K
+description: Lattice iCE40 HX1K FPGA (1K LUTs, open source toolchain)
+category: FPGA
+keywords: [fpga, lattice, ice40, verilog, open source]
+
+properties:
+  - id: bitstream
+    label: Bitstream (.bin)
+    unit: null
+    default: 0
+  - id: verilog
+    label: Verilog Source (.v)
+    unit: null
+    default: 0
+
+pins:
+  - id: io_0
+    name: IO_0
+    x: -40
+    y: -30
+  - id: io_1
+    name: IO_1
+    x: -40
+    y: -20
+  - id: io_2
+    name: IO_2
+    x: -40
+    y: -10
+  - id: io_3
+    name: IO_3
+    x: -40
+    y: 0
+  - id: io_4
+    name: IO_4
+    x: -40
+    y: 10
+  - id: io_5
+    name: IO_5
+    x: -40
+    y: 20
+  - id: vcc
+    name: VCC
+    x: 0
+    y: -40
+  - id: gnd
+    name: GND
+    x: 0
+    y: 40
+
+symbol:
+  bounds: { x: -40, y: -45, width: 80, height: 90 }
+  graphics:
+    - kind: rect
+      x: -35
+      y: -40
+      width: 70
+      height: 80
+    - kind: text
+      x: 0
+      y: -28
+      text: iCE40
+      font_size: 9
+    - kind: text
+      x: 0
+      y: -18
+      text: HX1K
+      font_size: 7

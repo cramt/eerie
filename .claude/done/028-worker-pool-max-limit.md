@@ -1,6 +1,6 @@
 # 028 — Add max worker limit to WorkerPool
 
-Status: open
+Status: done
 
 ## Problem
 

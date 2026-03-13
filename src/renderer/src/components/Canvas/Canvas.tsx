@@ -25,7 +25,11 @@ interface ContextMenuState {
   items: ContextMenuEntry[]
 }
 
-export default function Canvas() {
+interface CanvasProps {
+  onComponentDblClick?: (compId: string) => void
+}
+
+export default function Canvas({ onComponentDblClick }: CanvasProps = {}) {
   const containerRef = useRef<HTMLDivElement>(null)
   const [size, setSize] = useState({ width: 800, height: 600 })
   const [contextMenu, setContextMenu] = useState<ContextMenuState | null>(null)
@@ -290,6 +294,7 @@ export default function Canvas() {
           isWiring={tool === 'wire'} colors={colors} snapTarget={snapTarget} onNetClick={handleNetClick} />
         <ComponentLayer components={circuit.components} selectedIds={selectedComponentIds} colors={colors}
           onDragStart={handleDragStart} onDragEnd={handleDragEnd} onDragMove={handleDragMove} onClick={handleComponentClick}
+          onDblClick={onComponentDblClick ? (id) => onComponentDblClick(id) : undefined}
           onLabelDblClick={handleLabelDblClick} tool={tool} hoveredPin={hoveredPin} />
         <OverlayLayer placingTypeId={placingTypeId} mousePos={mouseGridPos} isPlacing={tool === 'place'} colors={colors} selectionRect={marquee} />
         <SimOverlayLayer nets={circuit.nets} result={result} netNodeMap={netNodeMap} color={colors.pin} />

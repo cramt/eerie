@@ -1,6 +1,6 @@
 # 026 — Split spice-netlist parser into modules
 
-Status: open
+Status: done
 
 ## Problem
 

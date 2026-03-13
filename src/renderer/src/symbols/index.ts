@@ -13,6 +13,7 @@ import PNP, { pnpPinPositions } from "./PNP";
 import NMOS, { nmosPinPositions } from "./NMOS";
 import PMOS, { pmosPinPositions } from "./PMOS";
 import OpAmp, { opAmpPinPositions } from "./OpAmp";
+import Subcircuit, { subcircuitPinPositions } from "./Subcircuit";
 
 export interface SymbolDef {
   component: React.FC<any>;
@@ -137,6 +138,14 @@ export const SYMBOL_REGISTRY: Record<string, SymbolDef> = {
     category: "Semiconductors",
     labelOffset: { x: -10, y: -42 },
     valueOffset: { x: -10, y: 32 },
+  },
+  subcircuit: {
+    component: Subcircuit,
+    pins: Object.entries(subcircuitPinPositions).map(([name, pos]) => ({ name, ...pos })),
+    label: "Subcircuit",
+    category: "Hierarchy",
+    labelOffset: { x: -30, y: -38 },
+    valueOffset: { x: -30, y: 32 },
   },
 };
 

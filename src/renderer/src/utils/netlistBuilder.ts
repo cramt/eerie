@@ -153,6 +153,7 @@ export function buildNetlist(circuit: Circuit, analysis: Analysis = { tag: 'Op' 
 
   for (const comp of circuit.components) {
     if (comp.type_id === "ground") continue;
+    if (comp.type_id === "subcircuit") continue; // TODO: flatten subcircuit async
 
     const label = comp.label ?? comp.id;
     const element = buildElement(comp, label, node);

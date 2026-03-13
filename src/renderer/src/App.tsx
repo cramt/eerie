@@ -368,7 +368,18 @@ export default function App() {
               />
             )
           }
-          return <Canvas />
+          return <Canvas onComponentDblClick={(compId) => {
+            const comp = useCircuitStore.getState().circuit.components.find(c => c.id === compId)
+            if (comp?.type_id === 'subcircuit') {
+              const fileProp = comp.properties.file
+              const filePath = typeof fileProp === 'string' ? fileProp
+                : fileProp && typeof fileProp === 'object' && 'String' in fileProp ? (fileProp as { String: string }).String
+                : null
+              if (filePath && projectPath) {
+                loadCircuit(projectPath, filePath)
+              }
+            }
+          }} />
         })()}
       </div>
       <div className="plot-area">

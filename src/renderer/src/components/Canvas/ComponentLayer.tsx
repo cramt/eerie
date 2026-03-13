@@ -16,13 +16,14 @@ interface Props {
   onDragEnd: (id: string, x: number, y: number) => void
   onDragMove: (id: string, e: any) => void
   onClick: (id: string, e: any) => void
+  onDblClick?: (id: string, e: any) => void
   onLabelDblClick?: (id: string, screenPos: { x: number; y: number }) => void
   tool: Tool
   hoveredPin: AbsolutePin | null
 }
 
 export default function ComponentLayer({
-  components, selectedIds, colors, onDragStart, onDragEnd, onDragMove, onClick, onLabelDblClick, tool, hoveredPin
+  components, selectedIds, colors, onDragStart, onDragEnd, onDragMove, onClick, onDblClick, onLabelDblClick, tool, hoveredPin
 }: Props) {
   const { componentDefs } = useProjectStore()
 
@@ -57,6 +58,12 @@ export default function ComponentLayer({
               if (tool !== 'wire') {
                 e.cancelBubble = true
                 onClick(comp.id, e)
+              }
+            }}
+            onDblClick={(e) => {
+              if (tool !== 'wire' && onDblClick) {
+                e.cancelBubble = true
+                onDblClick(comp.id, e)
               }
             }}
           >
