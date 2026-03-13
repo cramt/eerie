@@ -29,7 +29,7 @@ export default function App() {
   const { circuit, setCircuit, projectPath, circuitName, dirty, setDirty } = useCircuitStore()
   const { theme, tool, setTool, setPlacingTypeId, selectedComponentIds, selectedNetIds, setSimPanelOpen, aiPanelOpen } = useUiStore()
   const { undo, redo } = useHistoryStore()
-  const { setComponents } = useProjectStore()
+  const { setComponents, setComponentDefs } = useProjectStore()
   const { tabs, activeTabId, openTab, openTextTab, updateTextContent, closeTab } = useTabsStore()
   const { initDaemonKey } = useAiStore()
 
@@ -136,6 +136,7 @@ export default function App() {
           setComponents(info.components)
         } else {
           const defs = await api.listComponentDefs()
+          setComponentDefs(defs)
           if (defs.length > 0) {
             setComponents(defs.map(def => ({
               name: def.name,
@@ -152,7 +153,7 @@ export default function App() {
         }
       } catch { /* project dir may be empty, that's fine */ }
     })
-  }, [loadCircuit, setComponents])
+  }, [loadCircuit, setComponents, setComponentDefs])
 
   const handleOpen = useCallback(() => {
     setFileDialog({ mode: 'open' })

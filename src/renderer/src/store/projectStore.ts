@@ -1,4 +1,7 @@
 import { create } from 'zustand'
+import type { ComponentDef } from '../../../codegen/generated-rpc'
+
+export type { ComponentDef }
 
 export interface ProjectComponent {
   /** Display name shown in the component panel, e.g. "10kΩ Resistor" */
@@ -18,9 +21,15 @@ interface ProjectStore {
   /** Component library from eerie.yaml. null = use the built-in generic list. */
   components: ProjectComponent[] | null
   setComponents: (components: ProjectComponent[] | null) => void
+  /** Full ComponentDef[] (with symbol graphics) keyed by type_id. */
+  componentDefs: Record<string, ComponentDef>
+  setComponentDefs: (defs: ComponentDef[]) => void
 }
 
 export const useProjectStore = create<ProjectStore>((set) => ({
   components: null,
   setComponents: (components) => set({ components }),
+  componentDefs: {},
+  setComponentDefs: (defs) =>
+    set({ componentDefs: Object.fromEntries(defs.map((d) => [d.id, d])) }),
 }))

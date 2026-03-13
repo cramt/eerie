@@ -227,6 +227,47 @@ export interface PropertyDef {
   default: number;
 }
 
+export interface Bounds2d {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
+export interface GraphicsElement {
+  kind: string;
+  x1: number | null;
+  y1: number | null;
+  x2: number | null;
+  y2: number | null;
+  cx: number | null;
+  cy: number | null;
+  r: number | null;
+  start_angle: number | null;
+  end_angle: number | null;
+  x: number | null;
+  y: number | null;
+  width: number | null;
+  height: number | null;
+  points: number[];
+  filled: boolean | null;
+  stroke_width: number | null;
+  text: string | null;
+  font_size: number | null;
+}
+
+export interface SymbolGraphics {
+  bounds: Bounds2d;
+  graphics: GraphicsElement[];
+}
+
+export interface PinLocation {
+  id: string;
+  name: string;
+  x: number;
+  y: number;
+}
+
 export interface ComponentDef {
   id: string;
   name: string;
@@ -235,6 +276,8 @@ export interface ComponentDef {
   subcategory: string | null;
   keywords: string[];
   properties: PropertyDef[];
+  symbol: SymbolGraphics | null;
+  pins: PinLocation[];
 }
 
 // Request/Response type aliases
@@ -837,7 +880,11 @@ const eerieService_schema_registry: SchemaRegistry = new Map<string, Schema>([
   ["CircuitMutation", { kind: 'enum', variants: [{ name: 'UpdateProperty', fields: { 'component_id': { kind: 'string' }, 'property': { kind: 'string' }, 'value': { kind: 'f64' } } }, { name: 'AddComponent', fields: { 'type_id': { kind: 'string' }, 'label': { kind: 'option', inner: { kind: 'string' } }, 'properties': { kind: 'vec', element: { kind: 'tuple', elements: [{ kind: 'string' }, { kind: 'f64' }] } } } }, { name: 'RemoveComponent', fields: { 'component_id': { kind: 'string' } } }, { name: 'SetIntent', fields: { 'intent': { kind: 'option', inner: { kind: 'string' } } } }, { name: 'SetParameter', fields: { 'name': { kind: 'string' }, 'value': { kind: 'f64' } } }, { name: 'RemoveParameter', fields: { 'name': { kind: 'string' } } }] }],
   ["AiChatResponse", { kind: 'struct', fields: { 'message': { kind: 'string' }, 'mutations': { kind: 'vec', element: { kind: 'ref', name: 'CircuitMutation' } } } }],
   ["PropertyDef", { kind: 'struct', fields: { 'id': { kind: 'string' }, 'label': { kind: 'string' }, 'unit': { kind: 'option', inner: { kind: 'string' } }, 'default': { kind: 'f64' } } }],
-  ["ComponentDef", { kind: 'struct', fields: { 'id': { kind: 'string' }, 'name': { kind: 'string' }, 'description': { kind: 'string' }, 'category': { kind: 'string' }, 'subcategory': { kind: 'option', inner: { kind: 'string' } }, 'keywords': { kind: 'vec', element: { kind: 'string' } }, 'properties': { kind: 'vec', element: { kind: 'ref', name: 'PropertyDef' } } } }],
+  ["Bounds2d", { kind: 'struct', fields: { 'x': { kind: 'f64' }, 'y': { kind: 'f64' }, 'width': { kind: 'f64' }, 'height': { kind: 'f64' } } }],
+  ["GraphicsElement", { kind: 'struct', fields: { 'kind': { kind: 'string' }, 'x1': { kind: 'option', inner: { kind: 'f64' } }, 'y1': { kind: 'option', inner: { kind: 'f64' } }, 'x2': { kind: 'option', inner: { kind: 'f64' } }, 'y2': { kind: 'option', inner: { kind: 'f64' } }, 'cx': { kind: 'option', inner: { kind: 'f64' } }, 'cy': { kind: 'option', inner: { kind: 'f64' } }, 'r': { kind: 'option', inner: { kind: 'f64' } }, 'start_angle': { kind: 'option', inner: { kind: 'f64' } }, 'end_angle': { kind: 'option', inner: { kind: 'f64' } }, 'x': { kind: 'option', inner: { kind: 'f64' } }, 'y': { kind: 'option', inner: { kind: 'f64' } }, 'width': { kind: 'option', inner: { kind: 'f64' } }, 'height': { kind: 'option', inner: { kind: 'f64' } }, 'points': { kind: 'vec', element: { kind: 'f64' } }, 'filled': { kind: 'option', inner: { kind: 'bool' } }, 'stroke_width': { kind: 'option', inner: { kind: 'f64' } }, 'text': { kind: 'option', inner: { kind: 'string' } }, 'font_size': { kind: 'option', inner: { kind: 'f64' } } } }],
+  ["SymbolGraphics", { kind: 'struct', fields: { 'bounds': { kind: 'ref', name: 'Bounds2d' }, 'graphics': { kind: 'vec', element: { kind: 'ref', name: 'GraphicsElement' } } } }],
+  ["PinLocation", { kind: 'struct', fields: { 'id': { kind: 'string' }, 'name': { kind: 'string' }, 'x': { kind: 'f64' }, 'y': { kind: 'f64' } } }],
+  ["ComponentDef", { kind: 'struct', fields: { 'id': { kind: 'string' }, 'name': { kind: 'string' }, 'description': { kind: 'string' }, 'category': { kind: 'string' }, 'subcategory': { kind: 'option', inner: { kind: 'string' } }, 'keywords': { kind: 'vec', element: { kind: 'string' } }, 'properties': { kind: 'vec', element: { kind: 'ref', name: 'PropertyDef' } }, 'symbol': { kind: 'option', inner: { kind: 'ref', name: 'SymbolGraphics' } }, 'pins': { kind: 'vec', element: { kind: 'ref', name: 'PinLocation' } } } }],
 ]);
 
 // Service descriptor for runtime schema-driven dispatch

@@ -2,6 +2,7 @@ import React, { useRef, useCallback, useEffect, useState, useMemo } from 'react'
 import { Stage } from 'react-konva'
 import { useCircuitStore } from '../../store/circuitStore'
 import { useUiStore } from '../../store/uiStore'
+import { useProjectStore } from '../../store/projectStore'
 import { getThemeColors } from '../../themes/colors'
 import { getAbsolutePins } from '../../utils/pinUtils'
 import { useCanvasView } from './useCanvasView'
@@ -40,10 +41,11 @@ export default function Canvas() {
   const setTool = useUiStore((s) => s.setTool)
   const setPlacingTypeId = useUiStore((s) => s.setPlacingTypeId)
   const colors = getThemeColors(theme)
+  const { componentDefs } = useProjectStore()
 
   const absolutePins = useMemo(
-    () => getAbsolutePins(circuit.components),
-    [circuit.components]
+    () => getAbsolutePins(circuit.components, componentDefs),
+    [circuit.components, componentDefs]
   )
 
   const circuitName = useCircuitStore((s) => s.circuitName)

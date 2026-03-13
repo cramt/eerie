@@ -1,6 +1,6 @@
 # 007 — Symbol Renderer on Canvas
 
-Status: open
+Status: done
 Priority: high
 
 ## Goal

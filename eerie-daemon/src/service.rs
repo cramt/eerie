@@ -1,7 +1,7 @@
 use eerie_rpc::{
-    AiChatRequest, AiChatResponse, Capabilities, ComponentDef, EerieService, FileContent,
-    FileOpenRequest, FileSaveRequest, FileSaveResult, ListProjectRequest, ProjectDir,
-    ProjectListing, PropertyDef,
+    AiChatRequest, AiChatResponse, Bounds2d, Capabilities, ComponentDef, EerieService, FileContent,
+    FileOpenRequest, FileSaveRequest, FileSaveResult, GraphicsElement, ListProjectRequest,
+    PinLocation, ProjectDir, ProjectListing, PropertyDef, SymbolGraphics,
 };
 use std::path::PathBuf;
 use thevenin_types::{Netlist, SimResult};
@@ -169,8 +169,13 @@ fn parse_component_def(yaml_str: &str) -> Option<ComponentDef> {
         .as_vec()
         .map(|v| v.iter().filter_map(parse_property_def).collect())
         .unwrap_or_default();
+    let symbol = parse_symbol(&doc["symbol"]);
+    let pins = doc["pins"]
+        .as_vec()
+        .map(|v| v.iter().filter_map(parse_pin_location).collect())
+        .unwrap_or_default();
 
-    Some(ComponentDef { id, name, description, category, subcategory, keywords, properties })
+    Some(ComponentDef { id, name, description, category, subcategory, keywords, properties, symbol, pins })
 }
 
 fn parse_property_def(yaml: &yaml_rust2::Yaml) -> Option<PropertyDef> {
@@ -194,4 +199,61 @@ fn extract_default_f64(yaml: &yaml_rust2::Yaml) -> Option<f64> {
         }
     }
     None
+}
+
+fn parse_symbol(yaml: &yaml_rust2::Yaml) -> Option<SymbolGraphics> {
+    if yaml.is_badvalue() || yaml.is_null() {
+        return None;
+    }
+    let bounds = {
+        let b = &yaml["bounds"];
+        Bounds2d {
+            x: b["x"].as_f64().unwrap_or(0.0),
+            y: b["y"].as_f64().unwrap_or(0.0),
+            width: b["width"].as_f64().unwrap_or(0.0),
+            height: b["height"].as_f64().unwrap_or(0.0),
+        }
+    };
+    let graphics = yaml["graphics"]
+        .as_vec()
+        .map(|v| v.iter().filter_map(parse_graphics_element).collect())
+        .unwrap_or_default();
+    Some(SymbolGraphics { bounds, graphics })
+}
+
+fn parse_graphics_element(yaml: &yaml_rust2::Yaml) -> Option<GraphicsElement> {
+    let kind = yaml["kind"].as_str()?.to_string();
+    Some(GraphicsElement {
+        kind,
+        x1: yaml["x1"].as_f64(),
+        y1: yaml["y1"].as_f64(),
+        x2: yaml["x2"].as_f64(),
+        y2: yaml["y2"].as_f64(),
+        cx: yaml["cx"].as_f64(),
+        cy: yaml["cy"].as_f64(),
+        r: yaml["r"].as_f64(),
+        start_angle: yaml["start_angle"].as_f64(),
+        end_angle: yaml["end_angle"].as_f64(),
+        x: yaml["x"].as_f64(),
+        y: yaml["y"].as_f64(),
+        width: yaml["width"].as_f64(),
+        height: yaml["height"].as_f64(),
+        points: yaml["points"]
+            .as_vec()
+            .map(|v| v.iter().filter_map(|p| p.as_f64()).collect())
+            .unwrap_or_default(),
+        filled: yaml["filled"].as_bool(),
+        stroke_width: yaml["stroke_width"].as_f64(),
+        text: yaml["text"].as_str().map(String::from),
+        font_size: yaml["font_size"].as_f64(),
+    })
+}
+
+fn parse_pin_location(yaml: &yaml_rust2::Yaml) -> Option<PinLocation> {
+    let id = yaml["id"].as_str()?.to_string();
+    let name = yaml["name"].as_str().unwrap_or(&id).to_string();
+    let pos = &yaml["position"];
+    let x = pos["x"].as_f64().unwrap_or(0.0);
+    let y = pos["y"].as_f64().unwrap_or(0.0);
+    Some(PinLocation { id, name, x, y })
 }

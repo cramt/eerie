@@ -1,4 +1,5 @@
 import type { ComponentInstance, Point } from '../types'
+import type { ComponentDef } from '../store/projectStore'
 import { SYMBOL_REGISTRY } from '../symbols'
 import { GRID } from '../constants'
 
@@ -8,13 +9,23 @@ export interface AbsolutePin {
   gridPos: Point
 }
 
-/** Compute absolute grid positions for all component pins, handling rotation and flip_x. */
-export function getAbsolutePins(components: ComponentInstance[]): AbsolutePin[] {
+/** Compute absolute grid positions for all component pins, handling rotation and flip_x.
+ *  Falls back to YAML-backed pin locations when the SYMBOL_REGISTRY has no entry. */
+export function getAbsolutePins(
+  components: ComponentInstance[],
+  componentDefs?: Record<string, ComponentDef>,
+): AbsolutePin[] {
   const result: AbsolutePin[] = []
   for (const comp of components) {
     const sym = SYMBOL_REGISTRY[comp.type_id]
-    if (!sym) continue
-    for (const pin of sym.pins) {
+    const yamlPins = componentDefs?.[comp.type_id]?.pins ?? []
+
+    // Prefer SYMBOL_REGISTRY pins; fall back to YAML pin locations
+    const pins: Array<{ name: string; x: number; y: number }> = sym
+      ? sym.pins.map((p) => ({ name: p.name, x: p.x, y: p.y }))
+      : yamlPins.map((p) => ({ name: p.name, x: p.x, y: p.y }))
+
+    for (const pin of pins) {
       // Pin local coordinates are in pixels; apply flip then rotation
       const px = comp.flip_x ? -pin.x : pin.x
       const py = pin.y

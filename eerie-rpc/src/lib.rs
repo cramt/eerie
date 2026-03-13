@@ -10,6 +10,65 @@ pub struct PropertyDef {
     pub default: f64,
 }
 
+/// A single graphics primitive in a component symbol.
+/// Uses a flat struct — only the fields relevant to each `kind` are non-null.
+///
+/// Supported kinds: `"line"`, `"circle"`, `"arc"`, `"rect"`, `"polyline"`, `"text"`
+#[derive(facet::Facet, Clone, Debug)]
+pub struct GraphicsElement {
+    pub kind: String,
+    // line: (x1,y1)→(x2,y2)
+    pub x1: Option<f64>,
+    pub y1: Option<f64>,
+    pub x2: Option<f64>,
+    pub y2: Option<f64>,
+    // circle / arc: center + radius
+    pub cx: Option<f64>,
+    pub cy: Option<f64>,
+    pub r: Option<f64>,
+    // arc: sweep angles in degrees (standard math: 0=right, CCW positive)
+    pub start_angle: Option<f64>,
+    pub end_angle: Option<f64>,
+    // rect / bounds: top-left corner
+    pub x: Option<f64>,
+    pub y: Option<f64>,
+    pub width: Option<f64>,
+    pub height: Option<f64>,
+    // polyline: flat interleaved [x0,y0, x1,y1, ...]
+    pub points: Vec<f64>,
+    pub filled: Option<bool>,
+    // shared
+    pub stroke_width: Option<f64>,
+    // text
+    pub text: Option<String>,
+    pub font_size: Option<f64>,
+}
+
+/// Bounding box for a symbol, in local component coordinates.
+#[derive(facet::Facet, Clone, Debug)]
+pub struct Bounds2d {
+    pub x: f64,
+    pub y: f64,
+    pub width: f64,
+    pub height: f64,
+}
+
+/// Symbol geometry: bounding box + list of graphics primitives.
+#[derive(facet::Facet, Clone, Debug)]
+pub struct SymbolGraphics {
+    pub bounds: Bounds2d,
+    pub graphics: Vec<GraphicsElement>,
+}
+
+/// Pin with its position in local component coordinates (before rotation/flip).
+#[derive(facet::Facet, Clone, Debug)]
+pub struct PinLocation {
+    pub id: String,
+    pub name: String,
+    pub x: f64,
+    pub y: f64,
+}
+
 /// A component definition loaded from a YAML file in the `components/` directory.
 #[derive(facet::Facet, Clone, Debug)]
 pub struct ComponentDef {
@@ -21,6 +80,10 @@ pub struct ComponentDef {
     pub subcategory: Option<String>,
     pub keywords: Vec<String>,
     pub properties: Vec<PropertyDef>,
+    /// Symbol graphics for rendering on the canvas, if available.
+    pub symbol: Option<SymbolGraphics>,
+    /// Pin positions in local component coordinates.
+    pub pins: Vec<PinLocation>,
 }
 
 /// A single turn in the AI conversation (human-readable text only).

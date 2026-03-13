@@ -4,6 +4,8 @@ import type { ComponentInstance, Tool } from '../../types'
 import type { ThemeColors } from '../../themes/colors'
 import type { AbsolutePin } from '../../utils/pinUtils'
 import { SYMBOL_REGISTRY } from '../../symbols'
+import { useProjectStore } from '../../store/projectStore'
+import SymbolRenderer from './SymbolRenderer'
 import { GRID } from '../../constants'
 
 interface Props {
@@ -21,13 +23,16 @@ interface Props {
 export default function ComponentLayer({
   components, selectedIds, colors, onDragStart, onDragEnd, onDragMove, onClick, tool, hoveredPin
 }: Props) {
+  const { componentDefs } = useProjectStore()
+
   return (
     <Layer>
       {components.map((comp) => {
         const sym = SYMBOL_REGISTRY[comp.type_id]
+        const yamlDef = componentDefs[comp.type_id]
         const isSelected = selectedIds.has(comp.id)
         const SymbolComponent = sym?.component
-        const labelText = comp.label ?? sym?.label
+        const labelText = comp.label ?? sym?.label ?? yamlDef?.name
         const valueText = comp.properties.value != null ? String(comp.properties.value) : undefined
 
         return (
@@ -79,14 +84,45 @@ export default function ComponentLayer({
                 />
               )}
 
-              {SymbolComponent ? (
-                <SymbolComponent
-                  label={labelText}
-                  value={valueText}
+              {yamlDef?.symbol ? (
+                <SymbolRenderer
+                  symbol={yamlDef.symbol}
+                  pins={yamlDef.pins}
                   color={isSelected ? colors.componentSelected : colors.component}
                   textColor={colors.text}
                   textSecondary={colors.textSecondary}
+                  label={labelText}
+                  value={valueText}
+                  isHoveredPinId={
+                    hoveredPin?.componentId === comp.id ? hoveredPin.pinName : null
+                  }
+                  pinHoverColor={colors.pinHover}
+                  pinColor={colors.pin}
                 />
+              ) : SymbolComponent ? (
+                <>
+                  <SymbolComponent
+                    label={labelText}
+                    value={valueText}
+                    color={isSelected ? colors.componentSelected : colors.component}
+                    textColor={colors.text}
+                    textSecondary={colors.textSecondary}
+                  />
+                  {sym?.pins.map((pin) => {
+                    const isHovered = hoveredPin?.componentId === comp.id && hoveredPin?.pinName === pin.name
+                    return (
+                      <Circle
+                        key={pin.name}
+                        x={pin.x}
+                        y={pin.y}
+                        radius={isHovered ? 5 : 3}
+                        fill={isHovered ? colors.pinHover : colors.pin}
+                        stroke={isHovered ? colors.pinHover : colors.pin}
+                        strokeWidth={1}
+                      />
+                    )
+                  })}
+                </>
               ) : (
                 <Group>
                   <Rect
@@ -97,21 +133,6 @@ export default function ComponentLayer({
                   />
                 </Group>
               )}
-
-              {sym?.pins.map((pin) => {
-                const isHovered = hoveredPin?.componentId === comp.id && hoveredPin?.pinName === pin.name
-                return (
-                  <Circle
-                    key={pin.name}
-                    x={pin.x}
-                    y={pin.y}
-                    radius={isHovered ? 5 : 3}
-                    fill={isHovered ? colors.pinHover : colors.pin}
-                    stroke={isHovered ? colors.pinHover : colors.pin}
-                    strokeWidth={1}
-                  />
-                )
-              })}
             </Group>
 
             {/* Label/value text — NOT rotated with the component */}
