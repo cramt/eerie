@@ -16,7 +16,9 @@ import TabBar from './components/TabBar/TabBar'
 import FileExplorer from './components/FileExplorer/FileExplorer'
 import TextEditor from './components/TextEditor/TextEditor'
 import AiPanel from './components/AiPanel/AiPanel'
-import { filePinToUi, uiPinToFile } from './utils/netlistBuilder'
+import { filePinToUi, uiPinToFile, buildNetlist } from './utils/netlistBuilder'
+import { netlistToSpice } from './utils/spiceWriter'
+import { useSimulationStore } from './store/simulationStore'
 import * as api from './api'
 import { useAiStore } from './store/aiStore'
 
@@ -29,6 +31,7 @@ export default function App() {
   const { circuit, setCircuit, projectPath, circuitName, dirty, setDirty } = useCircuitStore()
   const { theme, tool, setTool, setPlacingTypeId, selectedComponentIds, selectedNetIds, setSimPanelOpen, aiPanelOpen } = useUiStore()
   const { undo, redo } = useHistoryStore()
+  const { analysis } = useSimulationStore()
   const { setComponents, setComponentDefs } = useProjectStore()
   const { tabs, activeTabId, openTab, openTextTab, updateTextContent, closeTab } = useTabsStore()
   const { initDaemonKey } = useAiStore()
@@ -158,6 +161,19 @@ export default function App() {
   const handleOpen = useCallback(() => {
     setFileDialog({ mode: 'open' })
   }, [])
+
+  const handleExportSpice = useCallback(() => {
+    const netlist = buildNetlist(circuit, analysis)
+    const text = netlistToSpice(netlist)
+    const name = (circuitName ?? circuit.name ?? 'circuit').replace(/\.eerie$/, '')
+    const blob = new Blob([text], { type: 'text/plain' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `${name}.sp`
+    a.click()
+    URL.revokeObjectURL(url)
+  }, [circuit, analysis, circuitName])
 
   const handleSave = useCallback(async () => {
     // Check if active tab is a text tab
@@ -311,7 +327,7 @@ export default function App() {
         />
       )}
       <div className="toolbar-area">
-        <Toolbar onOpen={handleOpen} onSave={handleSave} />
+        <Toolbar onOpen={handleOpen} onSave={handleSave} onExportSpice={handleExportSpice} />
       </div>
       <div className="panel-area">
         <div className="file-explorer-wrap">

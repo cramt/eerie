@@ -8,6 +8,7 @@ import styles from './Toolbar.module.css'
 interface Props {
   onOpen: () => void
   onSave: () => void
+  onExportSpice: () => void
 }
 
 const TOOLS: { id: Tool; label: string; icon: string; key: string }[] = [
@@ -16,7 +17,7 @@ const TOOLS: { id: Tool; label: string; icon: string; key: string }[] = [
   { id: 'place',  label: 'Place',  icon: '\u2610',    key: 'E' },
 ]
 
-export default function Toolbar({ onOpen, onSave }: Props) {
+export default function Toolbar({ onOpen, onSave, onExportSpice }: Props) {
   const { tool, setTool, simPanelOpen, toggleSimPanel, aiPanelOpen, toggleAiPanel } = useUiStore()
   const { dirty } = useCircuitStore()
   const { undo, redo, undoStack, redoStack } = useHistoryStore()
@@ -53,6 +54,9 @@ export default function Toolbar({ onOpen, onSave }: Props) {
         </button>
         <button className={styles.btn} onClick={onSave} title="Save (Ctrl+S)" disabled={!dirty}>
           Save
+        </button>
+        <button className={styles.btn} onClick={onExportSpice} title="Export SPICE netlist (.sp)">
+          Export
         </button>
         <button
           className={`${styles.btn} ${styles.simBtn} ${simPanelOpen ? styles.simBtnActive : ''}`}

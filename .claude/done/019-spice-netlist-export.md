@@ -1,6 +1,6 @@
 # 019 — SPICE Netlist Export
 
-Status: open
+Status: done
 Priority: medium
 
 ## Goal
