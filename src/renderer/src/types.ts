@@ -36,6 +36,10 @@ export interface Net {
 
 export interface Circuit {
   name: string
+  /** Human/agent-readable description of what this circuit does and its design goals. */
+  intent?: string
+  /** Named tunable values. Components can reference these via {Param: "name"} properties. */
+  parameters?: Record<string, number>
   components: ComponentInstance[]
   nets: Net[]
 }

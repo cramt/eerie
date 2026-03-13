@@ -67,6 +67,10 @@ interface CircuitStore {
   setCircuit: (circuit: Circuit, projectPath?: string, circuitName?: string) => void
   setCircuitDirect: (circuit: Circuit) => void
   setDirty: (dirty: boolean) => void
+  setCircuitName: (name: string) => void
+  setCircuitIntent: (intent: string | undefined) => void
+  setParameter: (name: string, value: number) => void
+  removeParameter: (name: string) => void
 
   addComponent: (typeId: string, x: number, y: number, preset?: { properties: Record<string, unknown>; namePrefix?: string }) => void
   updateComponent: (id: string, updates: Partial<ComponentInstance>) => void
@@ -127,6 +131,31 @@ export const useCircuitStore = create<CircuitStore>((set, get) => ({
 
   setCircuitDirect: (circuit) => set({ circuit, dirty: true }),
   setDirty: (dirty) => set({ dirty }),
+
+  setCircuitName: (name) => {
+    const { circuit } = get()
+    set({ circuit: { ...circuit, name }, dirty: true })
+  },
+
+  setCircuitIntent: (intent) => {
+    const { circuit } = get()
+    set({ circuit: { ...circuit, intent }, dirty: true })
+  },
+
+  setParameter: (name, value) => {
+    const { circuit } = get()
+    set({
+      circuit: { ...circuit, parameters: { ...circuit.parameters, [name]: value } },
+      dirty: true,
+    })
+  },
+
+  removeParameter: (name) => {
+    const { circuit } = get()
+    const parameters = { ...circuit.parameters }
+    delete parameters[name]
+    set({ circuit: { ...circuit, parameters }, dirty: true })
+  },
 
   addComponent: (typeId, x, y, preset) => {
     pushUndo()

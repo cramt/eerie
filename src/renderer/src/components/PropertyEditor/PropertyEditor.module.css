@@ -88,6 +88,30 @@
   flex-shrink: 0;
 }
 
+.intentArea {
+  display: block;
+  width: 100%;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-family: var(--font-sans);
+  line-height: 1.5;
+  color: var(--text-primary);
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  resize: none;
+  outline: none;
+}
+
+.intentArea:focus {
+  background: var(--bg-hover);
+}
+
+.intentArea::placeholder {
+  color: var(--text-muted);
+  font-style: italic;
+}
+
 .empty {
   padding: 16px 12px;
   font-size: 12px;

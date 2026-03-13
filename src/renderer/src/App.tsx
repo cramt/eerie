@@ -404,8 +404,18 @@ function parseCircuitYaml(content: string): Circuit | null {
       })),
     }))
 
+    // Parse parameters: plain number values from YAML
+    const parameters: Record<string, number> = {}
+    if (data.parameters && typeof data.parameters === 'object') {
+      for (const [k, v] of Object.entries(data.parameters)) {
+        if (typeof v === 'number') parameters[k] = v
+      }
+    }
+
     return {
       name: data.name ?? 'Untitled',
+      ...(data.intent ? { intent: String(data.intent) } : {}),
+      ...(Object.keys(parameters).length > 0 ? { parameters } : {}),
       components,
       nets,
     }
@@ -422,8 +432,12 @@ function serializeCircuitYaml(circuit: Circuit): string {
     compTypeById.set(comp.id, comp.type_id)
   }
 
-  const data = {
+  const data: Record<string, unknown> = {
     name: circuit.name,
+    ...(circuit.intent ? { intent: circuit.intent } : {}),
+    ...(circuit.parameters && Object.keys(circuit.parameters).length > 0
+      ? { parameters: circuit.parameters }
+      : {}),
     components: circuit.components.map(c => ({
       id: c.id,
       type_id: c.type_id,

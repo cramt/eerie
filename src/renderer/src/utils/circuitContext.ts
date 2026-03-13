@@ -94,6 +94,21 @@ export function circuitToContext(circuit: Circuit, simResult?: SimResult | null)
   const lines: string[] = []
 
   lines.push(`Circuit: ${circuit.name}`)
+
+  if (circuit.intent) {
+    lines.push('')
+    lines.push('Intent:')
+    for (const l of circuit.intent.trim().split('\n')) lines.push(`  ${l}`)
+  }
+
+  if (circuit.parameters && Object.keys(circuit.parameters).length > 0) {
+    lines.push('')
+    lines.push('Parameters:')
+    for (const [k, v] of Object.entries(circuit.parameters)) {
+      lines.push(`  ${k} = ${v}`)
+    }
+  }
+
   lines.push('')
 
   // Components (no positions)

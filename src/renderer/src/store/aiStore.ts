@@ -136,6 +136,49 @@ const TOOLS: Anthropic.Tool[] = [
       required: [],
     },
   },
+  {
+    name: 'set_circuit_intent',
+    description: 'Set or update the design intent description for this circuit. This documents what the circuit does, its design goals, and any constraints. It helps you and other agents understand the circuit\'s purpose.',
+    input_schema: {
+      type: 'object',
+      properties: {
+        intent: {
+          type: 'string',
+          description: 'Human-readable description of the circuit\'s purpose, design goals, and constraints.',
+        },
+      },
+      required: ['intent'],
+    },
+  },
+  {
+    name: 'set_parameter',
+    description: 'Define or update a named circuit parameter. Parameters are named numeric values that can be referenced by component properties for parametric design (e.g. set R_load=1000, then reference it in a component).',
+    input_schema: {
+      type: 'object',
+      properties: {
+        name: {
+          type: 'string',
+          description: 'Parameter name (e.g. R_load, cutoff_freq, supply_voltage)',
+        },
+        value: {
+          type: 'number',
+          description: 'Numeric value in base SI units',
+        },
+      },
+      required: ['name', 'value'],
+    },
+  },
+  {
+    name: 'remove_parameter',
+    description: 'Remove a named circuit parameter.',
+    input_schema: {
+      type: 'object',
+      properties: {
+        name: { type: 'string', description: 'Parameter name to remove' },
+      },
+      required: ['name'],
+    },
+  },
 ]
 
 /** Execute a single tool call and return a result string */
@@ -202,6 +245,24 @@ async function executeTool(name: string, input: Record<string, unknown>): Promis
       } catch (e) {
         return `Simulation error: ${String(e)}`
       }
+    }
+
+    case 'set_circuit_intent': {
+      const { intent } = input as { intent: string }
+      store.setCircuitIntent(intent.trim() || undefined)
+      return `Circuit intent updated`
+    }
+
+    case 'set_parameter': {
+      const { name, value } = input as { name: string; value: number }
+      store.setParameter(name, value)
+      return `Parameter ${name} = ${value}`
+    }
+
+    case 'remove_parameter': {
+      const { name } = input as { name: string }
+      store.removeParameter(name)
+      return `Removed parameter ${name}`
     }
 
     default:

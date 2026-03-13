@@ -109,6 +109,20 @@ fn tool_definitions() -> Value {
             }
         },
         {
+            "name": "get_circuit_topology",
+            "description": "Read a .eerie circuit file and return a clean, geometry-free topology description: component labels, types, values, and which pins connect to which nets. Includes design intent and parameters if defined. Use this instead of read_circuit when you need to understand the circuit logically rather than edit the raw YAML.",
+            "inputSchema": {
+                "type": "object",
+                "properties": {
+                    "filename": {
+                        "type": "string",
+                        "description": "Filename relative to project directory, e.g. \"voltage_divider.eerie\""
+                    }
+                },
+                "required": ["filename"]
+            }
+        },
+        {
             "name": "simulate_spice",
             "description": "Parse a SPICE netlist and run a DC operating point (.op) simulation. Returns node voltages and branch currents. Use this to verify a circuit design numerically.",
             "inputSchema": {
@@ -133,6 +147,154 @@ fn tool_content(text: impl Into<String>) -> Value {
 
 fn tool_error(text: impl Into<String>) -> Value {
     json!({ "content": [{ "type": "text", "text": text.into() }], "isError": true })
+}
+
+/// Build a geometry-free topology description from a parsed .eerie YAML value.
+fn format_topology(yaml: &serde_yaml::Value) -> String {
+    use serde_yaml::Value as Y;
+
+    let mut lines: Vec<String> = Vec::new();
+
+    let name = yaml["name"].as_str().unwrap_or("Untitled");
+    lines.push(format!("Circuit: {name}"));
+
+    if let Some(intent) = yaml["intent"].as_str() {
+        lines.push(String::new());
+        lines.push("Intent:".into());
+        for l in intent.trim().lines() {
+            lines.push(format!("  {l}"));
+        }
+    }
+
+    if let Some(params) = yaml["parameters"].as_mapping() {
+        if !params.is_empty() {
+            lines.push(String::new());
+            lines.push("Parameters:".into());
+            for (k, v) in params {
+                let key = k.as_str().unwrap_or("?");
+                let val = if let Some(n) = v.as_f64() {
+                    n.to_string()
+                } else if let Some(s) = v.as_str() {
+                    s.to_string()
+                } else {
+                    format!("{v:?}")
+                };
+                lines.push(format!("  {key} = {val}"));
+            }
+        }
+    }
+
+    // Build component id → (label, type_id) map
+    let mut comp_label: std::collections::HashMap<&str, &str> = Default::default();
+    let mut comp_type: std::collections::HashMap<&str, &str> = Default::default();
+
+    let empty_seq = Y::Sequence(vec![]);
+    let components = yaml["components"].as_sequence().unwrap_or(
+        if let Y::Sequence(s) = &empty_seq { s } else { unreachable!() }
+    );
+
+    lines.push(String::new());
+    lines.push("Components:".into());
+    for comp in components {
+        let id = comp["id"].as_str().unwrap_or("?");
+        let type_id = comp["type_id"].as_str().unwrap_or("?");
+        let label = comp["label"].as_str().unwrap_or(id);
+        comp_label.insert(id, label);
+        comp_type.insert(id, type_id);
+
+        // Format properties (skip geometry)
+        let mut prop_parts: Vec<String> = Vec::new();
+        if let Some(props) = comp["properties"].as_mapping() {
+            for (k, v) in props {
+                let key = k.as_str().unwrap_or("?");
+                let val = match v {
+                    Y::Number(_) => {
+                        let fv = v.as_f64().unwrap_or(0.0);
+                        if fv.abs() >= 1e6 { format!("{:.3}M", fv / 1e6) }
+                        else if fv.abs() >= 1e3 { format!("{:.3}k", fv / 1e3) }
+                        else if fv.abs() >= 1.0 { format!("{fv:.3}") }
+                        else if fv.abs() >= 1e-3 { format!("{:.3}m", fv * 1e3) }
+                        else if fv.abs() >= 1e-6 { format!("{:.3}µ", fv * 1e6) }
+                        else if fv.abs() >= 1e-9 { format!("{:.3}n", fv * 1e9) }
+                        else { format!("{:.3}p", fv * 1e12) }
+                    }
+                    Y::String(s) => s.clone(),
+                    Y::Mapping(m) => {
+                        // Facet-style {Float: 1000} or {String: "x"}
+                        if let Some(fv) = m.get("Float").and_then(Y::as_f64) {
+                            if fv.abs() >= 1e6 { format!("{:.3}M", fv / 1e6) }
+                            else if fv.abs() >= 1e3 { format!("{:.3}k", fv / 1e3) }
+                            else { format!("{fv}") }
+                        } else if let Some(sv) = m.get("String").and_then(Y::as_str) {
+                            sv.to_string()
+                        } else {
+                            format!("{m:?}")
+                        }
+                    }
+                    other => format!("{other:?}"),
+                };
+                prop_parts.push(format!("{key}={val}"));
+            }
+        }
+        let props_str = if prop_parts.is_empty() {
+            String::new()
+        } else {
+            format!(": {}", prop_parts.join(", "))
+        };
+        lines.push(format!("  {label} ({type_id}){props_str}"));
+    }
+
+    // Net connections
+    let nets = yaml["nets"].as_sequence().unwrap_or(
+        if let Y::Sequence(s) = &empty_seq { s } else { unreachable!() }
+    );
+    if !nets.is_empty() {
+        lines.push(String::new());
+        lines.push("Connections:".into());
+        for net in nets {
+            let net_id = net["id"].as_str().unwrap_or("?");
+            // Prefer first label text, then name field, then id
+            let net_name = net["labels"]
+                .as_sequence()
+                .and_then(|ls| ls.first())
+                .and_then(|l| l["name"].as_str())
+                .or_else(|| net["name"].as_str())
+                .unwrap_or(net_id);
+
+            let pins = net["pins"].as_sequence();
+            if pins.map_or(true, |p| p.is_empty()) {
+                continue;
+            }
+            let pin_parts: Vec<String> = pins.unwrap().iter().map(|p| {
+                let cid = p["component_id"].as_str().unwrap_or("?");
+                let raw_pin = p["pin_id"].as_str()
+                    .or_else(|| p["pin_name"].as_str())
+                    .unwrap_or("?");
+                let type_id = comp_type.get(cid).copied().unwrap_or("");
+                let label = comp_label.get(cid).copied().unwrap_or(cid);
+                // Try canonical; fall back to raw
+                let canon = match (type_id, raw_pin) {
+                    ("resistor" | "capacitor" | "inductor", "p") => "a",
+                    ("resistor" | "capacitor" | "inductor", "n") => "b",
+                    ("dc_voltage" | "dc_current", "p") => "positive",
+                    ("dc_voltage" | "dc_current", "n") => "negative",
+                    ("diode", "p") => "anode",
+                    ("diode", "n") => "cathode",
+                    ("npn" | "pnp", "c") => "collector",
+                    ("npn" | "pnp", "b") => "base",
+                    ("npn" | "pnp", "e") => "emitter",
+                    ("nmos" | "pmos", "d") => "drain",
+                    ("nmos" | "pmos", "g") => "gate",
+                    ("nmos" | "pmos", "s") => "source",
+                    _ => raw_pin,
+                };
+                format!("{label}({canon})")
+            }).collect();
+            lines.push(format!("  {net_name}: {}", pin_parts.join(" ↔ ")));
+        }
+    }
+
+    lines.join("\n")
 }
 
 async fn call_tool(project_dir: &PathBuf, name: &str, args: &Value) -> Value {
@@ -214,6 +376,26 @@ async fn call_tool(project_dir: &PathBuf, name: &str, args: &Value) -> Value {
                 Ok(()) => tool_content(format!("Written {filename} ({} bytes)", content.len())),
                 Err(e) => tool_error(format!("cannot write {filename}: {e}")),
             }
+        }
+
+        "get_circuit_topology" => {
+            let filename = match args.get("filename").and_then(Value::as_str) {
+                Some(f) => f,
+                None => return tool_error("missing argument: filename"),
+            };
+            let path = project_dir.join(filename);
+            if !path.starts_with(project_dir) {
+                return tool_error("path traversal not allowed");
+            }
+            let content = match std::fs::read_to_string(&path) {
+                Ok(c) => c,
+                Err(e) => return tool_error(format!("cannot read {filename}: {e}")),
+            };
+            let yaml: serde_yaml::Value = match serde_yaml::from_str(&content) {
+                Ok(v) => v,
+                Err(e) => return tool_error(format!("YAML parse error: {e}")),
+            };
+            tool_content(format_topology(&yaml))
         }
 
         "simulate_spice" => {
