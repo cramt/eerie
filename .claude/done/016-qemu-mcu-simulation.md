@@ -1,6 +1,6 @@
 # 016 — QEMU MCU Simulation
 
-Status: open
+Status: done
 Priority: low
 
 ## Goal

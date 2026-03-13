@@ -16,6 +16,8 @@ import TabBar from './components/TabBar/TabBar'
 import FileExplorer from './components/FileExplorer/FileExplorer'
 import TextEditor from './components/TextEditor/TextEditor'
 import AiPanel from './components/AiPanel/AiPanel'
+import ToastContainer from './components/Toast/Toast'
+import { toastError, toastSuccess } from './store/toastStore'
 import { filePinToUi, uiPinToFile, buildNetlist } from './utils/netlistBuilder'
 import { netlistToSpice } from './utils/spiceWriter'
 import { useSimulationStore } from './store/simulationStore'
@@ -69,6 +71,7 @@ export default function App() {
       if (parsed) openTab(proj, circ, parsed)
     } catch (err) {
       console.error('Failed to open circuit:', err)
+      toastError(`Failed to open circuit: ${err}`)
     }
   }, [openProject, openTab])
 
@@ -78,8 +81,10 @@ export default function App() {
       await api.saveCircuit(proj, circ, yaml)
       setCircuit(circuit, proj, circ)
       setDirty(false)
+      toastSuccess(`Saved ${circ}`)
     } catch (err) {
       console.error('Failed to save circuit:', err)
+      toastError(`Failed to save: ${err}`)
     }
   }, [circuit, setCircuit, setDirty])
 
@@ -92,6 +97,7 @@ export default function App() {
       openTab(proj, circ, newCircuit)
     } catch (err) {
       console.error('Failed to create circuit:', err)
+      toastError(`Failed to create circuit: ${err}`)
     }
   }, [openTab])
 
@@ -101,6 +107,7 @@ export default function App() {
       openTextTab(proj, fileName, '')
     } catch (err) {
       console.error('Failed to create file:', err)
+      toastError(`Failed to create file: ${err}`)
     }
   }, [openTextTab])
 
@@ -110,6 +117,7 @@ export default function App() {
       openTextTab(proj, fileName, file.content)
     } catch (err) {
       console.error('Failed to open file:', err)
+      toastError(`Failed to open file: ${err}`)
     }
   }, [openTextTab])
 
@@ -119,8 +127,10 @@ export default function App() {
       useTabsStore.setState((s) => ({
         tabs: s.tabs.map((t) => t.id === tabId ? { ...t, dirty: false } : t),
       }))
+      toastSuccess(`Saved ${fileName}`)
     } catch (err) {
       console.error('Failed to save file:', err)
+      toastError(`Failed to save file: ${err}`)
     }
   }, [])
 
@@ -373,6 +383,7 @@ export default function App() {
       <div className="status-area">
         <StatusBar />
       </div>
+      <ToastContainer />
     </div>
   )
 }

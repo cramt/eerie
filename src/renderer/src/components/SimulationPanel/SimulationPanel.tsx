@@ -6,6 +6,7 @@ import { useUiStore } from '../../store/uiStore'
 import { useSimulationStore } from '../../store/simulationStore'
 import { buildNetlist, buildNodeMap } from '../../utils/netlistBuilder'
 import * as api from '../../api'
+import { toastError } from '../../store/toastStore'
 import type { Analysis, Expr, SimPlot, SimResult, SimVector } from '../../../../codegen/generated-rpc'
 import styles from './SimulationPanel.module.css'
 
@@ -105,11 +106,14 @@ export default function SimulationPanel() {
       const res = await api.simulate(netlist)
       if (!res.ok) {
         setError(res.error.message)
+        toastError(`Simulation failed: ${res.error.message}`)
         return
       }
       setResult(res.value, netNodeMap)
     } catch (e) {
-      setError(String(e))
+      const msg = String(e)
+      setError(msg)
+      toastError(`Simulation error: ${msg}`)
     } finally {
       setRunning(false)
     }

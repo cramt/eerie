@@ -1,0 +1,66 @@
+.container {
+  position: fixed;
+  bottom: 32px;
+  right: 16px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  pointer-events: none;
+}
+
+.toast {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-family: var(--font-mono, monospace);
+  font-size: 12px;
+  max-width: 360px;
+  pointer-events: all;
+  animation: slideIn 0.15s ease-out;
+}
+
+@keyframes slideIn {
+  from { transform: translateX(40px); opacity: 0; }
+  to   { transform: translateX(0);    opacity: 1; }
+}
+
+.error {
+  background: #2a0a0a;
+  border: 1px solid #e53935;
+  color: #ff8a80;
+}
+
+.success {
+  background: #0a1f0a;
+  border: 1px solid #43a047;
+  color: #a5d6a7;
+}
+
+.info {
+  background: #0a0a2a;
+  border: 1px solid #5c6bc0;
+  color: #9fa8da;
+}
+
+.message {
+  flex: 1;
+  line-height: 1.4;
+}
+
+.dismiss {
+  background: none;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 0 2px;
+  opacity: 0.7;
+  line-height: 1;
+}
+
+.dismiss:hover {
+  opacity: 1;
+}

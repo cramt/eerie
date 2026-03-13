@@ -1,0 +1,68 @@
+id: rp2040
+name: RP2040 (Pico)
+description: Raspberry Pi RP2040 dual-core ARM Cortex-M0+
+category: MCU
+keywords: [mcu, microcontroller, raspberry pi, pico, arm, cortex-m0]
+
+properties:
+  - id: firmware_elf
+    label: Firmware ELF
+    unit: null
+    default: 0
+
+pins:
+  - id: gp0
+    name: GP0
+    x: -40
+    y: -30
+  - id: gp1
+    name: GP1
+    x: -40
+    y: -20
+  - id: gp2
+    name: GP2
+    x: -40
+    y: -10
+  - id: gp3
+    name: GP3
+    x: -40
+    y: 0
+  - id: gp4
+    name: GP4
+    x: -40
+    y: 10
+  - id: gp5
+    name: GP5
+    x: -40
+    y: 20
+  - id: vbus
+    name: VBUS
+    x: 0
+    y: -40
+  - id: gnd
+    name: GND
+    x: 0
+    y: 40
+  - id: 3v3
+    name: 3V3
+    x: 40
+    y: -40
+
+symbol:
+  bounds: { x: -40, y: -45, width: 80, height: 90 }
+  graphics:
+    - kind: rect
+      x: -35
+      y: -40
+      width: 70
+      height: 80
+    - kind: text
+      x: 0
+      y: -28
+      text: RP2040
+      font_size: 9
+    - kind: text
+      x: 0
+      y: -18
+      text: "M0+"
+      font_size: 7

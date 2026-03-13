@@ -1,6 +1,6 @@
 # 027 — Add toast/snackbar error feedback in UI
 
-Status: open
+Status: done
 
 ## Problem
 

@@ -1,0 +1,64 @@
+id: atmega328p
+name: ATmega328P (Arduino)
+description: Microchip ATmega328P 8-bit AVR microcontroller
+category: MCU
+keywords: [mcu, microcontroller, arduino, avr, atmega]
+
+properties:
+  - id: firmware_elf
+    label: Firmware ELF
+    unit: null
+    default: 0
+
+pins:
+  - id: d0
+    name: D0/RX
+    x: -40
+    y: -30
+  - id: d1
+    name: D1/TX
+    x: -40
+    y: -20
+  - id: d2
+    name: D2
+    x: -40
+    y: -10
+  - id: d3
+    name: D3
+    x: -40
+    y: 0
+  - id: d4
+    name: D4
+    x: -40
+    y: 10
+  - id: d5
+    name: D5
+    x: -40
+    y: 20
+  - id: vcc
+    name: VCC
+    x: 0
+    y: -40
+  - id: gnd
+    name: GND
+    x: 0
+    y: 40
+
+symbol:
+  bounds: { x: -40, y: -45, width: 80, height: 90 }
+  graphics:
+    - kind: rect
+      x: -35
+      y: -40
+      width: 70
+      height: 80
+    - kind: text
+      x: 0
+      y: -28
+      text: ATmega
+      font_size: 9
+    - kind: text
+      x: 0
+      y: -18
+      text: 328P
+      font_size: 7
