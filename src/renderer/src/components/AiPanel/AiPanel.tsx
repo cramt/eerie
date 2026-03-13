@@ -3,8 +3,13 @@ import { useAiStore } from '../../store/aiStore'
 import styles from './AiPanel.module.css'
 
 export default function AiPanel() {
-  const { messages, loading, apiKey, setApiKey, clearApiKey, sendMessage, clearMessages } =
+  const { messages, loading, apiKey, daemonApiKey, hasKey, setApiKey, clearApiKey, sendMessage, clearMessages, initDaemonKey } =
     useAiStore()
+
+  // Try to get API key from daemon on first mount
+  useEffect(() => {
+    initDaemonKey()
+  }, [])
   const [input, setInput] = useState('')
   const [keyInput, setKeyInput] = useState('')
   const [showKeyForm, setShowKeyForm] = useState(false)
@@ -38,7 +43,7 @@ export default function AiPanel() {
     setShowKeyForm(false)
   }
 
-  if (!apiKey || showKeyForm) {
+  if (!hasKey() || showKeyForm) {
     return (
       <div className={styles.panel}>
         <div className={styles.header}>
@@ -74,9 +79,16 @@ export default function AiPanel() {
           >
             Save key
           </button>
-          <p className={styles.setupNote}>
-            Key is stored only in your browser's localStorage.
-          </p>
+          {daemonApiKey ? (
+            <p className={styles.setupNote}>
+              Using <code>ANTHROPIC_API_KEY</code> from your environment.
+              Enter a different key below to override.
+            </p>
+          ) : (
+            <p className={styles.setupNote}>
+              Key is stored only in your browser's localStorage.
+            </p>
+          )}
         </div>
       </div>
     )

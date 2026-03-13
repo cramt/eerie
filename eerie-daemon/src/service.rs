@@ -12,7 +12,10 @@ pub struct DaemonService {
 
 impl EerieService for DaemonService {
     async fn get_capabilities(&self) -> Result<Capabilities, String> {
-        Ok(Capabilities { file_io: true })
+        Ok(Capabilities {
+            file_io: true,
+            anthropic_api_key: std::env::var("ANTHROPIC_API_KEY").ok(),
+        })
     }
 
     async fn get_project_dir(&self) -> Result<ProjectDir, String> {

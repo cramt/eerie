@@ -6,6 +6,10 @@ pub use thevenin_types::{Netlist, SimResult};
 pub struct Capabilities {
     /// Backend can read/write files on the host filesystem.
     pub file_io: bool,
+    /// Anthropic API key available in the daemon's environment (from
+    /// `ANTHROPIC_API_KEY`). When present the frontend can use it directly
+    /// instead of asking the user to paste a key.
+    pub anthropic_api_key: Option<String>,
 }
 
 /// The project directory the daemon was started in.

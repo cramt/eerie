@@ -18,6 +18,7 @@ import TextEditor from './components/TextEditor/TextEditor'
 import AiPanel from './components/AiPanel/AiPanel'
 import { filePinToUi, uiPinToFile } from './utils/netlistBuilder'
 import * as api from './api'
+import { useAiStore } from './store/aiStore'
 
 // Theme CSS
 import './themes/neon.css'
@@ -30,6 +31,7 @@ export default function App() {
   const { undo, redo } = useHistoryStore()
   const { setComponents } = useProjectStore()
   const { tabs, activeTabId, openTab, openTextTab, updateTextContent, closeTab } = useTabsStore()
+  const { initDaemonKey } = useAiStore()
 
   // ── File dialog state ───────────────────────────────────────────────
   const [fileDialog, setFileDialog] = useState<{ mode: FileDialogMode } | null>(null)
@@ -118,6 +120,9 @@ export default function App() {
       console.error('Failed to save file:', err)
     }
   }, [])
+
+  // Load daemon API key on startup
+  useEffect(() => { initDaemonKey() }, [initDaemonKey])
 
   // Auto-open the daemon's project directory on startup (native mode)
   useEffect(() => {

@@ -9,6 +9,7 @@ import { RpcError } from "@bearcove/roam-core";
 // Named type definitions
 export interface Capabilities {
   file_io: boolean;
+  anthropic_api_key: string | null;
 }
 
 export interface FileOpenRequest {
@@ -692,7 +693,7 @@ export class EerieServiceDispatcher implements ChannelingDispatcher {
 
 // Named schema registry (for recursive / shared named types)
 const eerieService_schema_registry: SchemaRegistry = new Map<string, Schema>([
-  ["Capabilities", { kind: 'struct', fields: { 'file_io': { kind: 'bool' } } }],
+  ["Capabilities", { kind: 'struct', fields: { 'file_io': { kind: 'bool' }, 'anthropic_api_key': { kind: 'option', inner: { kind: 'string' } } } }],
   ["FileOpenRequest", { kind: 'struct', fields: { 'path': { kind: 'string' } } }],
   ["FileContent", { kind: 'struct', fields: { 'name': { kind: 'string' }, 'content': { kind: 'string' } } }],
   ["FileSaveRequest", { kind: 'struct', fields: { 'path': { kind: 'string' }, 'content': { kind: 'string' } } }],

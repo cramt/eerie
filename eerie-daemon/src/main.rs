@@ -1,3 +1,4 @@
+mod mcp;
 mod service;
 
 use std::net::SocketAddr;
@@ -8,11 +9,12 @@ use axum::{
     extract::WebSocketUpgrade,
     http::{Response, StatusCode, Uri, header},
     response::IntoResponse,
-    routing::get,
+    routing::{get, options, post},
 };
 use roam::DriverCaller;
 use tower_http::services::ServeDir;
 
+use crate::mcp::McpState;
 use crate::service::DaemonService;
 use eerie_rpc::EerieServiceDispatcher;
 
@@ -55,11 +57,18 @@ async fn main() {
     ensure_project_manifest(&project_dir);
 
     PROJECT_DIR
-        .set(project_dir)
+        .set(project_dir.clone())
         .expect("PROJECT_DIR already set");
+
+    let mcp_state = McpState { project_dir };
+
+    let mcp_router = Router::new()
+        .route("/mcp", post(mcp::mcp_handler).options(mcp::mcp_handler))
+        .with_state(mcp_state);
 
     let mut app = Router::new()
         .route("/rpc", get(ws_handler))
+        .merge(mcp_router)
         .fallback(get(
             |x: Uri| async move { embedded_handler(x.path()).await },
         ));

@@ -21,12 +21,20 @@ interface AiStore {
   /** Internal Anthropic API history (includes tool use blocks) */
   _apiHistory: MessageParam[]
   loading: boolean
+  /** User-supplied key from localStorage */
   apiKey: string | null
+  /** Key provided by daemon (ANTHROPIC_API_KEY env) — preferred over apiKey */
+  daemonApiKey: string | null
+
+  /** True if any API key is available (daemon or user-supplied) */
+  hasKey: () => boolean
 
   setOpen: (open: boolean) => void
   toggleOpen: () => void
   setApiKey: (key: string) => void
   clearApiKey: () => void
+  /** Load daemon-provided key from capabilities (called once on startup) */
+  initDaemonKey: () => Promise<void>
   sendMessage: (text: string) => Promise<void>
   clearMessages: () => void
 }
@@ -207,6 +215,9 @@ export const useAiStore = create<AiStore>((set, get) => ({
   _apiHistory: [],
   loading: false,
   apiKey: loadApiKey(),
+  daemonApiKey: null,
+
+  hasKey: () => !!(get().daemonApiKey ?? get().apiKey),
 
   setOpen: (open) => set({ open }),
   toggleOpen: () => set(s => ({ open: !s.open })),
@@ -221,11 +232,21 @@ export const useAiStore = create<AiStore>((set, get) => ({
     set({ apiKey: null })
   },
 
+  initDaemonKey: async () => {
+    try {
+      const caps = await api.getCapabilities()
+      if (caps.anthropic_api_key) {
+        set({ daemonApiKey: caps.anthropic_api_key })
+      }
+    } catch { /* daemon not available, ignore */ }
+  },
+
   clearMessages: () => set({ messages: [], _apiHistory: [] }),
 
   sendMessage: async (text: string) => {
-    const { apiKey, _apiHistory } = get()
+    const apiKey = get().daemonApiKey ?? get().apiKey
     if (!apiKey) return
+    const { _apiHistory } = get()
 
     const userMsg: ChatMessage = { id: newId(), role: 'user', content: text }
     const history: MessageParam[] = [..._apiHistory, { role: 'user', content: text }]

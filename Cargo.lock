@@ -406,6 +406,8 @@ dependencies = [
  "mime_guess",
  "roam",
  "rust-embed",
+ "serde",
+ "serde_json",
  "thevenin",
  "thevenin-types",
  "tokio",

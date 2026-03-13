@@ -139,7 +139,7 @@ export function getCapabilities(): Promise<Capabilities> {
         /* fall through */
       }
       // WASM or unreachable daemon — no native capabilities
-      return { file_io: false };
+      return { file_io: false, anthropic_api_key: null };
     })();
   }
   return capabilitiesPromise;
