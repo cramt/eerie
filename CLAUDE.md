@@ -49,6 +49,15 @@ nix develop --command pnpm dev
 If a command fails because a tool is missing, add it to the `devShell` in `flake.nix`
 rather than installing it on the host.
 
+## WASM vs Native modes
+
+**WASM mode** (`pnpm dev:wasm`) is a **demo mode** — runs entirely in-browser, no daemon.
+Features that require the daemon (AI assistant, file I/O, MCP server) are gracefully
+disabled in WASM mode. It is fine to leave daemon-only features non-functional in WASM.
+
+**Native mode** (`pnpm dev` or `pnpm dev:native`) is the primary development target.
+The daemon reads `ANTHROPIC_API_KEY` from the environment to enable the AI assistant.
+
 ## Project layout
 
 See `MEMORY.md` for detailed architecture notes.

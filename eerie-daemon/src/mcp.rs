@@ -346,20 +346,20 @@ fn build_topology(yaml_src: &str) -> Result<String, String> {
         }
     }
 
-    if let Yaml::Hash(params) = &doc["parameters"] {
-        if !params.is_empty() {
-            lines.push(String::new());
-            lines.push("Parameters:".into());
-            for (k, v) in params {
-                let key = k.as_str().unwrap_or("?");
-                let val = match v {
-                    Yaml::Integer(i) => i.to_string(),
-                    Yaml::Real(r)    => r.clone(),
-                    Yaml::String(s)  => s.clone(),
-                    _ => format!("{v:?}"),
-                };
-                lines.push(format!("  {key} = {val}"));
-            }
+    if let Yaml::Hash(params) = &doc["parameters"]
+        && !params.is_empty()
+    {
+        lines.push(String::new());
+        lines.push("Parameters:".into());
+        for (k, v) in params {
+            let key = k.as_str().unwrap_or("?");
+            let val = match v {
+                Yaml::Integer(i) => i.to_string(),
+                Yaml::Real(r) => r.clone(),
+                Yaml::String(s) => s.clone(),
+                _ => format!("{v:?}"),
+            };
+            lines.push(format!("  {key} = {val}"));
         }
     }
 
