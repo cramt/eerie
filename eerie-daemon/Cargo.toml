@@ -22,4 +22,6 @@ tower-http     = { version = "0.6", features = ["fs", "set-header"] }
 rust-embed = "8"
 mime_guess = "2"
 yaml-rust2 = "0.9"
+facet.workspace      = true
+facet-json.workspace = true
 reqwest = { version = "0.12", default-features = false, features = ["rustls-tls"] }

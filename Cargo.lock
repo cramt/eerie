@@ -437,6 +437,8 @@ dependencies = [
  "axum",
  "eerie-rpc",
  "env_logger",
+ "facet",
+ "facet-json",
  "log",
  "mime_guess",
  "reqwest",
