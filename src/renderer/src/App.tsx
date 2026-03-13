@@ -111,6 +111,78 @@ export default function App() {
     }
   }, [openTextTab])
 
+  const createAndOpenComponent = useCallback(async () => {
+    const proj = useCircuitStore.getState().projectPath
+    if (!proj) { toastError('Open a project first'); return }
+
+    const raw = window.prompt('Component ID (e.g. my_sensor):')
+    if (!raw) return
+    const id = raw.trim().replace(/\s+/g, '_').replace(/[^a-z0-9_]/gi, '').toLowerCase()
+    if (!id) { toastError('Invalid component ID'); return }
+    const name = id.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())
+
+    const template = `id: ${id}
+name: ${name}
+description: Custom ${name} component
+category: custom
+keywords: []
+
+pins:
+  - id: a
+    name: A
+    position: { x: -20, y: 0 }
+    direction: left
+    pin_type: passive
+  - id: b
+    name: B
+    position: { x: 20, y: 0 }
+    direction: right
+    pin_type: passive
+
+symbol:
+  bounds: { x: -20, y: -10, width: 40, height: 20 }
+  graphics:
+    - kind: line
+      x1: -20.0
+      y1: 0.0
+      x2: -8.0
+      y2: 0.0
+      stroke_width: 1.5
+    - kind: rect
+      x: -8.0
+      y: -8.0
+      width: 16.0
+      height: 16.0
+      stroke_width: 1.5
+    - kind: line
+      x1: 8.0
+      y1: 0.0
+      x2: 20.0
+      y2: 0.0
+      stroke_width: 1.5
+
+properties:
+  - id: value
+    label: Value
+    unit: ""
+    property_type: float
+    default: { Float: 1000.0 }
+
+simulation:
+  model_type: spice_primitive
+  netlist: "R{label} {a} {b} {value}"
+`
+    const fileName = `components/${id}.yaml`
+    try {
+      await api.writeFile(`${proj}/${fileName}`, template)
+      openTextTab(proj, fileName, template)
+      toastSuccess(`Created ${fileName} — edit and save to add to library`)
+    } catch (err) {
+      console.error('Failed to create component:', err)
+      toastError(`Failed to create component: ${err}`)
+    }
+  }, [openTextTab])
+
   const loadTextFile = useCallback(async (proj: string, fileName: string) => {
     try {
       const file = await api.readFile(`${proj}/${fileName}`)
@@ -128,11 +200,23 @@ export default function App() {
         tabs: s.tabs.map((t) => t.id === tabId ? { ...t, dirty: false } : t),
       }))
       toastSuccess(`Saved ${fileName}`)
+      // Reload component defs when a YAML file in components/ is saved
+      if (fileName.startsWith('components/') && fileName.endsWith('.yaml')) {
+        const defs = await api.listComponentDefs()
+        setComponentDefs(defs)
+        if (defs.length > 0) {
+          setComponents(defs.map(def => ({
+            name: def.name,
+            type_id: def.id,
+            properties: Object.fromEntries(def.properties.map(p => [p.id, p.default])),
+          })))
+        }
+      }
     } catch (err) {
       console.error('Failed to save file:', err)
       toastError(`Failed to save file: ${err}`)
     }
-  }, [])
+  }, [setComponentDefs, setComponents])
 
   // Load daemon API key on startup
   useEffect(() => { initDaemonKey() }, [initDaemonKey])
@@ -349,7 +433,7 @@ export default function App() {
           />
         </div>
         <div className="component-panel-wrap">
-          <ComponentPanel />
+          <ComponentPanel onNewComponent={createAndOpenComponent} />
         </div>
       </div>
       <div className="tabs-area">

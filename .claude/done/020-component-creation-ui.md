@@ -1,6 +1,6 @@
 # 020 — Component Creation UI
 
-Status: open
+Status: done
 Priority: low
 
 ## Goal

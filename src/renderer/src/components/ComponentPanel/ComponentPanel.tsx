@@ -7,7 +7,11 @@ import styles from './ComponentPanel.module.css'
 
 const GENERIC_LIBRARY = getLibraryCategories()
 
-export default function ComponentPanel() {
+interface ComponentPanelProps {
+  onNewComponent?: () => void
+}
+
+export default function ComponentPanel({ onNewComponent }: ComponentPanelProps = {}) {
   const { setTool, setPlacingTypeId, setPlacingPreset, setPlacingProjectIdx, tool, placingTypeId, placingProjectIdx } = useUiStore()
   const { components: projectComponents } = useProjectStore()
   const [search, setSearch] = useState('')
@@ -60,7 +64,12 @@ export default function ComponentPanel() {
         <div className={styles.panel}>
           <div className={styles.header}>
             <span>Components</span>
-            <button className={styles.editLibBtn} onClick={() => setShowLibEditor(true)} title="Edit component library">✎ Edit</button>
+            <div style={{ display: 'flex', gap: 4 }}>
+              {onNewComponent && (
+                <button className={styles.editLibBtn} onClick={onNewComponent} title="New component definition">+ New</button>
+              )}
+              <button className={styles.editLibBtn} onClick={() => setShowLibEditor(true)} title="Edit component library">✎ Edit</button>
+            </div>
           </div>
           <input
             className={styles.search}
@@ -117,7 +126,12 @@ export default function ComponentPanel() {
       <div className={styles.panel}>
       <div className={styles.header}>
         <span>Components</span>
-        <button className={styles.editLibBtn} onClick={() => setShowLibEditor(true)} title="Set up component library">✎ Set up</button>
+        <div style={{ display: 'flex', gap: 4 }}>
+          {onNewComponent && (
+            <button className={styles.editLibBtn} onClick={onNewComponent} title="New component definition">+ New</button>
+          )}
+          <button className={styles.editLibBtn} onClick={() => setShowLibEditor(true)} title="Set up component library">✎ Set up</button>
+        </div>
       </div>
       <input
         className={styles.search}
