@@ -130,7 +130,22 @@ export default function App() {
       if (!dir) return
       try {
         const info = await api.listProject(dir)
-        setComponents(info.components)
+        // Use manifest-defined components if present, otherwise load from
+        // the workspace `components/` YAML files.
+        if (info.components !== null) {
+          setComponents(info.components)
+        } else {
+          const defs = await api.listComponentDefs()
+          if (defs.length > 0) {
+            setComponents(defs.map(def => ({
+              name: def.name,
+              type_id: def.id,
+              properties: Object.fromEntries(def.properties.map(p => [p.id, p.default])),
+            })))
+          } else {
+            setComponents(null)
+          }
+        }
         useCircuitStore.setState({ projectPath: dir })
         if (info.circuits.length === 1) {
           await loadCircuit(dir, info.circuits[0])

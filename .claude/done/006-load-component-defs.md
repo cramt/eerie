@@ -1,6 +1,6 @@
 # 006 — Load Component Definitions from YAML
 
-Status: open
+Status: done
 Priority: high
 
 ## Goal

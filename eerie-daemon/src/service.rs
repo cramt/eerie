@@ -1,6 +1,7 @@
 use eerie_rpc::{
-    AiChatRequest, AiChatResponse, Capabilities, EerieService, FileContent, FileOpenRequest,
-    FileSaveRequest, FileSaveResult, ListProjectRequest, ProjectDir, ProjectListing,
+    AiChatRequest, AiChatResponse, Capabilities, ComponentDef, EerieService, FileContent,
+    FileOpenRequest, FileSaveRequest, FileSaveResult, ListProjectRequest, ProjectDir,
+    ProjectListing, PropertyDef,
 };
 use std::path::PathBuf;
 use thevenin_types::{Netlist, SimResult};
@@ -117,4 +118,80 @@ impl EerieService for DaemonService {
         let mcp_url = format!("http://127.0.0.1:{}/mcp", self.port);
         crate::ai::run_chat(&api_key, req, &mcp_url).await
     }
+
+    async fn list_component_defs(&self) -> Result<Vec<ComponentDef>, String> {
+        let workspace = std::env::var("EERIE_WORKSPACE")
+            .map(std::path::PathBuf::from)
+            .unwrap_or_else(|_| std::env::current_dir().unwrap_or_default());
+        let components_dir = workspace.join("components");
+        if !components_dir.exists() {
+            return Ok(vec![]);
+        }
+        let mut defs = Vec::new();
+        scan_yaml_dir(&components_dir, &mut defs);
+        defs.sort_by(|a, b| a.name.cmp(&b.name));
+        Ok(defs)
+    }
+}
+
+fn scan_yaml_dir(dir: &std::path::Path, out: &mut Vec<ComponentDef>) {
+    let Ok(entries) = std::fs::read_dir(dir) else { return };
+    for entry in entries.flatten() {
+        let path = entry.path();
+        if path.is_dir() {
+            scan_yaml_dir(&path, out);
+        } else if path.extension().map_or(false, |e| e == "yaml") {
+            if let Ok(text) = std::fs::read_to_string(&path) {
+                if let Some(def) = parse_component_def(&text) {
+                    out.push(def);
+                }
+            }
+        }
+    }
+}
+
+fn parse_component_def(yaml_str: &str) -> Option<ComponentDef> {
+    use yaml_rust2::YamlLoader;
+    let docs = YamlLoader::load_from_str(yaml_str).ok()?;
+    let doc = docs.first()?;
+
+    // Skip files that don't look like component defs (must have id + name)
+    let id = doc["id"].as_str()?.to_string();
+    let name = doc["name"].as_str()?.to_string();
+    let description = doc["description"].as_str().unwrap_or("").to_string();
+    let category = doc["category"].as_str().unwrap_or("").to_string();
+    let subcategory = doc["subcategory"].as_str().map(String::from);
+    let keywords = doc["keywords"]
+        .as_vec()
+        .map(|v| v.iter().filter_map(|k| k.as_str().map(String::from)).collect())
+        .unwrap_or_default();
+    let properties = doc["properties"]
+        .as_vec()
+        .map(|v| v.iter().filter_map(parse_property_def).collect())
+        .unwrap_or_default();
+
+    Some(ComponentDef { id, name, description, category, subcategory, keywords, properties })
+}
+
+fn parse_property_def(yaml: &yaml_rust2::Yaml) -> Option<PropertyDef> {
+    let id = yaml["id"].as_str()?.to_string();
+    let label = yaml["label"].as_str().unwrap_or(&id).to_string();
+    let unit = yaml["unit"].as_str().map(String::from);
+    let default = extract_default_f64(&yaml["default"]).unwrap_or(0.0);
+    Some(PropertyDef { id, label, unit, default })
+}
+
+/// Extract a numeric default from `{ Float: 1.0 }` or a bare number.
+fn extract_default_f64(yaml: &yaml_rust2::Yaml) -> Option<f64> {
+    if let Some(f) = yaml.as_f64() {
+        return Some(f);
+    }
+    if let yaml_rust2::Yaml::Hash(h) = yaml {
+        for (_k, v) in h {
+            if let Some(f) = v.as_f64() {
+                return Some(f);
+            }
+        }
+    }
+    None
 }

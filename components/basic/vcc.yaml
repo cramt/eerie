@@ -1,0 +1,41 @@
+id: vcc
+name: VCC
+description: Positive supply voltage power rail
+category: power
+subcategory: rails
+keywords: [VCC, VDD, supply, power, rail, positive]
+
+pins:
+  - id: p
+    name: vcc
+    position: { x: 0, y: 8 }
+    direction: down
+    pin_type: passive
+
+symbol:
+  bounds: { x: -6, y: -6, width: 12, height: 14 }
+  graphics:
+    - kind: line
+      x1: 0.0
+      y1: 8.0
+      x2: 0.0
+      y2: 0.0
+      stroke_width: 1.5
+    - kind: line
+      x1: -6.0
+      y1: 0.0
+      x2: 6.0
+      y2: 0.0
+      stroke_width: 2.0
+    - kind: line
+      x1: -3.0
+      y1: -3.5
+      x2: 3.0
+      y2: -3.5
+      stroke_width: 2.0
+
+properties: []
+
+simulation:
+  model_type: net_name
+  net: "VCC"

@@ -8,9 +8,10 @@ import {
   type Capabilities,
   type AiChatRequest,
   type AiChatResponse,
+  type ComponentDef,
 } from "../../codegen/generated-rpc";
 
-export type { SimResult, Netlist, Capabilities, AiChatRequest, AiChatResponse };
+export type { SimResult, Netlist, Capabilities, AiChatRequest, AiChatResponse, ComponentDef };
 
 export type SimulateResponse =
   | { ok: true; value: SimResult }
@@ -154,6 +155,16 @@ export function getCapabilities(): Promise<Capabilities> {
     })();
   }
   return capabilitiesPromise;
+}
+
+/** List component definitions from the workspace `components/` directory (native mode only). */
+export async function listComponentDefs(): Promise<ComponentDef[]> {
+  try {
+    const client = await getClient();
+    const res = await client.listComponentDefs();
+    if (res.ok) return res.value;
+  } catch { /* ignore */ }
+  return [];
 }
 
 // ── File I/O ─────────────────────────────────────────────────────────────────

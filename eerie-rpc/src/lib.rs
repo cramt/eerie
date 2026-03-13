@@ -1,5 +1,28 @@
 pub use thevenin_types::{Netlist, SimResult};
 
+/// A single property definition for a component, parsed from its YAML file.
+#[derive(facet::Facet, Clone, Debug)]
+pub struct PropertyDef {
+    pub id: String,
+    pub label: String,
+    pub unit: Option<String>,
+    /// Default value in base SI units.
+    pub default: f64,
+}
+
+/// A component definition loaded from a YAML file in the `components/` directory.
+#[derive(facet::Facet, Clone, Debug)]
+pub struct ComponentDef {
+    /// Type identifier, e.g. `"resistor"`, `"dc_voltage"`.
+    pub id: String,
+    pub name: String,
+    pub description: String,
+    pub category: String,
+    pub subcategory: Option<String>,
+    pub keywords: Vec<String>,
+    pub properties: Vec<PropertyDef>,
+}
+
 /// A single turn in the AI conversation (human-readable text only).
 #[derive(facet::Facet, Clone, Debug)]
 pub struct AiMessage {
@@ -144,4 +167,7 @@ pub trait EerieService {
 
     /// Run AI chat with agentic circuit editing loop (server-side Anthropic API call).
     async fn ai_chat(&self, req: AiChatRequest) -> Result<AiChatResponse, String>;
+
+    /// List component definitions from the `components/` directory in the workspace.
+    async fn list_component_defs(&self) -> Result<Vec<ComponentDef>, String>;
 }

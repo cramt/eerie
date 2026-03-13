@@ -220,6 +220,23 @@ export interface AiChatResponse {
   mutations: CircuitMutation[];
 }
 
+export interface PropertyDef {
+  id: string;
+  label: string;
+  unit: string | null;
+  default: number;
+}
+
+export interface ComponentDef {
+  id: string;
+  name: string;
+  description: string;
+  category: string;
+  subcategory: string | null;
+  keywords: string[];
+  properties: PropertyDef[];
+}
+
 // Request/Response type aliases
 export type GetCapabilitiesRequest = [];
 export type GetCapabilitiesResponse = { ok: true; value: Capabilities } | { ok: false; error: string };
@@ -258,6 +275,9 @@ export type SimulatePzRequest = [Netlist];
 export type SimulatePzResponse = { ok: true; value: SimResult } | { ok: false; error: string };
 
 
+export type ListComponentDefsRequest = [];
+export type ListComponentDefsResponse = { ok: true; value: ComponentDef[] } | { ok: false; error: string };
+
 // Caller interface for EerieService
 export interface EerieServiceCaller {
   /** Query what this backend supports. */
@@ -288,6 +308,8 @@ export interface EerieServiceCaller {
   simulatePz(netlist: Netlist): CallBuilder<{ ok: true; value: SimResult } | { ok: false; error: string }>;
   /** Run AI chat with agentic circuit editing loop (server-side Anthropic API call). */
   aiChat(req: AiChatRequest): CallBuilder<{ ok: true; value: AiChatResponse } | { ok: false; error: string }>;
+  /** List component definitions from the `components/` directory in the workspace. */
+  listComponentDefs(): CallBuilder<{ ok: true; value: ComponentDef[] } | { ok: false; error: string }>;
 }
 
 // Client implementation for EerieService
@@ -606,6 +628,28 @@ export class EerieServiceClient implements EerieServiceCaller {
     });
   }
 
+  /** List component definitions from the `components/` directory in the workspace. */
+  listComponentDefs(): CallBuilder<{ ok: true; value: ComponentDef[] } | { ok: false; error: string }> {
+    const descriptor = eerieService_descriptor.methods[14];
+    return new CallBuilder(async (metadata) => {
+      try {
+        const value = await this.caller.call({
+          method: "EerieService.listComponentDefs",
+          args: {},
+          descriptor,
+          schemaRegistry: eerieService_descriptor.schema_registry,
+          metadata,
+        });
+        return { ok: true, value } as { ok: true; value: ComponentDef[] } | { ok: false; error: string };
+      } catch (e) {
+        if (e instanceof RpcError && e.isUserError()) {
+          return { ok: false, error: e.userError } as { ok: true; value: ComponentDef[] } | { ok: false; error: string };
+        }
+        throw e;
+      }
+    });
+  }
+
 }
 
 /**
@@ -635,6 +679,7 @@ export interface EerieServiceHandler {
   simulateSens(netlist: Netlist): Promise<{ ok: true; value: SimResult } | { ok: false; error: string }> | { ok: true; value: SimResult } | { ok: false; error: string };
   simulatePz(netlist: Netlist): Promise<{ ok: true; value: SimResult } | { ok: false; error: string }> | { ok: true; value: SimResult } | { ok: false; error: string };
   aiChat(req: AiChatRequest): Promise<{ ok: true; value: AiChatResponse } | { ok: false; error: string }> | { ok: true; value: AiChatResponse } | { ok: false; error: string };
+  listComponentDefs(): Promise<{ ok: true; value: ComponentDef[] } | { ok: false; error: string }> | { ok: true; value: ComponentDef[] } | { ok: false; error: string };
 }
 
 // Dispatcher for EerieService
@@ -744,6 +789,13 @@ export class EerieServiceDispatcher implements ChannelingDispatcher {
       } catch {
         call.replyInternalError();
       }
+    } else if (method.id === 0x8dc6b6a6381339dfn) {
+      try {
+        const result = await this.handler.listComponentDefs();
+        if (result.ok) call.reply(result.value); else call.replyErr(result.error);
+      } catch {
+        call.replyInternalError();
+      }
     }
   }
 }
@@ -784,6 +836,8 @@ const eerieService_schema_registry: SchemaRegistry = new Map<string, Schema>([
   ["AiChatRequest", { kind: 'struct', fields: { 'messages': { kind: 'vec', element: { kind: 'ref', name: 'AiMessage' } }, 'circuit_yaml': { kind: 'string' }, 'spice_netlist': { kind: 'string' } } }],
   ["CircuitMutation", { kind: 'enum', variants: [{ name: 'UpdateProperty', fields: { 'component_id': { kind: 'string' }, 'property': { kind: 'string' }, 'value': { kind: 'f64' } } }, { name: 'AddComponent', fields: { 'type_id': { kind: 'string' }, 'label': { kind: 'option', inner: { kind: 'string' } }, 'properties': { kind: 'vec', element: { kind: 'tuple', elements: [{ kind: 'string' }, { kind: 'f64' }] } } } }, { name: 'RemoveComponent', fields: { 'component_id': { kind: 'string' } } }, { name: 'SetIntent', fields: { 'intent': { kind: 'option', inner: { kind: 'string' } } } }, { name: 'SetParameter', fields: { 'name': { kind: 'string' }, 'value': { kind: 'f64' } } }, { name: 'RemoveParameter', fields: { 'name': { kind: 'string' } } }] }],
   ["AiChatResponse", { kind: 'struct', fields: { 'message': { kind: 'string' }, 'mutations': { kind: 'vec', element: { kind: 'ref', name: 'CircuitMutation' } } } }],
+  ["PropertyDef", { kind: 'struct', fields: { 'id': { kind: 'string' }, 'label': { kind: 'string' }, 'unit': { kind: 'option', inner: { kind: 'string' } }, 'default': { kind: 'f64' } } }],
+  ["ComponentDef", { kind: 'struct', fields: { 'id': { kind: 'string' }, 'name': { kind: 'string' }, 'description': { kind: 'string' }, 'category': { kind: 'string' }, 'subcategory': { kind: 'option', inner: { kind: 'string' } }, 'keywords': { kind: 'vec', element: { kind: 'string' } }, 'properties': { kind: 'vec', element: { kind: 'ref', name: 'PropertyDef' } } } }],
 ]);
 
 // Service descriptor for runtime schema-driven dispatch
@@ -874,6 +928,12 @@ export const eerieService_descriptor: ServiceDescriptor = {
       id: 0x88a9ea20fe956f57n,
       args: { kind: 'tuple', elements: [{ kind: 'ref', name: 'AiChatRequest' }] },
       result: { kind: 'enum', variants: [{ name: 'Ok', fields: { kind: 'ref', name: 'AiChatResponse' } }, { name: 'Err', fields: { kind: 'enum', variants: [{ name: 'User', fields: { kind: 'string' } }, { name: 'UnknownMethod', fields: null }, { name: 'InvalidPayload', fields: null }, { name: 'Cancelled', fields: null }] } }] },
+    },
+    {
+      name: 'listComponentDefs',
+      id: 0x8dc6b6a6381339dfn,
+      args: { kind: 'tuple', elements: [] },
+      result: { kind: 'enum', variants: [{ name: 'Ok', fields: { kind: 'vec', element: { kind: 'ref', name: 'ComponentDef' } } }, { name: 'Err', fields: { kind: 'enum', variants: [{ name: 'User', fields: { kind: 'string' } }, { name: 'UnknownMethod', fields: null }, { name: 'InvalidPayload', fields: null }, { name: 'Cancelled', fields: null }] } }] },
     },
   ],
 };
