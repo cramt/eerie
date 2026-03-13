@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { useCircuitStore } from '../../store/circuitStore'
 import { useUiStore } from '../../store/uiStore'
+import { useProjectStore } from '../../store/projectStore'
 import { SYMBOL_REGISTRY } from '../../symbols'
 import { SOURCE_TYPE_DEFAULTS, SOURCE_TYPE_FIELDS } from '../../utils/defaultProperties'
 import styles from './PropertyEditor.module.css'
@@ -177,6 +178,7 @@ function unwrapFacet(val: unknown): unknown {
 export default function PropertyEditor() {
   const { circuit, updateComponentProperty, updateComponent, removeComponent, removeComponents, removeNet, removeNets } = useCircuitStore()
   const { selectedComponentIds, selectedNetIds } = useUiStore()
+  const { componentDefs } = useProjectStore()
   const [addingProp, setAddingProp] = useState(false)
   const [newPropKey, setNewPropKey] = useState('')
 
@@ -241,7 +243,9 @@ export default function PropertyEditor() {
   const comp = selectedComps[0]
 
   const sym = SYMBOL_REGISTRY[comp.type_id]
+  const def = componentDefs[comp.type_id]
   const isSource = comp.type_id === 'dc_voltage' || comp.type_id === 'dc_current'
+  const displayName = def?.name ?? sym?.label ?? comp.type_id
 
   const handleAddProperty = () => {
     const key = newPropKey.trim()
@@ -252,6 +256,10 @@ export default function PropertyEditor() {
     }
   }
 
+  // Build property list: prefer ComponentDef ordering/labels, then fall back to raw keys
+  const defPropIds = new Set(def?.properties.map(p => p.id) ?? [])
+  const extraKeys = Object.keys(comp.properties).filter(k => k !== 'source_type' && !defPropIds.has(k))
+
   return (
     <div className={styles.panel}>
       <div className={styles.header}>Properties</div>
@@ -259,14 +267,14 @@ export default function PropertyEditor() {
       <div className={styles.section}>
         <div className={styles.row}>
           <span className={styles.key}>Type</span>
-          <span className={styles.val}>{sym?.label ?? comp.type_id}</span>
+          <span className={styles.val}>{displayName}</span>
         </div>
         <div className={styles.row}>
           <span className={styles.key}>Label</span>
           <input
             className={styles.input}
             value={comp.label ?? ''}
-            placeholder={sym?.label ?? comp.type_id}
+            placeholder={displayName}
             onChange={(e) => updateComponent(comp.id, { label: e.target.value || undefined })}
           />
         </div>
@@ -287,7 +295,39 @@ export default function PropertyEditor() {
             updateComponent={updateComponent}
           />
         )}
-        {Object.entries(comp.properties)
+        {/* Render def-ordered properties with proper labels */}
+        {def?.properties.map((propDef) => (
+          <PropertyRow
+            key={`${comp.id}-${propDef.id}`}
+            propKey={propDef.id}
+            label={propDef.label}
+            value={comp.properties[propDef.id] ?? propDef.default}
+            unit={propDef.unit ?? PROP_UNITS[propDef.id]}
+            onChange={(v) => updateComponentProperty(comp.id, propDef.id, v)}
+            onRemove={() => {
+              const props = { ...comp.properties }
+              delete props[propDef.id]
+              updateComponent(comp.id, { properties: props })
+            }}
+          />
+        ))}
+        {/* Extra properties not in the def */}
+        {extraKeys.map((key) => (
+          <PropertyRow
+            key={`${comp.id}-${key}`}
+            propKey={key}
+            value={comp.properties[key]}
+            unit={PROP_UNITS[key]}
+            onChange={(v) => updateComponentProperty(comp.id, key, v)}
+            onRemove={() => {
+              const props = { ...comp.properties }
+              delete props[key]
+              updateComponent(comp.id, { properties: props })
+            }}
+          />
+        ))}
+        {/* Legacy: no def, render all raw properties */}
+        {!def && Object.entries(comp.properties)
           .filter(([key]) => key !== 'source_type')
           .map(([key, val]) => (
           <PropertyRow
@@ -303,7 +343,7 @@ export default function PropertyEditor() {
             }}
           />
         ))}
-        {Object.entries(comp.properties).length === 0 && (
+        {Object.entries(comp.properties).length === 0 && !def && (
           <p className={styles.emptyProps}>No properties set.</p>
         )}
 
@@ -361,12 +401,14 @@ export default function PropertyEditor() {
 
 function PropertyRow({
   propKey,
+  label,
   value,
   unit,
   onChange,
   onRemove,
 }: {
   propKey: string
+  label?: string
   value: unknown
   unit?: string
   onChange: (v: unknown) => void
@@ -393,7 +435,7 @@ function PropertyRow({
 
   return (
     <div className={styles.row}>
-      <span className={styles.key}>{propKey}</span>
+      <span className={styles.key}>{label ?? propKey}</span>
       {editing ? (
         <input
           className={styles.input}

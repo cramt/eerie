@@ -1,6 +1,6 @@
 # 011 — Property Editor Wired to Component Definitions
 
-Status: open
+Status: done
 Priority: medium
 
 ## Goal
