@@ -1,6 +1,7 @@
 import React from 'react'
 import { useCircuitStore } from '../../store/circuitStore'
 import { useUiStore } from '../../store/uiStore'
+import { useHistoryStore } from '../../store/historyStore'
 import type { Tool } from '../../types'
 import styles from './Toolbar.module.css'
 
@@ -18,6 +19,7 @@ const TOOLS: { id: Tool; label: string; icon: string; key: string }[] = [
 export default function Toolbar({ onOpen, onSave }: Props) {
   const { tool, setTool, simPanelOpen, toggleSimPanel, aiPanelOpen, toggleAiPanel } = useUiStore()
   const { dirty } = useCircuitStore()
+  const { undo, redo, undoStack, redoStack } = useHistoryStore()
 
   return (
     <div className={styles.toolbar}>
@@ -40,6 +42,12 @@ export default function Toolbar({ onOpen, onSave }: Props) {
       <span className={styles.title} />
 
       <div className={styles.actions}>
+        <button className={styles.btn} onClick={undo} disabled={undoStack.length === 0} title="Undo (Ctrl+Z)">
+          ↩
+        </button>
+        <button className={styles.btn} onClick={redo} disabled={redoStack.length === 0} title="Redo (Ctrl+Y)">
+          ↪
+        </button>
         <button className={styles.btn} onClick={onOpen} title="Open project (Ctrl+O)">
           Open
         </button>

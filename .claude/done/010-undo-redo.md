@@ -1,6 +1,6 @@
 # 010 — Undo / Redo
 
-Status: open
+Status: done
 Priority: medium
 
 ## Goal
