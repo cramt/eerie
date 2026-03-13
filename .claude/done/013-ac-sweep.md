@@ -1,6 +1,6 @@
 # 013 — AC Sweep Simulation
 
-Status: open
+Status: done
 Priority: medium
 
 ## Goal
