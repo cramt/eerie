@@ -219,11 +219,18 @@
         };
 
         # ── Daemon binary (native simulation via thevenin) ───────────────
+        # rust-embed looks for ../dist/ relative to the eerie-daemon crate
+        # at compile time — provide the pre-built native frontend.
         daemonBin = craneLib.buildPackage (commonCraneArgs
           // {
             inherit cargoArtifacts;
             pname = "eerie-daemon";
             cargoExtraArgs = "-p eerie-daemon";
+            # Copy the pre-built frontend into dist/ so rust-embed can find it
+            preBuild = ''
+              mkdir -p dist
+              cp -r --no-preserve=all ${frontendNative}/* dist/
+            '';
           });
 
         # ── Eerie (daemon + embedded frontend) ──────────────────────────

@@ -1,0 +1,50 @@
+id: test
+name: Test
+description: Custom Test component
+category: custom
+keywords: []
+
+pins:
+  - id: a
+    name: A
+    position: { x: -20, y: 0 }
+    direction: left
+    pin_type: passive
+  - id: b
+    name: B
+    position: { x: 20, y: 0 }
+    direction: right
+    pin_type: passive
+
+symbol:
+  bounds: { x: -20, y: -10, width: 40, height: 20 }
+  graphics:
+    - kind: line
+      x1: -20.0
+      y1: 0.0
+      x2: -8.0
+      y2: 0.0
+      stroke_width: 1.5
+    - kind: rect
+      x: -8.0
+      y: -8.0
+      width: 16.0
+      height: 16.0
+      stroke_width: 1.5
+    - kind: line
+      x1: 8.0
+      y1: 0.0
+      x2: 20.0
+      y2: 0.0
+      stroke_width: 1.5
+
+properties:
+  - id: value
+    label: Value
+    unit: ""
+    property_type: float
+    default: { Float: 1000.0 }
+
+simulation:
+  model_type: spice_primitive
+  netlist: "R{label} {a} {b} {value}"

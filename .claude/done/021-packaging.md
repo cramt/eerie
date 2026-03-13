@@ -1,6 +1,6 @@
 # 021 — Packaging / NixOS Installer
 
-Status: open
+Status: done
 Priority: low
 
 ## Goal
