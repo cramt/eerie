@@ -33,6 +33,7 @@
     "vite": "^7.3.1"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.78.0",
     "@bearcove/roam-core": "^7.3.0",
     "@bearcove/roam-inprocess": "7.3.0",
     "@bearcove/roam-postcard": "^7.3.0",

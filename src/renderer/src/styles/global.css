@@ -79,18 +79,23 @@ input:focus, select:focus {
 }
 
 .app-layout {
+  --ai-panel-width: 0px;
   display: grid;
   grid-template-rows: var(--toolbar-height) var(--tabbar-height) 1fr auto var(--status-height);
-  grid-template-columns: var(--panel-width) 1fr var(--props-width);
+  grid-template-columns: var(--panel-width) 1fr var(--props-width) var(--ai-panel-width);
   grid-template-areas:
-    "toolbar toolbar toolbar"
-    "panel   tabs    props"
-    "panel   canvas  props"
-    "panel   plot    props"
-    "status  status  status";
+    "toolbar toolbar toolbar toolbar"
+    "panel   tabs    props   ai"
+    "panel   canvas  props   ai"
+    "panel   plot    props   ai"
+    "status  status  status  status";
   height: 100vh;
   width: 100vw;
   position: relative;
+}
+
+.app-layout[data-ai-open="true"] {
+  --ai-panel-width: 360px;
 }
 
 .toolbar-area  { grid-area: toolbar; }
@@ -100,6 +105,7 @@ input:focus, select:focus {
 .plot-area     { grid-area: plot; overflow: hidden; }
 .props-area    { grid-area: props; }
 .status-area   { grid-area: status; }
+.ai-area       { grid-area: ai; overflow: hidden; border-left: 1px solid var(--border); }
 
 /* File explorer takes a fixed portion; components fill the rest */
 .panel-area .file-explorer-wrap {

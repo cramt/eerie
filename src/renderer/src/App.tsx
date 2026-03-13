@@ -15,6 +15,7 @@ import FileDialog, { type FileDialogMode } from './components/FileDialog/FileDia
 import TabBar from './components/TabBar/TabBar'
 import FileExplorer from './components/FileExplorer/FileExplorer'
 import TextEditor from './components/TextEditor/TextEditor'
+import AiPanel from './components/AiPanel/AiPanel'
 import { filePinToUi, uiPinToFile } from './utils/netlistBuilder'
 import * as api from './api'
 
@@ -25,7 +26,7 @@ import type { Circuit, ComponentInstance, Net } from './types'
 
 export default function App() {
   const { circuit, setCircuit, projectPath, circuitName, dirty, setDirty } = useCircuitStore()
-  const { theme, tool, setTool, setPlacingTypeId, selectedComponentIds, selectedNetIds, setSimPanelOpen } = useUiStore()
+  const { theme, tool, setTool, setPlacingTypeId, selectedComponentIds, selectedNetIds, setSimPanelOpen, aiPanelOpen } = useUiStore()
   const { undo, redo } = useHistoryStore()
   const { setComponents } = useProjectStore()
   const { tabs, activeTabId, openTab, openTextTab, updateTextContent, closeTab } = useTabsStore()
@@ -279,7 +280,7 @@ export default function App() {
       selectedComponentIds, selectedNetIds, setSimPanelOpen])
 
   return (
-    <div className="app-layout">
+    <div className="app-layout" data-ai-open={aiPanelOpen ? 'true' : undefined}>
       {fileDialog && (
         <FileDialog
           mode={fileDialog.mode}
@@ -328,6 +329,9 @@ export default function App() {
       </div>
       <div className="props-area">
         <PropertyEditor />
+      </div>
+      <div className="ai-area">
+        {aiPanelOpen && <AiPanel />}
       </div>
       <div className="status-area">
         <StatusBar />
