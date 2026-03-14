@@ -1,4 +1,6 @@
 packages:
   - eerie-wasm/pkg
+  - ts-hello
+  - claude-agent-acp
 onlyBuiltDependencies:
   - esbuild

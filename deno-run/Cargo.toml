@@ -1,0 +1,13 @@
+[package]
+name = "deno-run"
+version = "0.1.0"
+edition = "2024"
+description = "Run esbuild-bundled TypeScript inside a deno_runtime MainWorker"
+
+[dependencies]
+deno_core = "0.385.0"
+deno_runtime = { version = "0.240.0", features = ["hmr"] }
+deno_resolver = "0.63.0"
+node_resolver = "0.70.0"
+deno_semver = "0.9.1"
+sys_traits = "0.1.24"

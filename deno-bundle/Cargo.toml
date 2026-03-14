@@ -1,0 +1,19 @@
+[package]
+name = "deno-bundle"
+version = "0.1.0"
+edition = "2024"
+description = "Proc macro: bundles TypeScript files via `deno bundle` at compile time"
+
+[lib]
+name = "deno_bundle"
+path = "src/lib.rs"
+proc-macro = true
+
+[[bin]]
+name = "deno-bundle"
+path = "src/main.rs"
+
+[dependencies]
+proc-macro2 = "1"
+quote = "1"
+unsynn = "0.3"

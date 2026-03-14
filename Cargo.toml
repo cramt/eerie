@@ -4,6 +4,10 @@ members = [
     "eerie-wasm",
     "eerie-rpc",
     "eerie-daemon",
+    "deno-bundle",
+    "deno-run",
+    "ts-hello",
+    "claude-agent-acp",
 ]
 resolver = "2"
 

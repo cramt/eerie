@@ -316,6 +316,8 @@
             cargo-watch
             nodejs_22
             pnpm
+            deno
+            esbuild
             pkg-config
             openssl
             git

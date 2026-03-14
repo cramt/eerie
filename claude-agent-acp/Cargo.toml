@@ -1,0 +1,25 @@
+[package]
+name = "claude-agent-acp"
+version = "0.1.0"
+edition = "2024"
+
+[[bin]]
+name = "claude-agent-acp"
+path = "src/main.rs"
+
+[lib]
+name = "claude_agent_acp"
+path = "src/lib.rs"
+
+[dependencies]
+deno-bundle = { path = "../deno-bundle" }
+deno-run = { path = "../deno-run" }
+deno_core = "0.385.0"
+deno_error = "0.7.0"
+deno_runtime = { version = "0.240.0", features = ["hmr"] }
+anyhow = "1"
+tokio = { version = "1", features = ["rt-multi-thread", "macros"] }
+bytes = "1"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+rustls = { version = "=0.23.28", features = ["aws_lc_rs"] }

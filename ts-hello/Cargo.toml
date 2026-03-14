@@ -1,0 +1,10 @@
+[package]
+name = "ts-hello"
+version = "0.1.0"
+edition = "2024"
+description = "Example: bundles TypeScript at compile time, runs it inside Deno at runtime"
+
+[dependencies]
+deno-bundle = { path = "../deno-bundle" }
+deno-run = { path = "../deno-run" }
+tokio = { version = "1", features = ["full"] }
