@@ -44,6 +44,10 @@ interface UiStore {
   setTheme: (theme: Theme) => void
   setZoom: (zoom: number) => void
   setMouseGridPos: (pos: Point) => void
+
+  aiEditDialog: { x: number; y: number; focusedComponentId?: string } | null
+  openAiEditDialog: (x: number, y: number, focusedComponentId?: string) => void
+  closeAiEditDialog: () => void
 }
 
 export const useUiStore = create<UiStore>((set, get) => ({
@@ -105,4 +109,8 @@ export const useUiStore = create<UiStore>((set, get) => ({
   },
   setZoom: (zoom) => set({ zoom }),
   setMouseGridPos: (pos) => set({ mouseGridPos: pos }),
+
+  aiEditDialog: null,
+  openAiEditDialog: (x, y, focusedComponentId) => set({ aiEditDialog: { x, y, focusedComponentId } }),
+  closeAiEditDialog: () => set({ aiEditDialog: null }),
 }))

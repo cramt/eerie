@@ -94,6 +94,26 @@ pub struct Capabilities {
     pub file_io: bool,
     /// Backend can spawn the `claude` CLI for AI chat.
     pub ai_chat: bool,
+    /// Backend can edit circuits in-place using AI.
+    pub ai_edit: bool,
+}
+
+/// Request to edit a circuit using AI.
+#[derive(facet::Facet, Clone, Debug)]
+pub struct AiEditCircuitRequest {
+    /// The circuit serialized as YAML.
+    pub circuit_yaml: String,
+    /// Natural-language instruction, e.g. "add a 10kΩ pull-up resistor from VCC to the output".
+    pub instruction: String,
+    /// Optional: ID of the component the user right-clicked on (for focused edits).
+    pub focused_component_id: Option<String>,
+}
+
+/// Response from the AI circuit editor.
+#[derive(facet::Facet, Clone, Debug)]
+pub struct AiEditCircuitResponse {
+    /// The updated circuit as YAML.
+    pub circuit_yaml: String,
 }
 
 /// A single turn in an AI conversation.
@@ -256,4 +276,7 @@ pub trait EerieService {
 
     /// Send a message to the AI assistant (spawns `claude` CLI; native mode only).
     async fn ai_chat(&self, req: AiChatRequest) -> Result<AiChatResponse, String>;
+
+    /// Edit a circuit in-place using AI (native mode only).
+    async fn ai_edit_circuit(&self, req: AiEditCircuitRequest) -> Result<AiEditCircuitResponse, String>;
 }

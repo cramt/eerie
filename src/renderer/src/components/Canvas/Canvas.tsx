@@ -4,8 +4,10 @@ import { useCircuitStore } from '../../store/circuitStore'
 import { useUiStore } from '../../store/uiStore'
 import { useProjectStore } from '../../store/projectStore'
 import { useSimulationStore } from '../../store/simulationStore'
+import { useHistoryStore } from '../../store/historyStore'
 import { getThemeColors } from '../../themes/colors'
 import { getAbsolutePins } from '../../utils/pinUtils'
+import { parseCircuitYaml, serializeCircuitYaml } from '../../utils/circuitYaml'
 import { useCanvasView } from './useCanvasView'
 import { useWireDrawing } from './useWireDrawing'
 import { useComponentDrag } from './useComponentDrag'
@@ -15,7 +17,10 @@ import ComponentLayer from './ComponentLayer'
 import OverlayLayer from './OverlayLayer'
 import SimOverlayLayer from './SimOverlayLayer'
 import ContextMenu, { type ContextMenuEntry } from './ContextMenu'
+import AiEditDialog from '../AiEditDialog/AiEditDialog'
 import { SYMBOL_REGISTRY } from '../../symbols'
+import * as api from '../../api'
+import type { Capabilities } from '../../api'
 import type { Point } from '../../types'
 import styles from './Canvas.module.css'
 
@@ -35,10 +40,11 @@ export default function Canvas({ onComponentDblClick }: CanvasProps = {}) {
   const [contextMenu, setContextMenu] = useState<ContextMenuState | null>(null)
   const [marquee, setMarquee] = useState<{ start: Point; end: Point } | null>(null)
   const [editingLabel, setEditingLabel] = useState<{ compId: string; x: number; y: number; value: string } | null>(null)
+  const [caps, setCaps] = useState<Capabilities | null>(null)
   const marqueeRef = useRef<{ start: Point; active: boolean }>({ start: { x: 0, y: 0 }, active: false })
 
   const { circuit, addComponent, removeComponent, removeComponents, updateComponent, removeNet, removeNets } = useCircuitStore()
-  const { tool, placingTypeId, placingPreset, selectedComponentIds, selectedNetIds, theme } = useUiStore()
+  const { tool, placingTypeId, placingPreset, selectedComponentIds, selectedNetIds, theme, aiEditDialog, openAiEditDialog, closeAiEditDialog } = useUiStore()
   const selectComponent = useUiStore((s) => s.selectComponent)
   const selectComponents = useUiStore((s) => s.selectComponents)
   const selectNet = useUiStore((s) => s.selectNet)
@@ -69,6 +75,10 @@ export default function Canvas({ onComponentDblClick }: CanvasProps = {}) {
     ro.observe(el)
     setSize({ width: el.clientWidth, height: el.clientHeight })
     return () => ro.disconnect()
+  }, [])
+
+  useEffect(() => {
+    api.getCapabilities().then(setCaps)
   }, [])
 
   // Fit the view when a different circuit is loaded
@@ -197,6 +207,16 @@ export default function Canvas({ onComponentDblClick }: CanvasProps = {}) {
     return null
   }, [screenToGrid, circuit.components])
 
+  const handleAiEdit = useCallback(async (instruction: string) => {
+    const yaml = serializeCircuitYaml(useCircuitStore.getState().circuit)
+    const resultYaml = await api.aiEditCircuit(yaml, instruction, aiEditDialog?.focusedComponentId)
+    const parsed = parseCircuitYaml(resultYaml)
+    if (!parsed) throw new Error('AI returned unparseable circuit YAML')
+    useHistoryStore.getState().pushUndo()
+    useCircuitStore.getState().setCircuitDirect(parsed)
+    closeAiEditDialog()
+  }, [aiEditDialog, closeAiEditDialog])
+
   const handleContextMenu = useCallback((e: any) => {
     e.evt.preventDefault()
     setContextMenu(null)
@@ -249,6 +269,10 @@ export default function Canvas({ onComponentDblClick }: CanvasProps = {}) {
           { label: 'Delete', shortcut: 'Del', danger: true, onClick: () => removeComponent(clickedCompId) },
         )
       }
+      items.push(
+        { separator: true },
+        { label: 'Ask AI to edit…', disabled: !caps?.ai_edit, onClick: () => openAiEditDialog(menuX, menuY, clickedCompId) },
+      )
       setContextMenu({ x: menuX, y: menuY, items })
     } else {
       // Check if right-clicked on a selected net area — but nets are handled by WireLayer click
@@ -261,10 +285,12 @@ export default function Canvas({ onComponentDblClick }: CanvasProps = {}) {
         { separator: true },
         { label: 'Start wire', shortcut: 'W', onClick: () => setTool('wire') },
         { label: 'Select mode', shortcut: 'S', onClick: () => { setTool('select'); setPlacingTypeId(null) } },
+        { separator: true },
+        { label: 'Ask AI…', disabled: !caps?.ai_edit, onClick: () => openAiEditDialog(menuX, menuY) },
       ]
       setContextMenu({ x: menuX, y: menuY, items })
     }
-  }, [tool, cancelWire, findComponentAt, circuit.components, selectedComponentIds, selectComponent, updateComponent, removeComponent, removeComponents, addComponent, screenToGrid, setTool, setPlacingTypeId])
+  }, [tool, cancelWire, findComponentAt, circuit.components, selectedComponentIds, selectComponent, updateComponent, removeComponent, removeComponents, addComponent, screenToGrid, setTool, setPlacingTypeId, caps, openAiEditDialog])
 
   const closeContextMenu = useCallback(() => setContextMenu(null), [])
 
@@ -301,6 +327,15 @@ export default function Canvas({ onComponentDblClick }: CanvasProps = {}) {
       </Stage>
       {contextMenu && (
         <ContextMenu x={contextMenu.x} y={contextMenu.y} items={contextMenu.items} onClose={closeContextMenu} />
+      )}
+      {aiEditDialog && (
+        <AiEditDialog
+          x={aiEditDialog.x}
+          y={aiEditDialog.y}
+          focusedComponentId={aiEditDialog.focusedComponentId}
+          onClose={closeAiEditDialog}
+          onApply={handleAiEdit}
+        />
       )}
       {editingLabel && (
         <input

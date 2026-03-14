@@ -10,9 +10,11 @@ import {
   type TreeEntry,
   type AiChatRequest,
   type AiChatResponse,
+  type AiEditCircuitRequest,
+  type AiEditCircuitResponse,
 } from "../../codegen/generated-rpc";
 
-export type { SimResult, Netlist, Capabilities, ComponentDef, TreeEntry, AiChatRequest, AiChatResponse };
+export type { SimResult, Netlist, Capabilities, ComponentDef, TreeEntry, AiChatRequest, AiChatResponse, AiEditCircuitRequest, AiEditCircuitResponse };
 
 export type SimulateResponse =
   | { ok: true; value: SimResult }
@@ -143,7 +145,7 @@ export function getCapabilities(): Promise<Capabilities> {
         /* fall through */
       }
       // WASM or unreachable daemon — no native capabilities
-      return { file_io: false, ai_chat: false };
+      return { file_io: false, ai_chat: false, ai_edit: false };
     })();
   }
   return capabilitiesPromise;
@@ -388,6 +390,23 @@ export async function createFolder(path: string): Promise<void> {
   const client = await getClient();
   const res = await client.createFolder({ path });
   if (!res.ok) throw new Error(res.error);
+}
+
+/** Edit a circuit in-place using AI (native mode only). Returns the updated circuit YAML. */
+export async function aiEditCircuit(
+  circuitYaml: string,
+  instruction: string,
+  focusedComponentId?: string,
+): Promise<string> {
+  const client = await getClient();
+  const req: AiEditCircuitRequest = {
+    circuit_yaml: circuitYaml,
+    instruction,
+    focused_component_id: focusedComponentId ?? null,
+  };
+  const res = await client.aiEditCircuit(req);
+  if (!res.ok) throw new Error(res.error);
+  return res.value.circuit_yaml;
 }
 
 /** Send a message to the AI assistant (native mode only). */

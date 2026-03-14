@@ -1,10 +1,10 @@
 #![cfg(target_arch = "wasm32")]
 use std::collections::{BTreeMap, BTreeSet};
 use eerie_rpc::{
-    AiChatRequest, AiChatResponse, Capabilities, ComponentDef, CreateFolderRequest,
-    DeleteRequest, EerieService, EerieServiceDispatcher, FileContent, FileOpenRequest,
-    FileSaveRequest, FileSaveResult, ListProjectRequest, ProjectDir, ProjectListing,
-    RenameRequest, TreeEntry,
+    AiChatRequest, AiChatResponse, AiEditCircuitRequest, AiEditCircuitResponse, Capabilities,
+    ComponentDef, CreateFolderRequest, DeleteRequest, EerieService, EerieServiceDispatcher,
+    FileContent, FileOpenRequest, FileSaveRequest, FileSaveResult, ListProjectRequest, ProjectDir,
+    ProjectListing, RenameRequest, TreeEntry,
 };
 use roam::DriverCaller;
 use roam_inprocess::JsInProcessLink;
@@ -99,11 +99,15 @@ impl EerieService for WasmService {
     // ── Capabilities & project dir ───────────────────────────────────────────
 
     async fn get_capabilities(&self) -> Result<Capabilities, String> {
-        Ok(Capabilities { file_io: true, ai_chat: false })
+        Ok(Capabilities { file_io: true, ai_chat: false, ai_edit: false })
     }
 
     async fn ai_chat(&self, _req: AiChatRequest) -> Result<AiChatResponse, String> {
         Err("AI chat is not available in WASM mode".into())
+    }
+
+    async fn ai_edit_circuit(&self, _req: AiEditCircuitRequest) -> Result<AiEditCircuitResponse, String> {
+        Err("AI editing is not available in WASM mode".into())
     }
 
     /// Virtual project root is always "/".

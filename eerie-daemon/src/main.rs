@@ -1,3 +1,4 @@
+mod ai_provider;
 mod service;
 
 use std::net::SocketAddr;
@@ -108,7 +109,8 @@ async fn handle_ws(ws: axum::extract::ws::WebSocket) {
     // Bridge axum's WebSocket to roam via the message-level adapter
     let link = AxumWsLink { ws };
     let project_dir = PROJECT_DIR.get().cloned().unwrap_or_default();
-    let dispatcher = EerieServiceDispatcher::new(DaemonService { project_dir });
+    let ai = ai_provider::make_provider(project_dir.clone());
+    let dispatcher = EerieServiceDispatcher::new(DaemonService { project_dir, ai });
 
     let result = roam::acceptor(link)
         .establish::<DriverCaller>(dispatcher)
