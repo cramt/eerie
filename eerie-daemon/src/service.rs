@@ -107,6 +107,7 @@ impl EerieService for DaemonService {
             .arg(&req.message)
             .arg("--output-format")
             .arg("stream-json")
+            .arg("--verbose")
             .env_remove("CLAUDECODE") // allow nesting inside a claude session
             .current_dir(&self.project_dir)
             .stdout(std::process::Stdio::piped())
