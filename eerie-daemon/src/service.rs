@@ -155,6 +155,13 @@ impl EerieService for DaemonService {
     }
 
     async fn ai_edit_circuit(&self, req: AiEditCircuitRequest) -> Result<AiEditCircuitResponse, String> {
+        log::info!(
+            "[ai_edit] request: instruction={:?}, focused={:?}, yaml={} bytes",
+            req.instruction,
+            req.focused_component_id,
+            req.circuit_yaml.len(),
+        );
+
         // Build a list of known component type IDs for the system prompt
         let defs = self.list_component_defs().await.unwrap_or_default();
         let type_ids: Vec<&str> = defs.iter().map(|d| d.id.as_str()).collect();
@@ -218,9 +225,23 @@ nets:
             }
         }
 
+        log::info!(
+            "[ai_edit] sending to AI: system={} bytes, user={} bytes",
+            system.len(),
+            user.len(),
+        );
+        let t0 = std::time::Instant::now();
         let response = self.ai.complete(&system, &user).await?;
+        log::info!(
+            "[ai_edit] AI responded in {:.1}s, response={} bytes",
+            t0.elapsed().as_secs_f64(),
+            response.len(),
+        );
+
         let yaml = extract_yaml_block(&response);
+        log::info!("[ai_edit] extracted yaml block: {} bytes", yaml.len());
         validate_circuit_yaml(&yaml)?;
+        log::info!("[ai_edit] yaml validated OK");
 
         Ok(AiEditCircuitResponse { circuit_yaml: yaml })
     }

@@ -23,6 +23,9 @@ impl AiProvider for ClaudeCliProvider {
         let prompt = format!("{system}\n\n{user}");
         let project_dir = self.project_dir.clone();
         Box::pin(async move {
+            log::info!("[ai_provider] spawning claude CLI (prompt {} chars)", prompt.len());
+            let t0 = std::time::Instant::now();
+
             let output = tokio::process::Command::new("claude")
                 .arg("-p")
                 .arg(&prompt)
@@ -37,8 +40,20 @@ impl AiProvider for ClaudeCliProvider {
                 .await
                 .map_err(|e| format!("failed to spawn claude: {e}"))?;
 
+            let elapsed = t0.elapsed();
             let stdout = String::from_utf8_lossy(&output.stdout);
             let stderr = String::from_utf8_lossy(&output.stderr);
+
+            log::info!(
+                "[ai_provider] claude exited in {:.1}s, status={:?}, stdout={} bytes, stderr={} bytes",
+                elapsed.as_secs_f64(),
+                output.status.code(),
+                stdout.len(),
+                stderr.len(),
+            );
+            if !stderr.trim().is_empty() {
+                log::warn!("[ai_provider] claude stderr: {}", stderr.trim());
+            }
 
             parse_claude_result(&stdout, &stderr, output.status.code())
         })
