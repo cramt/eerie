@@ -107,24 +107,33 @@ impl EerieService for DaemonService {
             .arg(&req.message)
             .arg("--output-format")
             .arg("stream-json")
-            .arg("--no-cache") // avoid filesystem permission issues in daemon
             .env_remove("CLAUDECODE") // allow nesting inside a claude session
             .current_dir(&self.project_dir)
             .stdout(std::process::Stdio::piped())
-            .stderr(std::process::Stdio::null());
+            .stderr(std::process::Stdio::piped());
         if let Some(ref sid) = req.session_id {
             cmd.arg("--resume").arg(sid);
         }
+        log::info!("ai_chat: spawning claude (session={:?})", req.session_id);
         let output = cmd
             .output()
             .await
             .map_err(|e| format!("failed to spawn claude: {e}"))?;
 
         let stdout = String::from_utf8_lossy(&output.stdout);
+        let stderr = String::from_utf8_lossy(&output.stderr);
+
+        log::debug!("ai_chat: exit={} stdout_bytes={} stderr_bytes={}",
+            output.status, stdout.len(), stderr.len());
+        if !stderr.is_empty() {
+            log::warn!("ai_chat stderr: {}", stderr.trim());
+        }
+
         // NDJSON: scan lines for the "result" event
         for line in stdout.lines() {
             let line = line.trim();
             if line.is_empty() { continue; }
+            log::trace!("ai_chat line: {line}");
             let Ok(val) = serde_json::from_str::<serde_json::Value>(line) else { continue };
             if val.get("type").and_then(|t| t.as_str()) == Some("result") {
                 let text = val.get("result")
@@ -135,11 +144,18 @@ impl EerieService for DaemonService {
                     .and_then(|s| s.as_str())
                     .unwrap_or("")
                     .to_string();
+                log::info!("ai_chat: got response ({} chars, session={session_id})", text.len());
                 return Ok(AiChatResponse { text, session_id });
             }
         }
+
+        let stderr_snippet = if stderr.trim().is_empty() {
+            String::new()
+        } else {
+            format!(": {}", stderr.trim())
+        };
         Err(format!(
-            "claude exited with status {:?} but produced no result event",
+            "claude exited with status {:?} but produced no result event{stderr_snippet}",
             output.status.code()
         ))
     }
