@@ -92,6 +92,24 @@ pub struct ComponentDef {
 pub struct Capabilities {
     /// Backend can read/write files on the host filesystem.
     pub file_io: bool,
+    /// Backend can spawn the `claude` CLI for AI chat.
+    pub ai_chat: bool,
+}
+
+/// A single turn in an AI conversation.
+#[derive(facet::Facet, Clone, Debug)]
+pub struct AiChatRequest {
+    pub message: String,
+    /// Session ID from a previous `AiChatResponse`; `None` to start fresh.
+    pub session_id: Option<String>,
+}
+
+/// Response from the AI backend.
+#[derive(facet::Facet, Clone, Debug)]
+pub struct AiChatResponse {
+    pub text: String,
+    /// Pass this back as `session_id` on the next turn to continue the conversation.
+    pub session_id: String,
 }
 
 /// The project directory the daemon was started in.
@@ -235,4 +253,7 @@ pub trait EerieService {
 
     /// Create a directory (and any missing parents).
     async fn create_folder(&self, req: CreateFolderRequest) -> Result<bool, String>;
+
+    /// Send a message to the AI assistant (spawns `claude` CLI; native mode only).
+    async fn ai_chat(&self, req: AiChatRequest) -> Result<AiChatResponse, String>;
 }

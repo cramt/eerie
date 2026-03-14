@@ -9,6 +9,7 @@ import { RpcError } from "@bearcove/roam-core";
 // Named type definitions
 export interface Capabilities {
   file_io: boolean;
+  ai_chat: boolean;
 }
 
 export interface FileOpenRequest {
@@ -275,6 +276,16 @@ export interface CreateFolderRequest {
   path: string;
 }
 
+export interface AiChatRequest {
+  message: string;
+  session_id: string | null;
+}
+
+export interface AiChatResponse {
+  text: string;
+  session_id: string;
+}
+
 // Request/Response type aliases
 export type GetCapabilitiesRequest = [];
 export type GetCapabilitiesResponse = { ok: true; value: Capabilities } | { ok: false; error: string };
@@ -323,6 +334,7 @@ export type DeletePathResponse = { ok: true; value: boolean } | { ok: false; err
 
 export type CreateFolderResponse = { ok: true; value: boolean } | { ok: false; error: string };
 
+
 // Caller interface for EerieService
 export interface EerieServiceCaller {
   /** Query what this backend supports. */
@@ -359,6 +371,8 @@ export interface EerieServiceCaller {
   deletePath(req: DeleteRequest): CallBuilder<{ ok: true; value: boolean } | { ok: false; error: string }>;
   /** Create a directory (and any missing parents). */
   createFolder(req: CreateFolderRequest): CallBuilder<{ ok: true; value: boolean } | { ok: false; error: string }>;
+  /** Send a message to the AI assistant (spawns `claude` CLI; native mode only). */
+  aiChat(req: AiChatRequest): CallBuilder<{ ok: true; value: AiChatResponse } | { ok: false; error: string }>;
 }
 
 // Client implementation for EerieService
@@ -743,6 +757,28 @@ export class EerieServiceClient implements EerieServiceCaller {
     });
   }
 
+  /** Send a message to the AI assistant (spawns `claude` CLI; native mode only). */
+  aiChat(req: AiChatRequest): CallBuilder<{ ok: true; value: AiChatResponse } | { ok: false; error: string }> {
+    const descriptor = eerieService_descriptor.methods[17];
+    return new CallBuilder(async (metadata) => {
+      try {
+        const value = await this.caller.call({
+          method: "EerieService.aiChat",
+          args: { req },
+          descriptor,
+          schemaRegistry: eerieService_descriptor.schema_registry,
+          metadata,
+        });
+        return { ok: true, value } as { ok: true; value: AiChatResponse } | { ok: false; error: string };
+      } catch (e) {
+        if (e instanceof RpcError && e.isUserError()) {
+          return { ok: false, error: e.userError } as { ok: true; value: AiChatResponse } | { ok: false; error: string };
+        }
+        throw e;
+      }
+    });
+  }
+
 }
 
 /**
@@ -775,6 +811,7 @@ export interface EerieServiceHandler {
   renamePath(req: RenameRequest): Promise<{ ok: true; value: boolean } | { ok: false; error: string }> | { ok: true; value: boolean } | { ok: false; error: string };
   deletePath(req: DeleteRequest): Promise<{ ok: true; value: boolean } | { ok: false; error: string }> | { ok: true; value: boolean } | { ok: false; error: string };
   createFolder(req: CreateFolderRequest): Promise<{ ok: true; value: boolean } | { ok: false; error: string }> | { ok: true; value: boolean } | { ok: false; error: string };
+  aiChat(req: AiChatRequest): Promise<{ ok: true; value: AiChatResponse } | { ok: false; error: string }> | { ok: true; value: AiChatResponse } | { ok: false; error: string };
 }
 
 // Dispatcher for EerieService
@@ -905,13 +942,20 @@ export class EerieServiceDispatcher implements ChannelingDispatcher {
       } catch {
         call.replyInternalError();
       }
+    } else if (method.id === 0xe66a8acf7fec7c2cn) {
+      try {
+        const result = await this.handler.aiChat(args[0] as AiChatRequest);
+        if (result.ok) call.reply(result.value); else call.replyErr(result.error);
+      } catch {
+        call.replyInternalError();
+      }
     }
   }
 }
 
 // Named schema registry (for recursive / shared named types)
 const eerieService_schema_registry: SchemaRegistry = new Map<string, Schema>([
-  ["Capabilities", { kind: 'struct', fields: { 'file_io': { kind: 'bool' } } }],
+  ["Capabilities", { kind: 'struct', fields: { 'file_io': { kind: 'bool' }, 'ai_chat': { kind: 'bool' } } }],
   ["FileOpenRequest", { kind: 'struct', fields: { 'path': { kind: 'string' } } }],
   ["FileContent", { kind: 'struct', fields: { 'name': { kind: 'string' }, 'content': { kind: 'string' } } }],
   ["FileSaveRequest", { kind: 'struct', fields: { 'path': { kind: 'string' }, 'content': { kind: 'string' } } }],
@@ -951,6 +995,8 @@ const eerieService_schema_registry: SchemaRegistry = new Map<string, Schema>([
   ["RenameRequest", { kind: 'struct', fields: { 'from': { kind: 'string' }, 'to': { kind: 'string' } } }],
   ["DeleteRequest", { kind: 'struct', fields: { 'path': { kind: 'string' } } }],
   ["CreateFolderRequest", { kind: 'struct', fields: { 'path': { kind: 'string' } } }],
+  ["AiChatRequest", { kind: 'struct', fields: { 'message': { kind: 'string' }, 'session_id': { kind: 'option', inner: { kind: 'string' } } } }],
+  ["AiChatResponse", { kind: 'struct', fields: { 'text': { kind: 'string' }, 'session_id': { kind: 'string' } } }],
 ]);
 
 // Service descriptor for runtime schema-driven dispatch
@@ -1059,6 +1105,12 @@ export const eerieService_descriptor: ServiceDescriptor = {
       id: 0xc48f1ec53be0cc76n,
       args: { kind: 'tuple', elements: [{ kind: 'ref', name: 'CreateFolderRequest' }] },
       result: { kind: 'enum', variants: [{ name: 'Ok', fields: { kind: 'bool' } }, { name: 'Err', fields: { kind: 'enum', variants: [{ name: 'User', fields: { kind: 'string' } }, { name: 'UnknownMethod', fields: null }, { name: 'InvalidPayload', fields: null }, { name: 'Cancelled', fields: null }] } }] },
+    },
+    {
+      name: 'aiChat',
+      id: 0xe66a8acf7fec7c2cn,
+      args: { kind: 'tuple', elements: [{ kind: 'ref', name: 'AiChatRequest' }] },
+      result: { kind: 'enum', variants: [{ name: 'Ok', fields: { kind: 'ref', name: 'AiChatResponse' } }, { name: 'Err', fields: { kind: 'enum', variants: [{ name: 'User', fields: { kind: 'string' } }, { name: 'UnknownMethod', fields: null }, { name: 'InvalidPayload', fields: null }, { name: 'Cancelled', fields: null }] } }] },
     },
   ],
 };

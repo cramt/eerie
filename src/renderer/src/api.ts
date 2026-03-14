@@ -8,9 +8,11 @@ import {
   type Capabilities,
   type ComponentDef,
   type TreeEntry,
+  type AiChatRequest,
+  type AiChatResponse,
 } from "../../codegen/generated-rpc";
 
-export type { SimResult, Netlist, Capabilities, ComponentDef, TreeEntry };
+export type { SimResult, Netlist, Capabilities, ComponentDef, TreeEntry, AiChatRequest, AiChatResponse };
 
 export type SimulateResponse =
   | { ok: true; value: SimResult }
@@ -141,7 +143,7 @@ export function getCapabilities(): Promise<Capabilities> {
         /* fall through */
       }
       // WASM or unreachable daemon — no native capabilities
-      return { file_io: false };
+      return { file_io: false, ai_chat: false };
     })();
   }
   return capabilitiesPromise;
@@ -386,6 +388,15 @@ export async function createFolder(path: string): Promise<void> {
   const client = await getClient();
   const res = await client.createFolder({ path });
   if (!res.ok) throw new Error(res.error);
+}
+
+/** Send a message to the AI assistant (native mode only). */
+export async function aiChat(message: string, sessionId?: string): Promise<AiChatResponse> {
+  const client = await getClient();
+  const req: AiChatRequest = { message, session_id: sessionId ?? null };
+  const res = await client.aiChat(req);
+  if (!res.ok) throw new Error(res.error);
+  return res.value;
 }
 
 /** Create a new project (native: writes eerie.yaml; VFS: writes manifest). */

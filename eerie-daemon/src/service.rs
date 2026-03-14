@@ -1,5 +1,5 @@
 use eerie_rpc::{
-    Bounds2d, Capabilities, ComponentDef, CreateFolderRequest,
+    AiChatRequest, AiChatResponse, Bounds2d, Capabilities, ComponentDef, CreateFolderRequest,
     DeleteRequest, EerieService, FileContent, FileOpenRequest, FileSaveRequest, FileSaveResult,
     GraphicsElement, ListProjectRequest, PinLocation, ProjectDir, ProjectListing, PropertyDef,
     RenameRequest, SymbolGraphics, TreeEntry,
@@ -14,7 +14,7 @@ pub struct DaemonService {
 
 impl EerieService for DaemonService {
     async fn get_capabilities(&self) -> Result<Capabilities, String> {
-        Ok(Capabilities { file_io: true })
+        Ok(Capabilities { file_io: true, ai_chat: true })
     }
 
     async fn get_project_dir(&self) -> Result<ProjectDir, String> {
@@ -99,6 +99,49 @@ impl EerieService for DaemonService {
         std::fs::create_dir_all(&req.path)
             .map(|_| true)
             .map_err(|e| format!("mkdir failed: {e}"))
+    }
+
+    async fn ai_chat(&self, req: AiChatRequest) -> Result<AiChatResponse, String> {
+        let mut cmd = tokio::process::Command::new("claude");
+        cmd.arg("-p")
+            .arg(&req.message)
+            .arg("--output-format")
+            .arg("stream-json")
+            .arg("--no-cache") // avoid filesystem permission issues in daemon
+            .env_remove("CLAUDECODE") // allow nesting inside a claude session
+            .current_dir(&self.project_dir)
+            .stdout(std::process::Stdio::piped())
+            .stderr(std::process::Stdio::null());
+        if let Some(ref sid) = req.session_id {
+            cmd.arg("--resume").arg(sid);
+        }
+        let output = cmd
+            .output()
+            .await
+            .map_err(|e| format!("failed to spawn claude: {e}"))?;
+
+        let stdout = String::from_utf8_lossy(&output.stdout);
+        // NDJSON: scan lines for the "result" event
+        for line in stdout.lines() {
+            let line = line.trim();
+            if line.is_empty() { continue; }
+            let Ok(val) = serde_json::from_str::<serde_json::Value>(line) else { continue };
+            if val.get("type").and_then(|t| t.as_str()) == Some("result") {
+                let text = val.get("result")
+                    .and_then(|r| r.as_str())
+                    .unwrap_or("")
+                    .to_string();
+                let session_id = val.get("session_id")
+                    .and_then(|s| s.as_str())
+                    .unwrap_or("")
+                    .to_string();
+                return Ok(AiChatResponse { text, session_id });
+            }
+        }
+        Err(format!(
+            "claude exited with status {:?} but produced no result event",
+            output.status.code()
+        ))
     }
 
     async fn simulate_op(&self, netlist: Netlist) -> Result<SimResult, String> {

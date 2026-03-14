@@ -16,6 +16,7 @@ import TabBar from './components/TabBar/TabBar'
 import FileExplorer from './components/FileExplorer/FileExplorer'
 import TextEditor from './components/TextEditor/TextEditor'
 import ToastContainer from './components/Toast/Toast'
+import AiChat from './components/AiChat/AiChat'
 import { toastError, toastSuccess } from './store/toastStore'
 import { filePinToUi, uiPinToFile, buildNetlist } from './utils/netlistBuilder'
 import { netlistToSpice } from './utils/spiceWriter'
@@ -29,7 +30,7 @@ import type { Circuit, ComponentInstance, Net } from './types'
 
 export default function App() {
   const { circuit, setCircuit, projectPath, circuitName, dirty, setDirty } = useCircuitStore()
-  const { theme, tool, setTool, setPlacingTypeId, selectedComponentIds, selectedNetIds, setSimPanelOpen } = useUiStore()
+  const { theme, tool, setTool, setPlacingTypeId, selectedComponentIds, selectedNetIds, setSimPanelOpen, chatOpen, toggleChat } = useUiStore()
   const { undo, redo } = useHistoryStore()
   const { analysis } = useSimulationStore()
   const { setComponents, setComponentDefs } = useProjectStore()
@@ -400,7 +401,7 @@ simulation:
       selectedComponentIds, selectedNetIds, setSimPanelOpen])
 
   return (
-    <div className="app-layout">
+    <div className="app-layout" data-ai-open={chatOpen ? "true" : undefined}>
       {fileDialog && (
         <FileDialog
           mode={fileDialog.mode}
@@ -463,6 +464,9 @@ simulation:
       </div>
       <div className="status-area">
         <StatusBar />
+      </div>
+      <div className="ai-area">
+        {chatOpen && <AiChat />}
       </div>
       <ToastContainer />
     </div>
