@@ -112,7 +112,7 @@ async fn handle_ws(ws: axum::extract::ws::WebSocket) {
     let ai = ai_provider::make_provider(project_dir.clone());
     let dispatcher = EerieServiceDispatcher::new(DaemonService { project_dir, ai });
 
-    let result = roam::acceptor(link)
+    let result = roam::acceptor_on(link)
         .establish::<DriverCaller>(dispatcher)
         .await;
 
