@@ -108,7 +108,10 @@ export const useUiStore = create<UiStore>((set, get) => ({
     set({ theme })
   },
   setZoom: (zoom) => set({ zoom }),
-  setMouseGridPos: (pos) => set({ mouseGridPos: pos }),
+  setMouseGridPos: (pos) => {
+    const prev = get().mouseGridPos
+    if (prev.x !== pos.x || prev.y !== pos.y) set({ mouseGridPos: pos })
+  },
 
   aiEditDialog: null,
   openAiEditDialog: (x, y, focusedComponentId) => set({ aiEditDialog: { x, y, focusedComponentId } }),

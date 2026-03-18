@@ -136,17 +136,22 @@ export function useWireDrawing(
     const gp = screenToGrid(pointer.x, pointer.y)
     const snap = findSnap(gp, absolutePins, wireSnapPoints, nets)
     lastSnapRef.current = snap
-    setHoveredPin(snap?.kind === 'pin' ? snap.pin : null)
-    setSnapIndicator(snap ? snap.pos : null)
+    const newPin = snap?.kind === 'pin' ? snap.pin : null
+    setHoveredPin(prev => prev === newPin ? prev : newPin)
+    const newSnap = snap ? snap.pos : null
+    setSnapIndicator(prev => {
+      if (prev === newSnap) return prev
+      if (prev && newSnap && prev.x === newSnap.x && prev.y === newSnap.y) return prev
+      return newSnap
+    })
     const snapPos = snap ? snap.pos : gp
-    setMouseGridPos(snapPos)
+    setMouseGridPos(prev => prev.x === snapPos.x && prev.y === snapPos.y ? prev : snapPos)
     storeSetMousePos(snapPos)
   }, [screenToGrid, absolutePins, wireSnapPoints, nets, storeSetMousePos])
 
   const handleNonWireMouseMove = useCallback((pointer: { x: number; y: number }) => {
     const gp = screenToGrid(pointer.x, pointer.y)
-    setHoveredPin(null)
-    setMouseGridPos(gp)
+    setMouseGridPos(prev => prev.x === gp.x && prev.y === gp.y ? prev : gp)
     storeSetMousePos(gp)
   }, [screenToGrid, storeSetMousePos])
 

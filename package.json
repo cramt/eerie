@@ -17,11 +17,12 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
-    "@tanstack/router-vite-plugin": "^1.166.7",
-    "@types/node": "^25.3.5",
+    "@rolldown/plugin-babel": "^0.2.2",
+    "@tanstack/router-vite-plugin": "^1.166.14",
+    "@types/node": "^25.5.0",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
-    "@vitejs/plugin-react": "^5.1.4",
+    "@vitejs/plugin-react": "^6.0.1",
     "babel-plugin-react-compiler": "^1.0.0",
     "eslint": "^10.0.3",
     "eslint-plugin-react-compiler": "19.1.0-rc.2",
@@ -29,8 +30,8 @@
     "jiti": "^2.6.1",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3",
-    "typescript-eslint": "^8.56.1",
-    "vite": "^7.3.1"
+    "typescript-eslint": "^8.57.1",
+    "vite": "^8.0.0"
   },
   "dependencies": {
     "@bearcove/roam-core": "^7.3.0",
@@ -39,15 +40,15 @@
     "@bearcove/roam-wire": "^7.3.0",
     "@bearcove/roam-ws": "7.3.0",
     "@monaco-editor/react": "4.8.0-rc.3",
-    "@tanstack/react-router": "^1.166.7",
+    "@tanstack/react-router": "^1.167.5",
     "eerie-wasm": "workspace:*",
-    "konva": "^10.2.0",
+    "konva": "^10.2.3",
     "neverthrow": "^8.2.0",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "react-konva": "^19.2.3",
     "uplot": "^1.6.32",
     "yaml": "^2.8.2",
-    "zustand": "^5.0.11"
+    "zustand": "^5.0.12"
   }
 }

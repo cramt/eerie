@@ -243,7 +243,7 @@ export default defineConfig({
       routesDirectory: "./src/routes",
       generatedRouteTree: "./src/routeTree.gen.ts",
     }),
-    react({ babel: { plugins: ["babel-plugin-react-compiler"] } }),
+    react({ compiler: true }),
     eerieDaemon(),
     eerieWasmWatch(),
     eerieCodegenWatch(),

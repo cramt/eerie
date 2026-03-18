@@ -126,7 +126,15 @@ export default function Canvas({ onComponentDblClick }: CanvasProps = {}) {
       return
     }
 
-    if (tool === 'wire') { handleWireMouseMove(pointer) } else { handleNonWireMouseMove(pointer) }
+    if (tool === 'wire') {
+      handleWireMouseMove(pointer)
+    } else if (tool === 'place') {
+      handleNonWireMouseMove(pointer)
+    } else {
+      // select mode: update store for StatusBar, but don't trigger Canvas re-render
+      const gp = screenToGrid(pointer.x, pointer.y)
+      useUiStore.getState().setMouseGridPos(gp)
+    }
   }, [handlePanMove, tool, handleWireMouseMove, handleNonWireMouseMove, screenToGrid])
 
   const handleMouseDown = useCallback((e: any) => {

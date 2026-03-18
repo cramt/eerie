@@ -15,6 +15,6 @@ resolver = "2"
 log         = "0.4"
 facet       = "0.44.1"
 facet-json  = "0.44.1"
-roam           = { git = "https://github.com/bearcove/roam" }
-roam-codegen   = { git = "https://github.com/bearcove/roam" }
-roam-inprocess = { git = "https://github.com/bearcove/roam" }
+roam           = "7.3.0"
+roam-codegen   = "7.3.0"
+roam-inprocess = "7.3.0"

@@ -3367,16 +3367,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "facet-cbor"
-version = "7.3.0"
-source = "git+https://github.com/bearcove/roam#6d9ea5a5e29d86c596bbb13e86ec92c88751b458"
-dependencies = [
- "facet",
- "facet-core",
- "facet-reflect",
-]
-
-[[package]]
 name = "facet-core"
 version = "0.44.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -5573,7 +5563,8 @@ dependencies = [
 [[package]]
 name = "moire"
 version = "1.0.0"
-source = "git+https://github.com/bearcove/moire?rev=13eac79#13eac79c1b128282dd792a611319d0a1016ad15d"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ac52dcc0ff5b4710a66626370b1bf85ba3d924fd8019e8cfa100e8dafffda4ad"
 dependencies = [
  "moire-macros-noop",
  "moire-tokio",
@@ -5583,12 +5574,14 @@ dependencies = [
 [[package]]
 name = "moire-macros-noop"
 version = "1.0.0"
-source = "git+https://github.com/bearcove/moire?rev=13eac79#13eac79c1b128282dd792a611319d0a1016ad15d"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "92ccdc0bf403f5ecf29c09e8e9f178caed89a914ea032e0c2d99d3824b78892d"
 
 [[package]]
 name = "moire-runtime"
 version = "1.0.0"
-source = "git+https://github.com/bearcove/moire?rev=13eac79#13eac79c1b128282dd792a611319d0a1016ad15d"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "568cc05b223c4c76247467e3bdaa7862f05c38d5c8f6e44198613880f90ecd98"
 dependencies = [
  "ctor",
  "facet",
@@ -5604,8 +5597,10 @@ dependencies = [
 [[package]]
 name = "moire-tokio"
 version = "1.0.0"
-source = "git+https://github.com/bearcove/moire?rev=13eac79#13eac79c1b128282dd792a611319d0a1016ad15d"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "fdb30c43038ce71c727da5a4ff01d09dd4c823486cc17b3b08661420d0ceda43"
 dependencies = [
+ "ctor",
  "moire-runtime",
  "moire-types",
  "parking_lot",
@@ -5615,7 +5610,8 @@ dependencies = [
 [[package]]
 name = "moire-trace-capture"
 version = "1.0.0"
-source = "git+https://github.com/bearcove/moire?rev=13eac79#13eac79c1b128282dd792a611319d0a1016ad15d"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6685ebbdee1253529c9074c41d8288504b640ffe8c21176ce464fef5c5c00c38"
 dependencies = [
  "libc",
  "moire-trace-types",
@@ -5624,7 +5620,8 @@ dependencies = [
 [[package]]
 name = "moire-trace-types"
 version = "1.0.0"
-source = "git+https://github.com/bearcove/moire?rev=13eac79#13eac79c1b128282dd792a611319d0a1016ad15d"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1ef6f98b447211257a517d101f0f5cf4300627cd6fd1c0c13ff53d157a872c9d"
 dependencies = [
  "facet",
 ]
@@ -5632,7 +5629,8 @@ dependencies = [
 [[package]]
 name = "moire-types"
 version = "1.0.0"
-source = "git+https://github.com/bearcove/moire?rev=13eac79#13eac79c1b128282dd792a611319d0a1016ad15d"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "667b2fc41e30d3b0f7d0d29e978d3f473afaf0e0be355202eead317e35ace200"
 dependencies = [
  "facet",
  "facet-value",
@@ -5642,7 +5640,8 @@ dependencies = [
 [[package]]
 name = "moire-wasm"
 version = "1.0.0"
-source = "git+https://github.com/bearcove/moire?rev=13eac79#13eac79c1b128282dd792a611319d0a1016ad15d"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f143cef34407271acdbca3af106d82b330693e0990ef87df146441392d8a9577"
 dependencies = [
  "async-channel",
  "async-lock",
@@ -5657,7 +5656,8 @@ dependencies = [
 [[package]]
 name = "moire-wire"
 version = "1.0.0"
-source = "git+https://github.com/bearcove/moire?rev=13eac79#13eac79c1b128282dd792a611319d0a1016ad15d"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "bf0ec84eeb2e23a83339cf5edc9d5a3a9ec5849416bd4051951fba416ea3e0f7"
 dependencies = [
  "facet",
  "facet-json",
@@ -7136,39 +7136,43 @@ dependencies = [
 [[package]]
 name = "roam"
 version = "7.3.0"
-source = "git+https://github.com/bearcove/roam#6d9ea5a5e29d86c596bbb13e86ec92c88751b458"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "eb8134b18b8735b239996b748307cfb208d84c245ed5595a6c2eece0e3c819a5"
 dependencies = [
  "facet",
+ "facet-postcard",
  "roam-core",
- "roam-postcard",
+ "roam-hash",
  "roam-service-macros",
  "roam-types",
- "tracing",
 ]
 
 [[package]]
 name = "roam-codegen"
 version = "7.3.0"
-source = "git+https://github.com/bearcove/roam#6d9ea5a5e29d86c596bbb13e86ec92c88751b458"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c427795fc5183c53ff010c6cc3ac7756ba39674a7d9438b22180d87b467fda0b"
 dependencies = [
  "facet-core",
  "heck",
+ "roam-hash",
  "roam-types",
 ]
 
 [[package]]
 name = "roam-core"
 version = "7.3.0"
-source = "git+https://github.com/bearcove/roam#6d9ea5a5e29d86c596bbb13e86ec92c88751b458"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "736e8d8279a37ddce65b165ebd4c665b254885a159c75ff20b9379bff3d92626"
 dependencies = [
  "facet",
- "facet-cbor",
  "facet-core",
  "facet-error",
+ "facet-format",
+ "facet-postcard",
  "facet-reflect",
  "getrandom 0.3.4",
  "moire",
- "roam-postcard",
  "roam-types",
  "smallvec 1.15.1",
  "tokio",
@@ -7178,9 +7182,22 @@ dependencies = [
 ]
 
 [[package]]
+name = "roam-hash"
+version = "7.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "926fac2289cbccf6100dd9fa733001a2999651cdeb6bea064320bac185dfa817"
+dependencies = [
+ "blake3",
+ "facet-core",
+ "heck",
+ "roam-types",
+]
+
+[[package]]
 name = "roam-inprocess"
 version = "7.3.0"
-source = "git+https://github.com/bearcove/roam#6d9ea5a5e29d86c596bbb13e86ec92c88751b458"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "86c38b756bb4bc85aab4cb0a49eb63798ec5e690f4ea04c1eea3cb5aab9b7b82"
 dependencies = [
  "futures-channel",
  "futures-util",
@@ -7192,7 +7209,8 @@ dependencies = [
 [[package]]
 name = "roam-macros-core"
 version = "7.3.0"
-source = "git+https://github.com/bearcove/roam#6d9ea5a5e29d86c596bbb13e86ec92c88751b458"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9f5ac50c8954493d007a2a5541753fba33c605955abeb9221568ba0d160219e9"
 dependencies = [
  "facet-cargo-toml",
  "heck",
@@ -7204,27 +7222,18 @@ dependencies = [
 [[package]]
 name = "roam-macros-parse"
 version = "7.3.0"
-source = "git+https://github.com/bearcove/roam#6d9ea5a5e29d86c596bbb13e86ec92c88751b458"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a453d67c29e4f4f34abdf0dbf56f2fce8f7e3fdbb2640df077237ac375cd866d"
 dependencies = [
  "proc-macro2",
  "unsynn",
 ]
 
 [[package]]
-name = "roam-postcard"
-version = "7.3.0"
-source = "git+https://github.com/bearcove/roam#6d9ea5a5e29d86c596bbb13e86ec92c88751b458"
-dependencies = [
- "facet",
- "facet-core",
- "facet-reflect",
- "roam-types",
-]
-
-[[package]]
 name = "roam-service-macros"
 version = "7.3.0"
-source = "git+https://github.com/bearcove/roam#6d9ea5a5e29d86c596bbb13e86ec92c88751b458"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "769c26280491ff451c3c7ac14ed7034237ae0e586d5d08297c4d43e9bea00797"
 dependencies = [
  "proc-macro2",
  "roam-macros-core",
@@ -7233,17 +7242,15 @@ dependencies = [
 [[package]]
 name = "roam-types"
 version = "7.3.0"
-source = "git+https://github.com/bearcove/roam#6d9ea5a5e29d86c596bbb13e86ec92c88751b458"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ec2c23550c346311389eea924816f06e7ed3a049d8bb437609ece1a312cabc67"
 dependencies = [
  "bitflags 2.11.0",
- "blake3",
  "facet",
- "facet-cbor",
  "facet-core",
  "facet-path",
  "facet-postcard",
  "futures-channel",
- "heck",
  "smallvec 1.15.1",
  "structstruck",
  "tokio",
