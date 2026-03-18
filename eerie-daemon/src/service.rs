@@ -1,4 +1,5 @@
 use crate::ai_provider::AiProvider;
+use crate::error::DaemonError;
 use eerie_rpc::{
     AiChatRequest, AiChatResponse, AiEditCircuitRequest, AiEditCircuitResponse, Bounds2d,
     Capabilities, ComponentDef, CreateFolderRequest, DeleteRequest, EerieService, FileContent,
@@ -14,50 +15,41 @@ pub struct DaemonService {
     pub ai: Arc<dyn AiProvider + Send + Sync>,
 }
 
-impl EerieService for DaemonService {
-    async fn get_capabilities(&self) -> Result<Capabilities, String> {
-        Ok(Capabilities { file_io: true, ai_chat: true, ai_edit: true })
-    }
-
-    async fn get_project_dir(&self) -> Result<ProjectDir, String> {
-        Ok(ProjectDir {
-            path: self.project_dir.to_string_lossy().into_owned(),
-        })
-    }
-
-    async fn file_open(&self, req: FileOpenRequest) -> Result<FileContent, String> {
+impl DaemonService {
+    fn file_open_inner(&self, req: &FileOpenRequest) -> Result<FileContent, DaemonError> {
         let path = std::path::Path::new(&req.path);
+        log::info!("file_open: {}", path.display());
         let content = std::fs::read_to_string(path)
-            .map_err(|e| format!("Failed to read {}: {e}", path.display()))?;
+            .map_err(|source| DaemonError::FileIo { operation: "read", path: path.into(), source })?;
         let name = path
             .file_name()
             .map(|n| n.to_string_lossy().into_owned())
             .unwrap_or_else(|| req.path.clone());
+        log::debug!("file_open: read {} bytes from {}", content.len(), path.display());
         Ok(FileContent { name, content })
     }
 
-    async fn file_save(&self, req: FileSaveRequest) -> Result<FileSaveResult, String> {
+    fn file_save_inner(&self, req: &FileSaveRequest) -> Result<FileSaveResult, DaemonError> {
         let path = std::path::Path::new(&req.path);
+        log::info!("file_save: {} ({} bytes)", path.display(), req.content.len());
         if let Some(parent) = path.parent() {
             std::fs::create_dir_all(parent)
-                .map_err(|e| format!("Failed to create directories: {e}"))?;
+                .map_err(|source| DaemonError::CreateDir { path: parent.into(), source })?;
         }
         std::fs::write(path, &req.content)
-            .map_err(|e| format!("Failed to write {}: {e}", path.display()))?;
-        Ok(FileSaveResult {
-            path: req.path,
-        })
+            .map_err(|source| DaemonError::FileIo { operation: "write", path: path.into(), source })?;
+        Ok(FileSaveResult { path: req.path.clone() })
     }
 
-    async fn list_project(&self, req: ListProjectRequest) -> Result<ProjectListing, String> {
+    fn list_project_inner(&self, req: &ListProjectRequest) -> Result<ProjectListing, DaemonError> {
         let dir = std::path::Path::new(&req.path);
+        log::info!("list_project: {}", dir.display());
         let manifest_yaml = std::fs::read_to_string(dir.join("eerie.yaml"))
-            .map_err(|e| format!("not an eerie project (no eerie.yaml): {e}"))?;
-        // Root-level flat lists (for backward-compat / auto-open logic)
+            .map_err(|source| DaemonError::NotAProject { source })?;
         let mut circuits = Vec::new();
         let mut files = Vec::new();
         for entry in std::fs::read_dir(dir)
-            .map_err(|e| format!("cannot read directory: {e}"))?
+            .map_err(|source| DaemonError::ReadDir { source })?
             .filter_map(|e| e.ok())
         {
             if entry.file_type().map_or(true, |ft| ft.is_dir()) {
@@ -75,35 +67,76 @@ impl EerieService for DaemonService {
         }
         circuits.sort();
         files.sort();
-        // Full recursive tree
         let tree = build_tree(dir, "");
+        log::debug!("list_project: {} circuits, {} files, {} tree entries",
+            circuits.len(), files.len(), tree.len());
         Ok(ProjectListing { manifest_yaml, circuits, files, tree })
     }
 
+    fn simulate_inner<E: std::fmt::Display>(&self, analysis: &str, f: impl FnOnce(&Netlist) -> Result<SimResult, E>, netlist: &Netlist) -> Result<SimResult, DaemonError> {
+        log::info!("simulate_{}: {} items", analysis, netlist.items.len());
+        let t0 = std::time::Instant::now();
+        let result = f(netlist)
+            .map_err(|e| DaemonError::Simulation(e.to_string()))?;
+        log::info!("simulate_{}: completed in {:.1}ms, {} plots",
+            analysis, t0.elapsed().as_secs_f64() * 1000.0, result.plots.len());
+        Ok(result)
+    }
+}
+
+impl EerieService for DaemonService {
+    async fn get_capabilities(&self) -> Result<Capabilities, String> {
+        Ok(Capabilities { file_io: true, ai_chat: true, ai_edit: true })
+    }
+
+    async fn get_project_dir(&self) -> Result<ProjectDir, String> {
+        Ok(ProjectDir {
+            path: self.project_dir.to_string_lossy().into_owned(),
+        })
+    }
+
+    async fn file_open(&self, req: FileOpenRequest) -> Result<FileContent, String> {
+        self.file_open_inner(&req).map_err(Into::into)
+    }
+
+    async fn file_save(&self, req: FileSaveRequest) -> Result<FileSaveResult, String> {
+        self.file_save_inner(&req).map_err(Into::into)
+    }
+
+    async fn list_project(&self, req: ListProjectRequest) -> Result<ProjectListing, String> {
+        self.list_project_inner(&req).map_err(Into::into)
+    }
+
     async fn rename_path(&self, req: RenameRequest) -> Result<bool, String> {
+        log::info!("rename_path: {} -> {}", req.from, req.to);
         std::fs::rename(&req.from, &req.to)
             .map(|_| true)
-            .map_err(|e| format!("rename failed: {e}"))
+            .map_err(|source| DaemonError::Rename { source }.to_string())
     }
 
     async fn delete_path(&self, req: DeleteRequest) -> Result<bool, String> {
         let path = std::path::Path::new(&req.path);
+        log::info!("delete_path: {}", path.display());
         if path.is_dir() {
             std::fs::remove_dir_all(path)
         } else {
             std::fs::remove_file(path)
         }
         .map(|_| true)
-        .map_err(|e| format!("delete failed: {e}"))
+        .map_err(|source| DaemonError::Delete { source }.to_string())
     }
 
     async fn create_folder(&self, req: CreateFolderRequest) -> Result<bool, String> {
+        log::info!("create_folder: {}", req.path);
         std::fs::create_dir_all(&req.path)
             .map(|_| true)
-            .map_err(|e| format!("mkdir failed: {e}"))
+            .map_err(|source| DaemonError::Mkdir { source }.to_string())
     }
 
     async fn ai_chat(&self, req: AiChatRequest) -> Result<AiChatResponse, String> {
+        log::info!("ai_chat: message={} chars, session_id={:?}",
+            req.message.len(), req.session_id);
+
         let mut cmd = tokio::process::Command::new("claude");
         cmd.arg("-p")
             .arg(&req.message)
@@ -120,7 +153,7 @@ impl EerieService for DaemonService {
         let output = cmd
             .output()
             .await
-            .map_err(|e| format!("failed to spawn claude: {e}"))?;
+            .map_err(|source| DaemonError::AiSpawn { source }.to_string())?;
 
         let stdout = String::from_utf8_lossy(&output.stdout);
         let stderr = String::from_utf8_lossy(&output.stderr);
@@ -139,6 +172,7 @@ impl EerieService for DaemonService {
                     .and_then(|s| s.as_str())
                     .unwrap_or("")
                     .to_string();
+                log::info!("ai_chat: got result ({} chars)", text.len());
                 return Ok(AiChatResponse { text, session_id });
             }
         }
@@ -148,10 +182,10 @@ impl EerieService for DaemonService {
         } else {
             format!(": {}", stderr.trim())
         };
-        Err(format!(
+        Err(DaemonError::AiNoResult(format!(
             "claude exited with status {:?} but produced no result event{stderr_snippet}",
             output.status.code()
-        ))
+        )).to_string())
     }
 
     async fn ai_edit_circuit(&self, req: AiEditCircuitRequest) -> Result<AiEditCircuitResponse, String> {
@@ -247,45 +281,48 @@ nets:
     }
 
     async fn simulate_op(&self, netlist: Netlist) -> Result<SimResult, String> {
-        thevenin::simulate_op(&netlist).map_err(|e| e.to_string())
+        self.simulate_inner("op", thevenin::simulate_op, &netlist).map_err(Into::into)
     }
 
     async fn simulate_dc(&self, netlist: Netlist) -> Result<SimResult, String> {
-        thevenin::simulate_dc(&netlist).map_err(|e| e.to_string())
+        self.simulate_inner("dc", thevenin::simulate_dc, &netlist).map_err(Into::into)
     }
 
     async fn simulate_ac(&self, netlist: Netlist) -> Result<SimResult, String> {
-        thevenin::simulate_ac(&netlist).map_err(|e| e.to_string())
+        self.simulate_inner("ac", thevenin::simulate_ac, &netlist).map_err(Into::into)
     }
 
     async fn simulate_tran(&self, netlist: Netlist) -> Result<SimResult, String> {
-        thevenin::simulate_tran(&netlist).map_err(|e| e.to_string())
+        self.simulate_inner("tran", thevenin::simulate_tran, &netlist).map_err(Into::into)
     }
 
     async fn simulate_noise(&self, netlist: Netlist) -> Result<SimResult, String> {
-        thevenin::simulate_noise(&netlist).map_err(|e| e.to_string())
+        self.simulate_inner("noise", thevenin::simulate_noise, &netlist).map_err(Into::into)
     }
 
     async fn simulate_tf(&self, netlist: Netlist) -> Result<SimResult, String> {
-        thevenin::simulate_tf(&netlist).map_err(|e| e.to_string())
+        self.simulate_inner("tf", thevenin::simulate_tf, &netlist).map_err(Into::into)
     }
 
     async fn simulate_sens(&self, netlist: Netlist) -> Result<SimResult, String> {
-        thevenin::simulate_sens(&netlist).map_err(|e| e.to_string())
+        self.simulate_inner("sens", thevenin::simulate_sens, &netlist).map_err(Into::into)
     }
 
     async fn simulate_pz(&self, netlist: Netlist) -> Result<SimResult, String> {
-        thevenin::simulate_pz(&netlist).map_err(|e| e.to_string())
+        self.simulate_inner("pz", thevenin::simulate_pz, &netlist).map_err(Into::into)
     }
 
     async fn list_component_defs(&self) -> Result<Vec<ComponentDef>, String> {
         let components_dir = self.project_dir.join("components");
+        log::info!("list_component_defs: scanning {}", components_dir.display());
         if !components_dir.exists() {
+            log::debug!("list_component_defs: components/ directory does not exist");
             return Ok(vec![]);
         }
         let mut defs = Vec::new();
         scan_yaml_dir(&components_dir, &mut defs);
         defs.sort_by(|a, b| a.name.cmp(&b.name));
+        log::info!("list_component_defs: found {} definitions", defs.len());
         Ok(defs)
     }
 }
@@ -458,13 +495,13 @@ fn extract_yaml_block(text: &str) -> String {
 fn validate_circuit_yaml(yaml: &str) -> Result<(), String> {
     use yaml_rust2::YamlLoader;
     let docs = YamlLoader::load_from_str(yaml)
-        .map_err(|e| format!("AI returned invalid YAML: {e}"))?;
-    let doc = docs.first().ok_or("AI returned empty YAML")?;
+        .map_err(|e| DaemonError::AiYamlParse(e.to_string()).to_string())?;
+    let doc = docs.first().ok_or_else(|| DaemonError::AiValidation("AI returned empty YAML".into()).to_string())?;
     if doc["components"].is_badvalue() {
-        return Err("AI response is missing 'components' key".into());
+        return Err(DaemonError::AiValidation("AI response is missing 'components' key".into()).to_string());
     }
     if doc["nets"].is_badvalue() {
-        return Err("AI response is missing 'nets' key".into());
+        return Err(DaemonError::AiValidation("AI response is missing 'nets' key".into()).to_string());
     }
     Ok(())
 }

@@ -1,4 +1,5 @@
 mod ai_provider;
+mod error;
 mod service;
 
 use std::net::SocketAddr;
