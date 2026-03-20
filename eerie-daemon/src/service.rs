@@ -1,4 +1,3 @@
-use crate::ai_provider::AiProvider;
 use crate::error::DaemonError;
 use eerie_rpc::{
     AiChatRequest, AiChatResponse, AiEditCircuitRequest, AiEditCircuitResponse, Bounds2d,
@@ -6,13 +5,12 @@ use eerie_rpc::{
     FileOpenRequest, FileSaveRequest, FileSaveResult, GraphicsElement, ListProjectRequest,
     PinLocation, ProjectDir, ProjectListing, PropertyDef, RenameRequest, SymbolGraphics, TreeEntry,
 };
-use std::{path::PathBuf, sync::Arc};
+use std::path::PathBuf;
 use thevenin_types::{Netlist, SimResult};
 
 #[derive(Clone)]
 pub struct DaemonService {
     pub project_dir: PathBuf,
-    pub ai: Arc<dyn AiProvider + Send + Sync>,
 }
 
 impl DaemonService {
@@ -134,58 +132,10 @@ impl EerieService for DaemonService {
     }
 
     async fn ai_chat(&self, req: AiChatRequest) -> Result<AiChatResponse, String> {
-        log::info!("ai_chat: message={} chars, session_id={:?}",
-            req.message.len(), req.session_id);
-
-        let mut cmd = tokio::process::Command::new("claude");
-        cmd.arg("-p")
-            .arg(&req.message)
-            .arg("--output-format")
-            .arg("stream-json")
-            .arg("--verbose")
-            .env_remove("CLAUDECODE") // allow nesting inside a claude session
-            .current_dir(&self.project_dir)
-            .stdout(std::process::Stdio::piped())
-            .stderr(std::process::Stdio::piped());
-        if let Some(ref sid) = req.session_id {
-            cmd.arg("--resume").arg(sid);
-        }
-        let output = cmd
-            .output()
-            .await
-            .map_err(|source| DaemonError::AiSpawn { source }.to_string())?;
-
-        let stdout = String::from_utf8_lossy(&output.stdout);
-        let stderr = String::from_utf8_lossy(&output.stderr);
-
-        // NDJSON: scan lines for the "result" event (also extract session_id)
-        for line in stdout.lines() {
-            let line = line.trim();
-            if line.is_empty() { continue; }
-            let Ok(val) = serde_json::from_str::<serde_json::Value>(line) else { continue };
-            if val.get("type").and_then(|t| t.as_str()) == Some("result") {
-                let text = val.get("result")
-                    .and_then(|r| r.as_str())
-                    .unwrap_or("")
-                    .to_string();
-                let session_id = val.get("session_id")
-                    .and_then(|s| s.as_str())
-                    .unwrap_or("")
-                    .to_string();
-                log::info!("ai_chat: got result ({} chars)", text.len());
-                return Ok(AiChatResponse { text, session_id });
-            }
-        }
-
-        let stderr_snippet = if stderr.trim().is_empty() {
-            String::new()
-        } else {
-            format!(": {}", stderr.trim())
-        };
-        Err(DaemonError::AiNoResult(format!(
-            "claude exited with status {:?} but produced no result event{stderr_snippet}",
-            output.status.code()
-        )).to_string())
+        let text = crate::ai_provider::ai_chat(&self.project_dir, &req.message).await?;
+        // The Agent SDK doesn't expose session IDs the same way the CLI does.
+        // For now, return an empty session_id (each chat is independent).
+        Ok(AiChatResponse { text, session_id: String::new() })
     }
 
     async fn ai_edit_circuit(&self, req: AiEditCircuitRequest) -> Result<AiEditCircuitResponse, String> {
@@ -196,88 +146,19 @@ impl EerieService for DaemonService {
             req.circuit_yaml.len(),
         );
 
-        // Build a list of known component type IDs for the system prompt
-        let defs = self.list_component_defs().await.unwrap_or_default();
-        let type_ids: Vec<&str> = defs.iter().map(|d| d.id.as_str()).collect();
-        let type_id_list = if type_ids.is_empty() {
-            "  (none — no component definitions found in workspace)".to_string()
-        } else {
-            type_ids.iter().map(|id| format!("  - {id}")).collect::<Vec<_>>().join("\n")
-        };
+        let circuit_yaml = crate::ai_provider::ai_edit_circuit(
+            &self.project_dir,
+            &req.circuit_yaml,
+            &req.instruction,
+            req.focused_component_id.as_deref(),
+        )
+        .await?;
 
-        let system = format!(
-r#"You are an expert circuit design assistant for the Eerie circuit tool.
+        // Validate the result.
+        validate_circuit_yaml(&circuit_yaml)?;
+        log::info!("[ai_edit] validated OK, {} bytes", circuit_yaml.len());
 
-Your task: modify a circuit described in YAML format according to the user's instruction,
-then output ONLY the updated YAML — nothing else, no explanation, no prose.
-
-## YAML format
-
-The circuit YAML has this structure:
-```yaml
-name: <circuit name>
-components:
-  - id: R1
-    type_id: resistor
-    position: {{x: 0, y: 0}}
-    rotation: 0       # degrees, 0/90/180/270
-    flip_x: false
-    properties:
-      value: 1000.0   # property values are plain numbers or strings
-nets:
-  - id: net1
-    segments:
-      - start: {{x: 0, y: 0}}
-        end: {{x: 10, y: 0}}
-    pins:
-      - component_id: R1
-        pin_id: p     # pin IDs depend on component type
-    labels: []
-```
-
-## Component type IDs available in this workspace:
-{type_id_list}
-
-## Rules
-1. Keep all existing component IDs intact unless the user asks to remove them.
-2. Use UUID v4 format for new component IDs (e.g. "550e8400-e29b-41d4-a716-446655440000").
-3. Property values are plain numbers (not wrapped in {{Float: ...}}).
-4. Positions use integer grid coordinates; the grid pitch is 10 units.
-5. Output ONLY the YAML — no markdown code fences, no explanation.
-6. Preserve components and nets you did not modify exactly as-is."#
-        );
-
-        let mut user = format!(
-            "Circuit:\n```yaml\n{}\n```\n\nInstruction: {}",
-            req.circuit_yaml.trim(),
-            req.instruction.trim()
-        );
-
-        if let Some(ref comp_id) = req.focused_component_id {
-            if let Some(ctx) = extract_component_context(&req.circuit_yaml, comp_id) {
-                user.push_str(&format!("\n\nFocused component ({comp_id}):\n{ctx}"));
-            }
-        }
-
-        log::info!(
-            "[ai_edit] sending to AI: system={} bytes, user={} bytes",
-            system.len(),
-            user.len(),
-        );
-        let t0 = std::time::Instant::now();
-        let response = self.ai.complete(&system, &user).await?;
-        log::info!(
-            "[ai_edit] AI responded in {:.1}s, response={} bytes",
-            t0.elapsed().as_secs_f64(),
-            response.len(),
-        );
-
-        let yaml = extract_yaml_block(&response);
-        log::info!("[ai_edit] extracted yaml block: {} bytes", yaml.len());
-        validate_circuit_yaml(&yaml)?;
-        log::info!("[ai_edit] yaml validated OK");
-
-        Ok(AiEditCircuitResponse { circuit_yaml: yaml })
+        Ok(AiEditCircuitResponse { circuit_yaml })
     }
 
     async fn simulate_op(&self, netlist: Netlist) -> Result<SimResult, String> {
@@ -327,6 +208,8 @@ nets:
     }
 }
 
+// ── Helpers ─────────────────────────────────────────────────────────────────
+
 /// Recursively build a flat, depth-first list of tree entries.
 /// Parent directories are emitted before their children.
 fn build_tree(dir: &std::path::Path, prefix: &str) -> Vec<TreeEntry> {
@@ -373,7 +256,6 @@ fn parse_component_def(yaml_str: &str) -> Option<ComponentDef> {
     let docs = YamlLoader::load_from_str(yaml_str).ok()?;
     let doc = docs.first()?;
 
-    // Skip files that don't look like component defs (must have id + name)
     let id = doc["id"].as_str()?.to_string();
     let name = doc["name"].as_str()?.to_string();
     let description = doc["description"].as_str().unwrap_or("").to_string();
@@ -404,7 +286,6 @@ fn parse_property_def(yaml: &yaml_rust2::Yaml) -> Option<PropertyDef> {
     Some(PropertyDef { id, label, unit, default })
 }
 
-/// Extract a numeric default from `{ Float: 1.0 }` or a bare number.
 fn extract_default_f64(yaml: &yaml_rust2::Yaml) -> Option<f64> {
     if let Some(f) = yaml.as_f64() {
         return Some(f);
@@ -476,21 +357,6 @@ fn parse_pin_location(yaml: &yaml_rust2::Yaml) -> Option<PinLocation> {
     Some(PinLocation { id, name, x, y })
 }
 
-/// Extract the first ```yaml ... ``` fenced block from a string.
-/// Falls back to the trimmed string itself if no fence is found.
-fn extract_yaml_block(text: &str) -> String {
-    // Look for ```yaml\n...\n``` or ```\n...\n```
-    for fence_start in ["```yaml\n", "```\n"] {
-        if let Some(start) = text.find(fence_start) {
-            let after = &text[start + fence_start.len()..];
-            if let Some(end) = after.find("```") {
-                return after[..end].trim().to_string();
-            }
-        }
-    }
-    text.trim().to_string()
-}
-
 /// Validate that a YAML string looks like a circuit (has `components` and `nets` keys).
 fn validate_circuit_yaml(yaml: &str) -> Result<(), String> {
     use yaml_rust2::YamlLoader;
@@ -504,22 +370,4 @@ fn validate_circuit_yaml(yaml: &str) -> Result<(), String> {
         return Err(DaemonError::AiValidation("AI response is missing 'nets' key".into()).to_string());
     }
     Ok(())
-}
-
-/// Extract YAML text for a single component from the circuit YAML by its ID.
-fn extract_component_context(circuit_yaml: &str, comp_id: &str) -> Option<String> {
-    use yaml_rust2::YamlLoader;
-    use yaml_rust2::YamlEmitter;
-    let docs = YamlLoader::load_from_str(circuit_yaml).ok()?;
-    let doc = docs.first()?;
-    let components = doc["components"].as_vec()?;
-    for comp in components {
-        if comp["id"].as_str() == Some(comp_id) {
-            let mut out = String::new();
-            let mut emitter = YamlEmitter::new(&mut out);
-            emitter.dump(comp).ok()?;
-            return Some(out);
-        }
-    }
-    None
 }

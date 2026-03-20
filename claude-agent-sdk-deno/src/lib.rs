@@ -1,10 +1,14 @@
-use std::{cell::RefCell, collections::HashMap, rc::Rc, sync::Arc};
+use std::{cell::RefCell, collections::HashMap, rc::Rc, sync::{Arc, OnceLock}};
 use bytes::Bytes;
+use deno_bundle::bundle;
 use deno_core::{op2, Extension, ExtensionFileSource, JsBuffer, OpDecl, OpState, Resource, ResourceId};
 use deno_error::JsErrorBox;
+use facet::Facet;
 use tokio::sync::{mpsc, Mutex};
 
 const CAP: usize = 64;
+
+// ── Pipe infrastructure ─────────────────────────────────────────────────────
 
 /// Host-side view of a pipe: send to JS, receive from JS.
 #[derive(Clone)]
@@ -134,6 +138,203 @@ pub fn stream_extension() -> Extension {
         })),
         ..Default::default()
     }
+}
+
+// ── Query API ───────────────────────────────────────────────────────────────
+
+static RUNTIME: OnceLock<QueryRuntime> = OnceLock::new();
+
+struct QueryRuntime {
+    pipe: HostPipe,
+    query_lock: Mutex<()>,
+}
+
+/// Parameters for a Claude Agent SDK query.
+#[derive(Debug, Clone, Facet)]
+#[facet(rename_all = "camelCase")]
+pub struct QueryParams {
+    /// The prompt to send to the agent.
+    pub prompt: String,
+    /// Options for the query.
+    #[facet(default)]
+    pub options: QueryOptions,
+}
+
+/// Options for a Claude Agent SDK query.
+/// Mirrors the TypeScript `query()` options.
+#[derive(Debug, Clone, Default, Facet)]
+#[facet(rename_all = "camelCase")]
+pub struct QueryOptions {
+    /// Working directory for file operations.
+    pub cwd: Option<String>,
+    /// Tools the agent can use (e.g., `["Read", "Glob", "Grep"]`).
+    pub allowed_tools: Option<Vec<String>>,
+    /// Tools to explicitly disallow.
+    pub disallowed_tools: Option<Vec<String>>,
+    /// How to handle permission prompts.
+    pub permission_mode: Option<String>,
+    /// Custom system prompt.
+    pub system_prompt: Option<String>,
+    /// Maximum agent turns before stopping.
+    pub max_turns: Option<u32>,
+    /// Model ID override.
+    pub model: Option<String>,
+    /// Maximum budget in USD.
+    pub max_budget_usd: Option<f64>,
+}
+
+/// Receiver for streaming query messages from the Claude Agent SDK.
+/// Each message is a raw JSON string representing an SDK message event.
+pub struct QueryReceiver {
+    rx: mpsc::Receiver<Result<String, String>>,
+}
+
+impl QueryReceiver {
+    /// Receive the next message as a raw JSON string.
+    pub async fn recv(&mut self) -> Option<Result<String, String>> {
+        self.rx.recv().await
+    }
+
+    /// Consume all messages and return the final result text.
+    pub async fn result(mut self) -> Result<String, String> {
+        let mut result_text = None;
+        while let Some(msg) = self.recv().await {
+            let msg = msg?;
+            // Check for "result" field in the JSON message.
+            // We use a minimal serde_json parse here for the wire protocol only.
+            if let Ok(val) = serde_json::from_str::<serde_json::Value>(&msg) {
+                if let Some(result) = val.get("result").and_then(|r| r.as_str()) {
+                    result_text = Some(result.to_string());
+                }
+            }
+        }
+        result_text.ok_or_else(|| "No result received from query".into())
+    }
+}
+
+fn init_runtime() -> QueryRuntime {
+    rustls::crypto::aws_lc_rs::default_provider()
+        .install_default()
+        .ok();
+
+    let (pipe_tx, pipe_rx) = std::sync::mpsc::sync_channel::<Result<HostPipe, String>>(1);
+
+    // Spawn the Deno runtime on a background thread (detached).
+    std::thread::spawn(move || {
+        let rt = tokio::runtime::Builder::new_current_thread()
+            .enable_all()
+            .build()
+            .expect("failed to build tokio runtime for Deno");
+
+        rt.block_on(async {
+            let local = tokio::task::LocalSet::new();
+            local
+                .run_until(async {
+                    let js = bundle!("src/query_bridge.ts", "--platform=node");
+
+                    js.run_with_setup(
+                        vec![stream_extension()],
+                        move |worker| {
+                            let op_state = worker.js_runtime.op_state();
+                            let state = op_state.borrow();
+                            match first_host_pipe(&state) {
+                                Some(pipe) => {
+                                    let _ = pipe_tx.send(Ok(pipe));
+                                }
+                                None => {
+                                    let _ = pipe_tx.send(Err(
+                                        "JS did not call op_eerie_pipe_open".into(),
+                                    ));
+                                }
+                            }
+                        },
+                    )
+                    .await;
+                })
+                .await;
+        });
+    });
+
+    let pipe = pipe_rx
+        .recv()
+        .expect("Deno thread exited before sending pipe")
+        .expect("Deno setup failed");
+
+    QueryRuntime {
+        pipe,
+        query_lock: Mutex::new(()),
+    }
+}
+
+/// Run a query against the Claude Agent SDK.
+///
+/// Returns a [`QueryReceiver`] that yields messages as raw JSON strings
+/// until the query completes. Only one query may run at a time; concurrent
+/// calls will wait for the previous query to finish.
+pub async fn query(params: QueryParams) -> Result<QueryReceiver, String> {
+    let rt = RUNTIME.get_or_init(init_runtime);
+    let guard = rt.query_lock.lock().await;
+
+    // Serialize params with facet-json.
+    let params_json = facet_json::to_string(&params)
+        .map_err(|e| format!("Failed to serialize query params: {e}"))?;
+
+    // Build wire protocol message: {"type":"query","params":<params>}
+    let wire = format!(r#"{{"type":"query","params":{params_json}}}"#);
+    let json_line = wire + "\n";
+
+    rt.pipe
+        .to_js
+        .send(Bytes::from(json_line.into_bytes()))
+        .await
+        .map_err(|_| "Deno pipe closed (send failed)".to_string())?;
+
+    let (tx, rx) = mpsc::channel(64);
+    let from_js = rt.pipe.from_js.clone();
+
+    tokio::spawn(async move {
+        let _guard = guard; // hold the query lock until done
+        loop {
+            let chunk = {
+                let mut rx = from_js.lock().await;
+                rx.recv().await
+            };
+            let Some(chunk) = chunk else {
+                let _ = tx.send(Err("Deno pipe closed unexpectedly".into())).await;
+                break;
+            };
+
+            let raw = String::from_utf8_lossy(&chunk);
+            let trimmed = raw.trim();
+
+            // Parse the wire protocol wrapper (internal, uses serde_json).
+            let Ok(msg) = serde_json::from_str::<serde_json::Value>(trimmed) else {
+                continue;
+            };
+
+            match msg.get("type").and_then(|t| t.as_str()) {
+                Some("query_done") => break,
+                Some("error") => {
+                    let message = msg
+                        .get("message")
+                        .and_then(|m| m.as_str())
+                        .unwrap_or("unknown error")
+                        .to_string();
+                    let _ = tx.send(Err(message)).await;
+                    break;
+                }
+                Some("message") => {
+                    if let Some(data) = msg.get("data") {
+                        let json_str = serde_json::to_string(data).unwrap_or_default();
+                        let _ = tx.send(Ok(json_str)).await;
+                    }
+                }
+                _ => {}
+            }
+        }
+    });
+
+    Ok(QueryReceiver { rx })
 }
 
 #[cfg(test)]

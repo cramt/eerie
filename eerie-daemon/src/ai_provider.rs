@@ -1,105 +1,116 @@
-use std::{future::Future, path::PathBuf, pin::Pin, sync::Arc};
+use std::path::PathBuf;
 
-/// Abstraction over an AI completion backend.
-pub trait AiProvider: Send + Sync {
-    fn complete<'a>(
-        &'a self,
-        system: &'a str,
-        user: &'a str,
-    ) -> Pin<Box<dyn Future<Output = Result<String, String>> + Send + 'a>>;
-}
+use claude_agent_sdk_deno::{QueryOptions, QueryParams};
 
-/// Implementation that spawns the `claude` CLI in one-shot (`-p`) mode.
-pub struct ClaudeCliProvider {
-    pub project_dir: PathBuf,
-}
+static CIRCUIT_EDITOR_PROMPT: &str = include_str!("../../prompts/circuit-editor.md");
 
-impl AiProvider for ClaudeCliProvider {
-    fn complete<'a>(
-        &'a self,
-        system: &'a str,
-        user: &'a str,
-    ) -> Pin<Box<dyn Future<Output = Result<String, String>> + Send + 'a>> {
-        let prompt = format!("{system}\n\n{user}");
-        let project_dir = self.project_dir.clone();
-        Box::pin(async move {
-            log::info!("[ai_provider] spawning claude CLI (prompt {} chars)", prompt.len());
-            let t0 = std::time::Instant::now();
-
-            let output = tokio::process::Command::new("claude")
-                .arg("-p")
-                .arg(&prompt)
-                .arg("--output-format")
-                .arg("stream-json")
-                .arg("--verbose")
-                .env_remove("CLAUDECODE")
-                .current_dir(&project_dir)
-                .stdout(std::process::Stdio::piped())
-                .stderr(std::process::Stdio::piped())
-                .output()
-                .await
-                .map_err(|e| format!("failed to spawn claude: {e}"))?;
-
-            let elapsed = t0.elapsed();
-            let stdout = String::from_utf8_lossy(&output.stdout);
-            let stderr = String::from_utf8_lossy(&output.stderr);
-
-            log::info!(
-                "[ai_provider] claude exited in {:.1}s, status={:?}, stdout={} bytes, stderr={} bytes",
-                elapsed.as_secs_f64(),
-                output.status.code(),
-                stdout.len(),
-                stderr.len(),
-            );
-            if !stderr.trim().is_empty() {
-                log::warn!("[ai_provider] claude stderr: {}", stderr.trim());
-            }
-
-            parse_claude_result(&stdout, &stderr, output.status.code())
-        })
-    }
-}
-
-/// Parse NDJSON output from the `claude` CLI and extract the result text.
-/// Used by both `ClaudeCliProvider` and `DaemonService::ai_chat`.
-pub fn parse_claude_result(
-    stdout: &str,
-    stderr: &str,
-    status_code: Option<i32>,
+/// Run an Agent SDK query against a circuit file.
+///
+/// Writes `circuit_yaml` to a temp `.eerie` file, lets the agent edit it
+/// with tools (Read, Edit, Glob, Grep), then reads back the result.
+pub async fn ai_edit_circuit(
+    project_dir: &PathBuf,
+    circuit_yaml: &str,
+    instruction: &str,
+    focused_component_id: Option<&str>,
 ) -> Result<String, String> {
-    for line in stdout.lines() {
-        let line = line.trim();
-        if line.is_empty() {
-            continue;
-        }
-        let Ok(val) = serde_json::from_str::<serde_json::Value>(line) else {
-            continue;
-        };
-        if val.get("type").and_then(|t| t.as_str()) == Some("result") {
-            let text = val
-                .get("result")
-                .and_then(|r| r.as_str())
-                .unwrap_or("")
-                .to_string();
-            return Ok(text);
+    // Write circuit to a temp file so the agent can Edit it in place.
+    let tmp_dir = project_dir.join(".eerie-tmp");
+    std::fs::create_dir_all(&tmp_dir)
+        .map_err(|e| format!("failed to create temp dir: {e}"))?;
+    let tmp_path = tmp_dir.join("edit-target.eerie");
+    std::fs::write(&tmp_path, circuit_yaml)
+        .map_err(|e| format!("failed to write temp circuit: {e}"))?;
+
+    let mut prompt = format!(
+        "Edit the circuit file at `{}`. Instruction: {}",
+        tmp_path.display(),
+        instruction.trim(),
+    );
+
+    if let Some(comp_id) = focused_component_id {
+        prompt.push_str(&format!(
+            "\n\nThe user is focused on component `{comp_id}`."
+        ));
+    }
+
+    log::info!(
+        "[ai_edit] running agent: instruction={:?}, focused={:?}, file={}",
+        instruction, focused_component_id, tmp_path.display(),
+    );
+    let t0 = std::time::Instant::now();
+
+    let rx = claude_agent_sdk_deno::query(QueryParams {
+        prompt,
+        options: QueryOptions {
+            cwd: Some(project_dir.to_string_lossy().into_owned()),
+            allowed_tools: Some(vec![
+                "Read".into(),
+                "Edit".into(),
+                "Write".into(),
+                "Glob".into(),
+                "Grep".into(),
+            ]),
+            system_prompt: Some(CIRCUIT_EDITOR_PROMPT.to_string()),
+            permission_mode: Some("acceptEdits".into()),
+            max_turns: Some(20),
+            ..Default::default()
+        },
+    })
+    .await?;
+
+    // Wait for the query to finish (we don't need intermediate messages).
+    let mut last_err = None;
+    let mut receiver = rx;
+    while let Some(msg) = receiver.recv().await {
+        if let Err(e) = msg {
+            last_err = Some(e);
         }
     }
 
-    let stderr_snippet = if stderr.trim().is_empty() {
-        String::new()
-    } else {
-        format!(": {}", stderr.trim())
-    };
-    Err(format!(
-        "claude exited with status {:?} but produced no result event{stderr_snippet}",
-        status_code
-    ))
+    if let Some(e) = last_err {
+        // Clean up temp file on error.
+        let _ = std::fs::remove_file(&tmp_path);
+        return Err(e);
+    }
+
+    log::info!(
+        "[ai_edit] agent finished in {:.1}s",
+        t0.elapsed().as_secs_f64(),
+    );
+
+    // Read back the edited file.
+    let result = std::fs::read_to_string(&tmp_path)
+        .map_err(|e| format!("failed to read edited circuit: {e}"))?;
+
+    // Clean up.
+    let _ = std::fs::remove_file(&tmp_path);
+    let _ = std::fs::remove_dir(&tmp_dir); // only succeeds if empty
+
+    Ok(result)
 }
 
-/// Construct the appropriate `AiProvider` based on the `EERIE_AI_PROVIDER`
-/// environment variable. Defaults to `"claude"`.
-pub fn make_provider(project_dir: PathBuf) -> Arc<dyn AiProvider + Send + Sync> {
-    let _provider_name = std::env::var("EERIE_AI_PROVIDER").unwrap_or_else(|_| "claude".into());
-    // Future: match on _provider_name to select Codex, Ollama, etc.
-    Arc::new(ClaudeCliProvider { project_dir })
+/// Run an Agent SDK query for freeform AI chat about the project.
+pub async fn ai_chat(
+    project_dir: &PathBuf,
+    message: &str,
+) -> Result<String, String> {
+    log::info!("[ai_chat] message={} chars", message.len());
+
+    let rx = claude_agent_sdk_deno::query(QueryParams {
+        prompt: message.to_string(),
+        options: QueryOptions {
+            cwd: Some(project_dir.to_string_lossy().into_owned()),
+            allowed_tools: Some(vec![
+                "Read".into(),
+                "Glob".into(),
+                "Grep".into(),
+            ]),
+            max_turns: Some(10),
+            ..Default::default()
+        },
+    })
+    .await?;
+
+    rx.result().await
 }

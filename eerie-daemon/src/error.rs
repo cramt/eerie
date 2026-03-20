@@ -33,12 +33,6 @@ pub enum DaemonError {
     #[error("mkdir failed: {source}")]
     Mkdir { source: std::io::Error },
 
-    #[error("failed to spawn claude: {source}")]
-    AiSpawn { source: std::io::Error },
-
-    #[error("{0}")]
-    AiNoResult(String),
-
     #[error("AI returned invalid YAML: {0}")]
     AiYamlParse(String),
 

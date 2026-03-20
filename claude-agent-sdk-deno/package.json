@@ -1,0 +1,8 @@
+{
+  "name": "claude-agent-sdk-deno",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@anthropic-ai/claude-agent-sdk": "^0.2.71"
+  }
+}

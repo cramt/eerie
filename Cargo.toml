@@ -7,7 +7,7 @@ members = [
     "deno-bundle",
     "deno-run",
     "ts-hello",
-    "claude-agent-acp",
+    "claude-agent-sdk-deno",
 ]
 resolver = "2"
 

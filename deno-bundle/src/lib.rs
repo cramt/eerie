@@ -6,7 +6,6 @@ use std::{
     path::PathBuf,
     process::Command,
 };
-use unsynn::{IParse, LiteralString, TokenIter};
 
 /// Bundle a TypeScript file at compile time using esbuild.
 ///
@@ -16,15 +15,49 @@ use unsynn::{IParse, LiteralString, TokenIter};
 /// Cargo will automatically re-compile when the TypeScript file changes.
 ///
 /// ```rust
-/// let js: &str = deno_bundle::bundle!("src/hello.ts");
+/// let js = deno_bundle::bundle!("src/hello.ts");
+/// ```
+///
+/// Extra esbuild arguments can be passed as additional string literals:
+///
+/// ```rust
+/// let js = deno_bundle::bundle!("src/hello.ts", "--platform=node");
 /// ```
 #[proc_macro]
 pub fn bundle(input: TokenStream) -> TokenStream {
-    let mut tokens = TokenIter::new(proc_macro2::TokenStream::from(input));
-    let path_lit: LiteralString = tokens
-        .parse_all()
-        .expect("bundle! expects a single string literal path");
-    let rel_path = path_lit.as_str();
+    let input2 = proc_macro2::TokenStream::from(input);
+    let mut strings: Vec<String> = Vec::new();
+
+    let mut expecting_string = true;
+    for tt in input2 {
+        match tt {
+            proc_macro2::TokenTree::Literal(lit) => {
+                if !expecting_string {
+                    panic!("bundle!: unexpected literal, expected comma");
+                }
+                // Parse the literal as a string.
+                let repr = lit.to_string();
+                let s = repr
+                    .strip_prefix('"')
+                    .and_then(|s| s.strip_suffix('"'))
+                    .unwrap_or_else(|| panic!("bundle!: expected string literal, got {repr}"));
+                strings.push(s.to_string());
+                expecting_string = false;
+            }
+            proc_macro2::TokenTree::Punct(p) if p.as_char() == ',' => {
+                if expecting_string {
+                    panic!("bundle!: unexpected comma");
+                }
+                expecting_string = true;
+            }
+            other => panic!("bundle!: unexpected token: {other}"),
+        }
+    }
+
+    assert!(!strings.is_empty(), "bundle! expects at least a path argument");
+
+    let rel_path = &strings[0];
+    let extra_args = &strings[1..];
 
     let manifest_dir =
         std::env::var("CARGO_MANIFEST_DIR").expect("CARGO_MANIFEST_DIR not set");
@@ -33,18 +66,26 @@ pub fn bundle(input: TokenStream) -> TokenStream {
     let source = std::fs::read(&entry)
         .unwrap_or_else(|e| panic!("failed to read {}: {e}", entry.display()));
 
-    // Cache by content hash — reuse output if the file hasn't changed.
+    // Cache by content hash (includes extra args so different configs get separate caches).
     let mut hasher = DefaultHasher::new();
     source.hash(&mut hasher);
+    extra_args.hash(&mut hasher);
     let hash = hasher.finish();
     let output = std::env::temp_dir().join(format!("deno_bundle_{hash:x}.js"));
 
     if !output.exists() {
-        let out = Command::new("esbuild")
-            .arg("--bundle")
+        let mut cmd = Command::new("esbuild");
+        cmd.arg("--bundle")
             .arg("--format=esm")
-            .arg(format!("--outfile={}", output.display()))
-            .arg(&entry)
+            .arg(format!("--outfile={}", output.display()));
+
+        for arg in extra_args {
+            cmd.arg(arg);
+        }
+
+        cmd.arg(&entry);
+
+        let out = cmd
             .output()
             .unwrap_or_else(|e| panic!("failed to spawn esbuild: {e}"));
 

@@ -16,4 +16,3 @@ path = "src/main.rs"
 [dependencies]
 proc-macro2 = "1"
 quote = "1"
-unsynn = "0.3"
