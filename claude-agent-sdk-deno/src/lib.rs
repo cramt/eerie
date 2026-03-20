@@ -218,9 +218,16 @@ impl QueryReceiver {
 const PIPE_INIT_SCRIPT: &str = r#"
     const rid = globalThis.__eerieOps.op_eerie_pipe_open();
     globalThis.__eerie_pipe_rid = rid;
+    // Clear CLAUDECODE so the Agent SDK can spawn claude without nesting issues.
+    try { Deno.env.delete("CLAUDECODE"); } catch {}
 "#;
 
 fn init_runtime() -> QueryRuntime {
+    // The Agent SDK spawns `claude` as a subprocess. If we're running inside
+    // a Claude Code session, CLAUDECODE=1 prevents nesting. Remove it so
+    // the subprocess can start.
+    unsafe { std::env::remove_var("CLAUDECODE") };
+
     rustls::crypto::aws_lc_rs::default_provider()
         .install_default()
         .ok();
@@ -289,6 +296,8 @@ pub async fn query(params: QueryParams) -> Result<QueryReceiver, String> {
         .map_err(|e| format!("Failed to serialize query params: {e}"))?;
 
     // Build wire protocol message: {"type":"query","params":<params>}
+    // Note: facet-json serializes None as null. The JS bridge strips nulls
+    // before passing to the Agent SDK (which treats null != undefined).
     let wire = format!(r#"{{"type":"query","params":{params_json}}}"#);
     let json_line = wire + "\n";
 
@@ -491,5 +500,105 @@ mod tests {
 
         let received = host_pipe.from_js.lock().await.try_recv().unwrap();
         assert_eq!(received.as_ref(), &[3u8, 2u8]); // lengths of "abc" and "de"
+    }
+
+    #[test]
+    fn test_query_params_serialization() {
+        let params = QueryParams {
+            prompt: "test".into(),
+            options: QueryOptions::default(),
+        };
+        let json = facet_json::to_string(&params).unwrap();
+        eprintln!("serialized: {json}");
+        // None fields should not appear or should be null, NOT the literal null
+        assert!(json.contains("\"prompt\""));
+    }
+
+    /// Test that child_process.spawn works in the embedded Deno runtime.
+    #[tokio::test]
+    async fn embedded_deno_child_process_spawn() {
+        rustls::crypto::aws_lc_rs::default_provider()
+            .install_default()
+            .ok();
+
+        let js_code = r#"
+            import { spawn } from "node:child_process";
+            const ops = globalThis.__eerieOps;
+            const rid = globalThis.__eerie_pipe_rid;
+
+            const child = spawn("echo", ["hello_from_spawn"]);
+            let out = "";
+            let err = "";
+            child.stdout.on("data", (d) => { out += d; });
+            child.stderr.on("data", (d) => { err += d; });
+            child.on("close", async (code) => {
+                const msg = JSON.stringify({ code, stdout: out.trim(), stderr: err.trim() }) + "\n";
+                await ops.op_eerie_pipe_write(rid, new TextEncoder().encode(msg));
+            });
+        "#;
+
+        let tmp = std::env::temp_dir().join("test_spawn_claude.mjs");
+        std::fs::write(&tmp, js_code).unwrap();
+
+        let specifier = deno_core::ModuleSpecifier::from_file_path(&tmp).unwrap();
+
+        let mut worker = deno_run::make_worker(vec![stream_extension()]);
+        worker
+            .execute_script(
+                "<init>",
+                deno_core::FastString::from_static(PIPE_INIT_SCRIPT),
+            )
+            .unwrap();
+        let pipe = first_host_pipe(&worker.js_runtime.op_state().borrow()).unwrap();
+
+        worker.execute_main_module(&specifier).await.unwrap();
+        worker.run_event_loop(false).await.unwrap();
+
+        let chunk = {
+            let mut rx = pipe.from_js.lock().await;
+            tokio::time::timeout(std::time::Duration::from_secs(10), rx.recv())
+                .await
+                .expect("timeout waiting for spawn result")
+                .expect("pipe closed")
+        };
+
+        let raw = String::from_utf8_lossy(&chunk);
+        eprintln!("claude --version result: {raw}");
+        let val: serde_json::Value = serde_json::from_str(raw.trim()).unwrap();
+        assert_eq!(val["code"], 0, "spawn failed: {raw}");
+        assert_eq!(val["stdout"], "hello_from_spawn");
+
+        let _ = std::fs::remove_file(&tmp);
+    }
+
+    /// Send a prompt to the Claude Agent SDK and verify we get at least one
+    /// message back. Uses whatever auth the Claude CLI has (login or API key).
+    #[tokio::test]
+    async fn query_smoke_test() {
+
+        let mut rx = crate::query(QueryParams {
+            prompt: "Respond with exactly the word 'hello' and nothing else.".to_string(),
+            options: QueryOptions {
+                max_turns: Some(1),
+                ..Default::default()
+            },
+        })
+        .await
+        .expect("query() failed to start");
+
+        let mut got_message = false;
+        while let Some(msg) = rx.recv().await {
+            match msg {
+                Ok(json) => {
+                    eprintln!("[smoke_test] message: {}", &json[..json.len().min(200)]);
+                    got_message = true;
+                }
+                Err(e) => {
+                    panic!("query returned error: {e}");
+                }
+            }
+        }
+
+        assert!(got_message, "expected at least one message from the Agent SDK");
     }
 }

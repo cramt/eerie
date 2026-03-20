@@ -33,7 +33,7 @@ impl NpmPackageFolderResolver for NoopNpmResolver {
     }
 }
 
-fn make_worker(extensions: Vec<Extension>) -> MainWorker {
+pub fn make_worker(extensions: Vec<Extension>) -> MainWorker {
     let fs = Arc::new(RealFs);
     let permission_desc_parser =
         Arc::new(RuntimePermissionDescriptorParser::new(RealSys));
@@ -160,10 +160,11 @@ impl JsModule {
         let tmp = std::env::temp_dir().join("deno_run_module.mjs");
         std::fs::write(&tmp, self.0).unwrap();
         let specifier = deno_core::ModuleSpecifier::from_file_path(&tmp).unwrap();
+
         worker.execute_main_module(&specifier).await.unwrap();
 
         // Step 4: drive the event loop (module's async code runs here).
-        worker.run_event_loop(false).await.unwrap();
+        let _ = worker.run_event_loop(false).await;
 
         let _ = std::fs::remove_file(&tmp);
         result
