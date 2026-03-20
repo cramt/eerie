@@ -212,6 +212,14 @@ impl QueryReceiver {
     }
 }
 
+/// Classic script that opens the pipe synchronously.
+/// The pipe RID is stored on `globalThis.__eerie_pipe_rid` so the ES module
+/// (which loads later) can read it without calling `op_eerie_pipe_open` itself.
+const PIPE_INIT_SCRIPT: &str = r#"
+    const rid = globalThis.__eerieOps.op_eerie_pipe_open();
+    globalThis.__eerie_pipe_rid = rid;
+"#;
+
 fn init_runtime() -> QueryRuntime {
     rustls::crypto::aws_lc_rs::default_provider()
         .install_default()
@@ -232,8 +240,9 @@ fn init_runtime() -> QueryRuntime {
                 .run_until(async {
                     let js = bundle!("src/query_bridge.ts", "--platform=node");
 
-                    js.run_with_setup(
+                    js.run_module_with_setup(
                         vec![stream_extension()],
+                        PIPE_INIT_SCRIPT,
                         move |worker| {
                             let op_state = worker.js_runtime.op_state();
                             let state = op_state.borrow();

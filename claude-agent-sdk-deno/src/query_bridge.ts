@@ -1,6 +1,9 @@
 /**
  * Bridge between the embedded Deno runtime and the Claude Agent SDK.
  *
+ * The pipe RID is set up by the Rust side via a classic script before this
+ * module is loaded. We read it from `globalThis.__eerie_pipe_rid`.
+ *
  * Protocol (NDJSON over the Rust↔JS pipe):
  *
  * Rust → JS:
@@ -15,10 +18,9 @@
 import { query } from "@anthropic-ai/claude-agent-sdk";
 
 const ops = (globalThis as any).__eerieOps;
+const rid: number = (globalThis as any).__eerie_pipe_rid;
 
 const encoder = new TextEncoder();
-
-const rid: number = ops.op_eerie_pipe_open();
 
 async function writeToRust(msg: object): Promise<void> {
   const line = JSON.stringify(msg) + "\n";

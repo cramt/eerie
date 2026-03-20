@@ -118,3 +118,61 @@ impl std::ops::Deref for JsBundle {
         self.0
     }
 }
+
+/// An ES module payload produced by `deno_bundle::bundle!` with `--platform=node`.
+///
+/// Unlike `JsBundle` (classic script via `execute_script`), this writes the code
+/// to a temp file and loads it as an ES module so that `import` statements work.
+pub struct JsModule(pub &'static str);
+
+impl JsModule {
+    pub const fn new(js: &'static str) -> Self {
+        Self(js)
+    }
+
+    /// Run a setup script (classic, synchronous) to prepare state (e.g. open a
+    /// pipe), call `setup` to extract that state, then load and execute the ES
+    /// module which uses it.
+    ///
+    /// `init_script` runs via `execute_script` (classic) — use it for sync ops
+    /// like opening a pipe.  The module code should read shared state from
+    /// `globalThis` rather than calling setup ops itself.
+    pub async fn run_module_with_setup<T, F>(
+        self,
+        extensions: Vec<Extension>,
+        init_script: &str,
+        setup: F,
+    ) -> T
+    where
+        F: FnOnce(&mut MainWorker) -> T,
+    {
+        let mut worker = make_worker(extensions);
+
+        // Step 1: run the classic init script (synchronous).
+        worker
+            .execute_script("<init>", FastString::from(init_script.to_string()))
+            .unwrap();
+
+        // Step 2: let the caller inspect OpState (e.g. extract a HostPipe).
+        let result = setup(&mut worker);
+
+        // Step 3: write the ES module to a temp file and load it.
+        let tmp = std::env::temp_dir().join("deno_run_module.mjs");
+        std::fs::write(&tmp, self.0).unwrap();
+        let specifier = deno_core::ModuleSpecifier::from_file_path(&tmp).unwrap();
+        worker.execute_main_module(&specifier).await.unwrap();
+
+        // Step 4: drive the event loop (module's async code runs here).
+        worker.run_event_loop(false).await.unwrap();
+
+        let _ = std::fs::remove_file(&tmp);
+        result
+    }
+}
+
+impl std::ops::Deref for JsModule {
+    type Target = str;
+    fn deref(&self) -> &str {
+        self.0
+    }
+}

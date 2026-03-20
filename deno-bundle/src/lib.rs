@@ -7,10 +7,25 @@ use std::{
     process::Command,
 };
 
+/// Node.js built-in module names. When `--platform=node` is passed, the macro
+/// automatically adds `--alias:X=node:X` for each of these so that Deno can
+/// resolve them via its Node compat layer.
+const NODE_BUILTINS: &[&str] = &[
+    "assert", "assert/strict", "async_hooks", "buffer", "child_process",
+    "cluster", "console", "constants", "crypto", "dgram",
+    "diagnostics_channel", "dns", "dns/promises", "domain", "events",
+    "fs", "fs/promises", "http", "http2", "https", "inspector",
+    "inspector/promises", "module", "net", "os", "path", "path/posix",
+    "path/win32", "perf_hooks", "process", "punycode", "querystring",
+    "readline", "readline/promises", "repl", "stream", "stream/consumers",
+    "stream/promises", "stream/web", "string_decoder", "sys", "timers",
+    "timers/promises", "tls", "tty", "url", "util", "util/types", "v8",
+    "vm", "wasi", "worker_threads", "zlib",
+];
+
 /// Bundle a TypeScript file at compile time using esbuild.
 ///
 /// The path is relative to the crate root (`CARGO_MANIFEST_DIR`).
-/// Returns the bundled JavaScript as a `&'static str`.
 ///
 /// Cargo will automatically re-compile when the TypeScript file changes.
 ///
@@ -23,6 +38,10 @@ use std::{
 /// ```rust
 /// let js = deno_bundle::bundle!("src/hello.ts", "--platform=node");
 /// ```
+///
+/// When `--platform=node` is present, the macro:
+/// 1. Adds `--alias:X=node:X` for every Node built-in so Deno resolves them.
+/// 2. Returns a `JsModule` instead of `JsBundle` (ES module execution).
 #[proc_macro]
 pub fn bundle(input: TokenStream) -> TokenStream {
     let input2 = proc_macro2::TokenStream::from(input);
@@ -35,7 +54,6 @@ pub fn bundle(input: TokenStream) -> TokenStream {
                 if !expecting_string {
                     panic!("bundle!: unexpected literal, expected comma");
                 }
-                // Parse the literal as a string.
                 let repr = lit.to_string();
                 let s = repr
                     .strip_prefix('"')
@@ -58,6 +76,7 @@ pub fn bundle(input: TokenStream) -> TokenStream {
 
     let rel_path = &strings[0];
     let extra_args = &strings[1..];
+    let is_node = extra_args.iter().any(|a| a.contains("platform=node"));
 
     let manifest_dir =
         std::env::var("CARGO_MANIFEST_DIR").expect("CARGO_MANIFEST_DIR not set");
@@ -70,6 +89,7 @@ pub fn bundle(input: TokenStream) -> TokenStream {
     let mut hasher = DefaultHasher::new();
     source.hash(&mut hasher);
     extra_args.hash(&mut hasher);
+    is_node.hash(&mut hasher);
     let hash = hasher.finish();
     let output = std::env::temp_dir().join(format!("deno_bundle_{hash:x}.js"));
 
@@ -81,6 +101,13 @@ pub fn bundle(input: TokenStream) -> TokenStream {
 
         for arg in extra_args {
             cmd.arg(arg);
+        }
+
+        // Add node: aliases so Deno can resolve built-in modules.
+        if is_node {
+            for builtin in NODE_BUILTINS {
+                cmd.arg(format!("--alias:{builtin}=node:{builtin}"));
+            }
         }
 
         cmd.arg(&entry);
@@ -105,11 +132,23 @@ pub fn bundle(input: TokenStream) -> TokenStream {
     // include_str! on the entry file causes cargo to re-run this macro
     // whenever the TypeScript source changes.
     let entry_str = entry.to_str().expect("non-UTF-8 path");
-    quote! {
-        {
-            const _: &str = include_str!(#entry_str);
-            ::deno_run::JsBundle::new(#js)
+    if is_node {
+        // ESM output with node imports — must run as an ES module.
+        quote! {
+            {
+                const _: &str = include_str!(#entry_str);
+                ::deno_run::JsModule::new(#js)
+            }
         }
+        .into()
+    } else {
+        // Self-contained bundle — runs as a classic script.
+        quote! {
+            {
+                const _: &str = include_str!(#entry_str);
+                ::deno_run::JsBundle::new(#js)
+            }
+        }
+        .into()
     }
-    .into()
 }
