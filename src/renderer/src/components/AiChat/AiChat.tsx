@@ -4,7 +4,7 @@ import * as api from '../../api'
 import './AiChat.css'
 
 export default function AiChat() {
-  const { chatMessages, chatSessionId, addChatMessage, setChatSessionId, setChatOpen } = useUiStore()
+  const { chatMessages, chatSessionId, addChatMessage, setChatSessionId, setRail } = useUiStore()
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
   const bottomRef = useRef<HTMLDivElement>(null)
@@ -41,11 +41,11 @@ export default function AiChat() {
     <div className="ai-chat">
       <div className="ai-chat-header">
         <span>AI Assistant</span>
-        <button className="ai-chat-close" onClick={() => setChatOpen(false)} aria-label="Close">✕</button>
+        <button className="ai-chat-close" onClick={() => setRail('ai', 'hidden')} aria-label="Close" title="Close  ⌘4">×</button>
       </div>
       <div className="ai-chat-messages">
         {chatMessages.length === 0 && (
-          <div className="ai-chat-empty">Ask me anything about your circuit...</div>
+          <div className="ai-chat-empty">ask anything about your circuit</div>
         )}
         {chatMessages.map((msg, i) => (
           <div key={i} className={`ai-chat-msg ai-chat-msg--${msg.role}`}>
@@ -67,12 +67,12 @@ export default function AiChat() {
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder="Ask Claude… (Enter to send, Shift+Enter for newline)"
+          placeholder="ask claude…  enter to send"
           rows={3}
           disabled={loading}
         />
         <button className="ai-chat-send" onClick={send} disabled={loading || !input.trim()}>
-          Send
+          send
         </button>
       </div>
     </div>

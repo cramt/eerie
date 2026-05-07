@@ -6,6 +6,17 @@ export interface ChatMessage {
   text: string
 }
 
+export type RailId = 'files' | 'components' | 'props' | 'ai'
+export type RailState = 'full' | 'collapsed' | 'hidden'
+export type RailMap = Record<RailId, RailState>
+
+const DEFAULT_RAILS: RailMap = {
+  files: 'full',
+  components: 'full',
+  props: 'full',
+  ai: 'hidden',
+}
+
 interface UiStore {
   tool: Tool
   placingTypeId: string | null
@@ -19,9 +30,13 @@ interface UiStore {
   zoom: number
   mouseGridPos: Point
   simPanelOpen: boolean
-  chatOpen: boolean
   chatMessages: ChatMessage[]
   chatSessionId: string | null
+  rails: RailMap
+  focusMode: boolean
+  paletteOpen: boolean
+  /** When E is held, the chord chip near cursor lists candidates. */
+  chordPending: boolean
 
   setTool: (tool: Tool) => void
   setPlacingTypeId: (typeId: string | null) => void
@@ -29,8 +44,6 @@ interface UiStore {
   setPlacingProjectIdx: (idx: number | null) => void
   setSimPanelOpen: (open: boolean) => void
   toggleSimPanel: () => void
-  setChatOpen: (open: boolean) => void
-  toggleChat: () => void
   addChatMessage: (msg: ChatMessage) => void
   setChatSessionId: (id: string | null) => void
   selectComponent: (id: string | null) => void
@@ -48,6 +61,13 @@ interface UiStore {
   aiEditDialog: { x: number; y: number; focusedComponentId?: string } | null
   openAiEditDialog: (x: number, y: number, focusedComponentId?: string) => void
   closeAiEditDialog: () => void
+
+  cycleRail: (id: RailId) => void
+  setRail: (id: RailId, state: RailState) => void
+  toggleFocusMode: () => void
+  setPaletteOpen: (open: boolean) => void
+  togglePalette: () => void
+  setChordPending: (pending: boolean) => void
 }
 
 export const useUiStore = create<UiStore>((set, get) => ({
@@ -61,15 +81,16 @@ export const useUiStore = create<UiStore>((set, get) => ({
   zoom: 1,
   mouseGridPos: { x: 0, y: 0 },
   simPanelOpen: false,
-  chatOpen: false,
   chatMessages: [],
   chatSessionId: null,
+  rails: DEFAULT_RAILS,
+  focusMode: false,
+  paletteOpen: false,
+  chordPending: false,
 
   setTool: (tool) => set({ tool }),
   setSimPanelOpen: (open) => set({ simPanelOpen: open }),
   toggleSimPanel: () => set((s) => ({ simPanelOpen: !s.simPanelOpen })),
-  setChatOpen: (open) => set({ chatOpen: open }),
-  toggleChat: () => set((s) => ({ chatOpen: !s.chatOpen })),
   addChatMessage: (msg) => set((s) => ({ chatMessages: [...s.chatMessages, msg] })),
   setChatSessionId: (id) => set({ chatSessionId: id }),
   setPlacingTypeId: (typeId) => set({ placingTypeId: typeId }),
@@ -116,4 +137,16 @@ export const useUiStore = create<UiStore>((set, get) => ({
   aiEditDialog: null,
   openAiEditDialog: (x, y, focusedComponentId) => set({ aiEditDialog: { x, y, focusedComponentId } }),
   closeAiEditDialog: () => set({ aiEditDialog: null }),
+
+  cycleRail: (id) => {
+    const order: RailState[] = ['full', 'collapsed', 'hidden']
+    const current = get().rails[id]
+    const next = order[(order.indexOf(current) + 1) % order.length]
+    set((s) => ({ rails: { ...s.rails, [id]: next } }))
+  },
+  setRail: (id, state) => set((s) => ({ rails: { ...s.rails, [id]: state } })),
+  toggleFocusMode: () => set((s) => ({ focusMode: !s.focusMode })),
+  setPaletteOpen: (open) => set({ paletteOpen: open }),
+  togglePalette: () => set((s) => ({ paletteOpen: !s.paletteOpen })),
+  setChordPending: (pending) => set({ chordPending: pending }),
 }))

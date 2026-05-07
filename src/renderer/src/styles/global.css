@@ -1,42 +1,8 @@
 /* ═══════════════════════════════════════════════════════════
-   EERIE — Global tokens & reset
-   Default values = Neon theme (fallback before JS hydrates)
+   EERIE — Global reset + shell layout
+   Tokens live in themes/neon.css. This file is reset only,
+   plus the flex-tile shell skeleton.
    ═══════════════════════════════════════════════════════════ */
-
-:root {
-  --bg-app:       #0a0a0e;
-  --bg-panel:     #101018;
-  --bg-toolbar:   #121220;
-  --bg-hover:     #1c1c30;
-  --bg-canvas:    #06060a;
-  --bg-input:     #0e0e18;
-
-  --border:       #2a2a44;
-  --border-focus: #e040fb;
-
-  --text-primary:   #e8e0f0;
-  --text-secondary: #8878aa;
-  --text-muted:     #44405a;
-
-  --accent:       #e040fb;
-  --accent-hover: #f06aff;
-  --accent-dim:   #2a1040;
-
-  --danger:  #ff3366;
-  --warning: #ffaa22;
-  --success: #00ffaa;
-
-  --font-mono: 'JetBrains Mono', 'Cascadia Code', monospace;
-  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
-
-  --radius-sm: 8px;
-  --radius-md: 12px;
-
-  --status-height: 28px;
-  --toolbar-height: 48px;
-  --panel-width: 240px;
-  --props-width: 280px;
-}
 
 /* ── Reset ─────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -44,86 +10,146 @@
 html, body, #root {
   height: 100%;
   overflow: hidden;
-  background: var(--bg-app);
+  background: var(--canvas);
   color: var(--text-primary);
   font-family: var(--font-sans);
-  font-size: 14px;
+  font-size: var(--text-base);
+  font-feature-settings: "ss01", "cv11";
   -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
 button {
   cursor: pointer;
-  border: none;
+  border: 0;
   background: none;
   color: inherit;
   font: inherit;
+  -webkit-app-region: no-drag;
 }
 
 input, select, textarea {
   font: inherit;
-  color: inherit;
-  background: var(--bg-input, var(--bg-app));
-  border: 1px solid var(--border);
+  color: var(--text-primary);
+  background: var(--surface-2);
+  border: 1px solid var(--hairline);
   border-radius: var(--radius-sm);
   padding: 4px 8px;
   outline: none;
+  transition: border-color var(--dur-instant) var(--ease-out-expo),
+              box-shadow var(--dur-instant) var(--ease-out-expo);
+}
+input::placeholder, textarea::placeholder { color: var(--text-muted); }
+
+input:focus-visible, select:focus-visible, textarea:focus-visible {
+  border-color: var(--signal);
+  box-shadow: 0 0 0 1px var(--signal-glow);
 }
 
-input:focus, select:focus {
-  border-color: var(--border-focus);
+:focus-visible {
+  outline: 1px solid var(--signal);
+  outline-offset: 1px;
 }
 
-/* ── Layout ─────────────────────────────────────────────── */
-:root {
-  --tabbar-height: 36px;
+::selection {
+  background: var(--signal-dim);
+  color: var(--text-primary);
 }
 
-.app-layout {
-  --ai-panel-width: 0px;
+/* ── Mono numerics — tabular always ────────────────────── */
+.mono, code, kbd, samp, pre,
+[data-mono] {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum", "zero", "ss02";
+}
+
+/* ── Shell skeleton ────────────────────────────────────── */
+.app-shell {
   display: grid;
-  grid-template-rows: var(--toolbar-height) var(--tabbar-height) 1fr auto var(--status-height);
-  grid-template-columns: var(--panel-width) 1fr var(--props-width) var(--ai-panel-width);
-  grid-template-areas:
-    "toolbar toolbar toolbar toolbar"
-    "panel   tabs    props   ai"
-    "panel   canvas  props   ai"
-    "panel   plot    props   ai"
-    "status  status  status  status";
+  grid-template-rows: var(--top-height) 1fr var(--status-height);
   height: 100vh;
   width: 100vw;
+  overflow: hidden;
+  background: var(--canvas);
+  color: var(--text-primary);
   position: relative;
 }
 
-.app-layout[data-ai-open="true"] {
-  --ai-panel-width: 360px;
+.app-shell__top    { grid-row: 1; min-width: 0; }
+.app-shell__body   {
+  grid-row: 2;
+  display: flex;
+  align-items: stretch;
+  min-height: 0;
+  min-width: 0;
+  position: relative;
 }
+.app-shell__status { grid-row: 3; min-width: 0; }
 
-.toolbar-area  { grid-area: toolbar; }
-.panel-area    { grid-area: panel; display: flex; flex-direction: column; overflow: hidden; }
-.tabs-area     { grid-area: tabs; overflow: hidden; }
-.canvas-area   { grid-area: canvas; overflow: hidden; }
-.plot-area     { grid-area: plot; overflow: hidden; }
-.props-area    { grid-area: props; }
-.status-area   { grid-area: status; }
-.ai-area       { grid-area: ai; overflow: hidden; border-left: 1px solid var(--border); }
-
-/* File explorer takes a fixed portion; components fill the rest */
-.panel-area .file-explorer-wrap {
-  flex-shrink: 0;
-  max-height: 40%;
-  min-height: 80px;
+.app-shell__canvas {
+  flex: 1 1 auto;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  min-width: 0;
+  min-height: 0;
+  background: var(--canvas);
+  position: relative;
+  border-left: 1px solid var(--hairline);
+  border-right: 1px solid var(--hairline);
 }
 
-.panel-area .component-panel-wrap {
-  flex: 1;
-  overflow: hidden;
+/* When the rail to the side is hidden (no border tile), the
+   canvas owns its own edge hairline. */
+.app-shell__canvas--no-left  { border-left: 0; }
+.app-shell__canvas--no-right { border-right: 0; }
+
+.canvas-tabs   { flex: 0 0 auto; min-height: 0; }
+.canvas-stage  { flex: 1 1 auto; min-height: 0; position: relative; overflow: hidden; }
+.canvas-plot   { flex: 0 0 auto; min-height: 0; }
+
+.canvas-empty {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  padding: 0 var(--space-6);
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+  letter-spacing: 0.02em;
+  text-wrap: balance;
+  pointer-events: none;
+  user-select: none;
 }
 
-/* ── Scrollbar ──────────────────────────────────────────── */
-::-webkit-scrollbar { width: 6px; }
+/* Sim progress hairline rides the bottom of the canvas tile. */
+.canvas-progress {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 1px;
+  background: var(--signal);
+  pointer-events: none;
+  transform-origin: left center;
+  transform: scaleX(0);
+  transition: transform var(--dur-normal) var(--ease-out-expo);
+  z-index: 5;
+}
+.canvas-progress[data-state="running"] { transform: scaleX(var(--progress, 0.1)); }
+.canvas-progress[data-state="errored"] { background: var(--warn); transform: scaleX(1); }
+
+/* ── Scrollbar ─────────────────────────────────────────── */
+::-webkit-scrollbar { width: 8px; height: 8px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-thumb { background: var(--hairline); border-radius: 4px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+/* ── Reduced motion ────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+  .canvas-progress { transition-duration: 0ms !important; }
+}
+

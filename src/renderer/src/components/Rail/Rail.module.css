@@ -1,0 +1,184 @@
+.rail {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  background: var(--surface);
+  position: relative;
+  min-width: 0;
+  transition: width var(--dur-normal) var(--ease-out-expo);
+  overflow: hidden;
+  user-select: none;
+}
+
+.rail[data-state="full"]      { width: var(--rail-full-width); }
+.rail[data-state="collapsed"] { width: var(--rail-collapsed); }
+.rail[data-state="hidden"]    { width: var(--rail-hidden-edge); }
+
+/* The Properties rail is intentionally a touch wider for value editors. */
+.rail[data-state="full"][aria-label="Properties"] {
+  width: var(--rail-full-prop);
+}
+
+/* ── Full state ───────────────────────────────────────── */
+.full {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  position: relative;
+}
+
+.body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Floating collapse chevron in the rail's outer corner. Sits over the
+   panel's own header but visually sides the rail edge, so the panel
+   keeps full-width context info (project name, selection, etc.). */
+.collapseBtn {
+  position: absolute;
+  top: 6px;
+  width: 16px;
+  height: 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  line-height: 1;
+  color: var(--text-muted);
+  background: transparent;
+  border: 0;
+  border-radius: var(--radius-xs);
+  cursor: pointer;
+  z-index: 5;
+  opacity: 0;
+  transition: opacity var(--dur-quick) var(--ease-out-expo),
+              color var(--dur-instant) var(--ease-out-expo),
+              background var(--dur-instant) var(--ease-out-expo);
+}
+
+.rail[data-side="left"]  .collapseBtn { right: 6px; }
+.rail[data-side="right"] .collapseBtn { left:  6px; }
+
+.full:hover .collapseBtn,
+.collapseBtn:focus-visible { opacity: 1; }
+.collapseBtn:hover { color: var(--text-primary); background: var(--surface-2); }
+
+/* ── Collapsed state ──────────────────────────────────── */
+.collapsed {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 10px;
+  position: relative;
+  background: var(--surface);
+  color: var(--text-muted);
+  border: 0;
+  cursor: pointer;
+  transition: color var(--dur-instant) var(--ease-out-expo),
+              background var(--dur-instant) var(--ease-out-expo);
+}
+
+.collapsed:hover { color: var(--text-primary); background: var(--surface-2); }
+
+.glyph {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-weight: var(--weight-medium);
+  line-height: 1;
+  letter-spacing: 0;
+}
+
+.dot {
+  position: absolute;
+  top: 26px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.badge {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  min-width: 14px;
+  height: 14px;
+  padding: 0 3px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 7px;
+  background: var(--signal);
+  color: var(--canvas);
+  font-size: 9px;
+  font-weight: var(--weight-semibold);
+  line-height: 1;
+}
+
+.collapsedTooltip {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  display: none;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 4px var(--space-2);
+  background: var(--surface-3);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-sans);
+  font-size: var(--text-xs);
+  white-space: nowrap;
+  color: var(--text-primary);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity var(--dur-quick) var(--ease-out-expo);
+  z-index: 20;
+}
+
+.rail[data-side="left"]  .collapsedTooltip { left: calc(100% + 8px); }
+.rail[data-side="right"] .collapsedTooltip { right: calc(100% + 8px); }
+
+.collapsed:hover .collapsedTooltip,
+.collapsed:focus-visible .collapsedTooltip {
+  display: inline-flex;
+  opacity: 1;
+  transition-delay: 320ms;
+}
+
+.shortcut {
+  color: var(--text-muted);
+  font-size: 10px;
+  letter-spacing: 0.04em;
+}
+
+/* ── Hidden state ─────────────────────────────────────── */
+.edge {
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  position: relative;
+  cursor: pointer;
+}
+
+.edge::before {
+  content: "";
+  position: absolute;
+  inset: 0 1px;
+  background: var(--hairline);
+  opacity: 0;
+  transition: opacity var(--dur-quick) var(--ease-out-expo);
+}
+
+.edge:hover::before,
+.edge:focus-visible::before { opacity: 1; }

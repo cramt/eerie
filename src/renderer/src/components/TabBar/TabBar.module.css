@@ -1,79 +1,151 @@
 .tabBar {
   display: flex;
   align-items: stretch;
-  height: 100%;
-  overflow-x: auto;
-  overflow-y: hidden;
-  background: var(--bg-toolbar);
-  border-bottom: 1px solid var(--border);
-  scrollbar-width: none;
+  height: var(--tabs-height);
+  background: var(--canvas);
+  border-bottom: 1px solid var(--hairline);
 }
 
-.tabBar::-webkit-scrollbar { display: none; }
+.tabBar[data-empty="true"] {
+  align-items: center;
+  padding-left: var(--space-2);
+}
+
+.scroll {
+  flex: 1 1 auto;
+  display: flex;
+  align-items: stretch;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  position: relative;
+  /* Edge fades at scroll boundaries */
+  mask-image: linear-gradient(to right, transparent 0, black 12px, black calc(100% - 12px), transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, transparent 0, black 12px, black calc(100% - 12px), transparent 100%);
+}
+.scroll::-webkit-scrollbar { display: none; }
 
 .tab {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 0 10px 0 14px;
+  height: 100%;
+  padding: 0 8px 0 14px;
   min-width: 100px;
-  max-width: 200px;
+  max-width: 220px;
   cursor: pointer;
-  border-right: 1px solid var(--border);
-  color: var(--text-secondary);
-  font-size: 12px;
-  font-family: var(--font-mono);
+  background: transparent;
+  color: var(--text-muted);
+  font-size: var(--text-sm);
   white-space: nowrap;
   user-select: none;
-  transition: background 0.1s, color 0.1s;
   flex-shrink: 0;
+  position: relative;
+  transition: color var(--dur-instant) var(--ease-out-expo),
+              background var(--dur-instant) var(--ease-out-expo);
 }
 
 .tab:hover {
-  background: var(--bg-hover);
-  color: var(--text-primary);
+  color: var(--text-secondary);
+  background: var(--surface);
 }
 
-.tab.active {
-  background: var(--bg-canvas);
+.tab[data-active="true"] {
   color: var(--text-primary);
-  border-bottom: 2px solid var(--accent);
+  background: var(--canvas);
+}
+
+.tab[data-active="true"]::after {
+  content: "";
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  bottom: 0;
+  height: 1px;
+  background: var(--signal);
 }
 
 .tabName {
-  flex: 1;
+  flex: 1 1 auto;
   overflow: hidden;
   text-overflow: ellipsis;
-  display: flex;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.01em;
+  display: inline-flex;
   align-items: center;
-  gap: 5px;
+  gap: 4px;
 }
 
-.dirtyDot {
-  color: var(--accent);
-  font-size: 8px;
-  line-height: 1;
+.dirtyMark {
+  color: var(--signal);
+  font-weight: var(--weight-semibold);
+  font-size: 13px;
+  line-height: 0.5;
+  transform: translateY(-2px);
 }
 
 .closeBtn {
   width: 16px;
   height: 16px;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  border-radius: 3px;
-  font-size: 14px;
+  border-radius: 2px;
+  font-size: 13px;
   color: var(--text-muted);
   flex-shrink: 0;
   line-height: 1;
+  opacity: 0;
+  transition: opacity var(--dur-instant) var(--ease-out-expo),
+              color var(--dur-instant) var(--ease-out-expo),
+              background var(--dur-instant) var(--ease-out-expo);
+}
+
+.tab:hover .closeBtn,
+.tab[data-active="true"] .closeBtn {
+  opacity: 1;
 }
 
 .closeBtn:hover {
-  background: var(--bg-hover);
+  background: var(--surface-2);
   color: var(--text-primary);
 }
 
-.tab.active .closeBtn:hover {
-  background: var(--accent-dim);
-  color: var(--accent);
+.newTab {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 100%;
+  width: var(--tabs-height);
+  font-size: 16px;
+  font-weight: var(--weight-medium);
+  color: var(--text-muted);
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  transition: color var(--dur-instant) var(--ease-out-expo),
+              background var(--dur-instant) var(--ease-out-expo);
+}
+
+.tabBar[data-empty="true"] .newTab {
+  width: auto;
+  padding: 0 var(--space-3);
+  height: 24px;
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-sm);
+  font-size: var(--text-xs);
+  font-family: var(--font-sans);
+  font-weight: var(--weight-medium);
+}
+
+.newTab:hover { color: var(--text-primary); background: var(--surface); }
+
+.newTabHint {
+  font-family: var(--font-sans);
+  font-size: var(--text-xs);
+  letter-spacing: 0.02em;
 }

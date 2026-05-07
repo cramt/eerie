@@ -1,73 +1,119 @@
 /* ═══════════════════════════════════════════════════════════
-   NEON — Cyberpunk. Hot pink wires on void black.
-   Big, bold, unapologetic. Wide panels, large toolbar.
-   Glowing accents, heavy rounded corners, gradient touches.
-   The opposite of "subtle."
+   EERIE — The Workshop Compositor
+   Tile-collapse discipline, curated defaults, semantic color.
+   Dark-only v1. Tokens are OKLCH; sRGB fallbacks resolved at
+   compute time by the browser.
+   See PRODUCT.md, DESIGN.md, .impeccable/briefs/app-shell.md.
    ═══════════════════════════════════════════════════════════ */
 
-html[data-theme="neon"] {
-  --bg-app:       #0a0a0e;
-  --bg-panel:     #101018;
-  --bg-toolbar:   #121220;
-  --bg-hover:     #1c1c30;
-  --bg-canvas:    #06060a;
-  --bg-input:     #0e0e18;
+:root {
+  /* ── Surfaces ───────────────────────────────────────────────
+     Tonal layering, no shadows. Each step ~3% lighter. Tinted
+     toward the amber Signal hue so neutrals never read flat-gray.
+     ─────────────────────────────────────────────────────────── */
+  --canvas:           oklch(13% 0.005 80);   /* deepest — schematic */
+  --surface:          oklch(17% 0.005 80);   /* panels, top bar    */
+  --surface-2:        oklch(20% 0.005 80);   /* status bar, hover  */
+  --surface-3:        oklch(24% 0.005 80);   /* palette, dialogs   */
+  --hairline:         oklch(28% 0.005 80);   /* 1px separators     */
+  --hairline-soft:    oklch(23% 0.005 80);
 
-  --border:       #2a2a44;
-  --border-focus: #e040fb;
+  /* ── Semantic accents ────────────────────────────────────── */
+  --signal:           oklch(78% 0.13 80);    /* muted gold-amber  */
+  --signal-dim:       oklch(78% 0.13 80 / 0.16);
+  --signal-glow:      oklch(78% 0.13 80 / 0.30);
+  --probe:            oklch(70% 0.11 195);   /* cool teal         */
+  --probe-dim:        oklch(70% 0.11 195 / 0.18);
+  --warn:             oklch(60% 0.18 25);    /* muted scarlet     */
+  --warn-dim:         oklch(60% 0.18 25 / 0.18);
+  --warn-glow:        oklch(60% 0.18 25 / 0.30);
 
-  --text-primary:   #e8e0f0;
-  --text-secondary: #8878aa;
-  --text-muted:     #44405a;
+  /* ── Text ──────────────────────────────────────────────────
+     Three steps; tinted toward amber so they don't read flat. */
+  --text-primary:     oklch(92% 0.01 80);
+  --text-secondary:   oklch(72% 0.01 80);
+  --text-muted:       oklch(50% 0.01 80);
+  --text-disabled:    oklch(36% 0.005 80);
 
-  --accent:       #e040fb;
-  --accent-hover: #f06aff;
-  --accent-dim:   #2a1040;
+  /* ── Type ──────────────────────────────────────────────────
+     Two faces. No display family. Hierarchy via weight + size. */
+  --font-sans: 'Geist', 'Geist Sans', ui-sans-serif, system-ui,
+               -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'Cascadia Code',
+               'Fira Code', Menlo, Consolas, monospace;
 
-  --danger:  #ff3366;
-  --warning: #ffaa22;
-  --success: #00ffaa;
+  --text-xs:    11px;     /* status, labels, mode pills */
+  --text-sm:    12px;     /* tabs, panel headers, mono numerics */
+  --text-base:  13px;     /* body inline UI */
+  --text-md:    14px;     /* property values, primary labels */
+  --text-lg:    16px;
+  --text-xl:    20px;     /* dialog titles */
 
-  --font-mono: 'JetBrains Mono', 'Cascadia Code', monospace;
-  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --weight-regular:  400;
+  --weight-medium:   500;
+  --weight-semibold: 600;
 
-  --radius-sm: 8px;
-  --radius-md: 12px;
+  /* ── Spacing (4pt) ─────────────────────────────────────── */
+  --space-1:  4px;
+  --space-2:  8px;
+  --space-3:  12px;
+  --space-4:  16px;
+  --space-5:  20px;
+  --space-6:  24px;
+  --space-8:  32px;
+
+  /* ── Radii — sharp corners by doctrine ─────────────────── */
+  --radius-xs: 2px;
+  --radius-sm: 3px;     /* buttons, pills */
+  --radius-md: 4px;     /* tabs, palette */
+  --radius-lg: 6px;     /* dialogs */
+
+  /* ── Layout ───────────────────────────────────────────── */
+  --top-height:        40px;
+  --status-height:     28px;
+  --rail-full-width:   240px;
+  --rail-full-prop:    264px;
+  --rail-collapsed:    36px;
+  --rail-hidden-edge:   4px;
+  --tabs-height:       34px;
+  --plot-footer:       28px;
+
+  /* ── Motion ───────────────────────────────────────────── */
+  --ease-out-expo:     cubic-bezier(0.16, 1, 0.3, 1);
+  --dur-instant:       60ms;
+  --dur-quick:         120ms;
+  --dur-normal:        220ms;
+  --dur-slow:          320ms;
+
+  /* ── Compatibility shims for legacy CSS still using
+     the older neon variable names. Map them onto the
+     new tokens so existing components keep working. ── */
+  --bg-app:        var(--canvas);
+  --bg-canvas:     var(--canvas);
+  --bg-panel:      var(--surface);
+  --bg-toolbar:    var(--surface);
+  --bg-input:      var(--surface-2);
+  --bg-hover:      var(--surface-2);
+
+  --border:        var(--hairline);
+  --border-focus:  var(--signal);
+
+  --accent:        var(--signal);
+  --accent-hover:  var(--signal);
+  --accent-dim:    var(--signal-dim);
+
+  --danger:        var(--warn);
+  --warning:       var(--warn);
+  --success:       var(--probe);
 
   --status-height: 28px;
-  --toolbar-height: 48px;
-  --panel-width: 240px;
-  --props-width: 280px;
+  --toolbar-height: var(--top-height);
+  --panel-width: var(--rail-full-width);
+  --props-width: var(--rail-full-prop);
 }
 
-/* Glowing accent borders */
-html[data-theme="neon"] .toolbar-area {
-  border-bottom: 1px solid #2a2a44;
-  box-shadow: 0 1px 12px rgba(224, 64, 251, 0.06);
-}
-
-html[data-theme="neon"] .panel-area {
-  border-right: 1px solid #2a2a44;
-  box-shadow: 1px 0 16px rgba(224, 64, 251, 0.04);
-}
-
-html[data-theme="neon"] .props-area {
-  border-left: 1px solid #2a2a44;
-  box-shadow: -1px 0 16px rgba(224, 64, 251, 0.04);
-}
-
-html[data-theme="neon"] .status-area {
-  border-top: 1px solid #2a2a44;
-  box-shadow: 0 -1px 12px rgba(224, 64, 251, 0.04);
-}
-
-/* Neon glow on focused inputs */
-html[data-theme="neon"] input:focus,
-html[data-theme="neon"] select:focus {
-  box-shadow: 0 0 10px rgba(224, 64, 251, 0.2);
-}
-
-/* Larger text for the spacious layout */
-html[data-theme="neon"] .app-layout {
-  font-size: 14px;
-}
+/* Status segments and helpers — used widely. */
+[data-tone="signal"]  { color: var(--signal); }
+[data-tone="probe"]   { color: var(--probe); }
+[data-tone="warn"]    { color: var(--warn); }
+[data-tone="muted"]   { color: var(--text-muted); }

@@ -112,12 +112,6 @@ importers:
         specifier: ^0.2.71
         version: 0.2.71(zod@4.3.6)
 
-  eerie-daemon:
-    dependencies:
-      '@anthropic-ai/sdk':
-        specifier: ^0.54.0
-        version: 0.54.0
-
   eerie-wasm/pkg: {}
 
   ts-hello:
@@ -133,10 +127,6 @@ packages:
     engines: {node: '>=18.0.0'}
     peerDependencies:
       zod: ^4.0.0
-
-  '@anthropic-ai/sdk@0.54.0':
-    resolution: {integrity: sha512-xyoCtHJnt/qg5GG6IgK+UJEndz8h8ljzt/caKXmq3LfBF81nC/BW6E4x2rOWCZcvsLyVW+e8U5mtIr6UCE/kJw==}
-    hasBin: true
 
   '@babel/code-frame@7.29.0':
     resolution: {integrity: sha512-9NhCeYjq9+3uxgdtp20LSiJXJvN0FeCtNGpJxuMFZ1Kv3cWUNb6DOhJwUvcVCzKGR66cw4njwM6hrJLqgOwbcw==}
@@ -1653,8 +1643,6 @@ snapshots:
       '@img/sharp-linuxmusl-x64': 0.34.5
       '@img/sharp-win32-arm64': 0.34.5
       '@img/sharp-win32-x64': 0.34.5
-
-  '@anthropic-ai/sdk@0.54.0': {}
 
   '@babel/code-frame@7.29.0':
     dependencies:
