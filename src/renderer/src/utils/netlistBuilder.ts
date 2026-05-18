@@ -162,12 +162,11 @@ export function buildNetlist(circuit: Circuit, analysis: Analysis = { tag: 'Op' 
     }
   }
 
-  // 4. Add analysis command
-  items.push({ tag: "Analysis", value: analysis });
-
   return {
     title: circuit.name,
     items,
+    analysis,
+    source: "",
   };
 
   function buildElement(
@@ -280,6 +279,7 @@ export function buildNetlist(circuit: Circuit, analysis: Analysis = { tag: 'Op' 
             substrate: null,
             model: comp.type_id === "npn" ? "NPN" : "PNP",
             params: [],
+            off: false,
           },
         };
       }

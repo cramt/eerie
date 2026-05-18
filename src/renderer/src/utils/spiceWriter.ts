@@ -1,7 +1,7 @@
 /**
  * Convert a typed Netlist to SPICE text for passing to the simulator.
  *
- * Uses roam's internal tagging format: { tag: 'Variant', ...fields }
+ * Uses vox's internal tagging format: { tag: 'Variant', ...fields }
  */
 import type {
   Netlist,
@@ -126,6 +126,14 @@ function writeElement(el: Element): string {
       return `${el.name} ${k.pos} ${k.neg} ${k.spec}`;
     case "SubcktCall":
       return `${el.name} ${k.ports.join(" ")} ${k.subckt}${writeParams(k.params)}`;
+    case "Ltra":
+      return `${el.name} ${k.pos1} ${k.neg1} ${k.pos2} ${k.neg2} ${k.model}${writeParams(k.params)}`;
+    case "Txl":
+      return `${el.name} ${k.pos1} ${k.neg1} ${k.pos2} ${k.neg2} ${k.model}${writeParams(k.params)}`;
+    case "Cpl":
+      return `${el.name} ${k.in_nodes.join(" ")} ${k.out_nodes.join(" ")} ${k.gnd} ${k.model}${writeParams(k.params)}`;
+    case "Xspice":
+      return `${el.name} ${k.connections.map(c => c.tag === 'Scalar' ? c.value : `[${c.value.join(" ")}]`).join(" ")} ${k.model}`;
     case "Raw":
       return `${el.name} ${k.value}`;
   }
@@ -174,8 +182,6 @@ function writeItem(item: Item): string {
     }
     case "Model":
       return `.model ${item.value.name} ${item.value.kind}${writeParams(item.value.params)}`;
-    case "Analysis":
-      return writeAnalysis(item.value);
     case "Param":
       return `.param ${item.value.map((p) => `${p.name}=${writeExpr(p.value)}`).join(" ")}`;
     case "Include":
@@ -188,10 +194,26 @@ function writeItem(item: Item): string {
       return `.options ${item.value.map((p) => `${p.name}=${writeExpr(p.value)}`).join(" ")}`;
     case "Save":
       return `.save ${item.value.join(" ")}`;
+    case "Func":
+      return `.func ${item.name}(${item.args.join(",")}) {${item.body}}`;
+    case "Temp":
+      return `.temp ${item.value}`;
+    case "Ic":
+      return `.ic ${item.value.map(([node, val]) => `V(${node})=${val}`).join(" ")}`;
+    case "Nodeset":
+      return `.nodeset ${item.value.map(([node, val]) => `V(${node})=${val}`).join(" ")}`;
+    case "Meas":
+      return `.meas ${item.value.analysis_type} ${item.value.name} ${item.value.spec}`;
+    case "Control":
+      return [".control", ...item.value, ".endc"].join("\n");
     case "Comment":
       return `* ${item.value}`;
     case "Raw":
       return item.value;
+    default: {
+      const _exhaustive: never = item;
+      return _exhaustive;
+    }
   }
 }
 
@@ -201,6 +223,7 @@ export function netlistToSpice(netlist: Netlist): string {
   for (const item of netlist.items) {
     lines.push(writeItem(item));
   }
+  lines.push(writeAnalysis(netlist.analysis));
   lines.push(".end");
   return lines.join("\n");
 }

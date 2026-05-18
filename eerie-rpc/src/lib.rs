@@ -221,7 +221,7 @@ pub struct FileSaveResult {
     pub path: String,
 }
 
-#[roam::service]
+#[vox::service]
 pub trait EerieService {
     /// Query what this backend supports.
     async fn get_capabilities(&self) -> Result<Capabilities, String>;

@@ -2,7 +2,7 @@
 name = "eerie-daemon"
 version = "0.1.0"
 edition = "2024"
-description = "Native daemon: axum HTTP + roam WS + thevenin simulation"
+description = "Native daemon: axum HTTP + vox WS + thevenin simulation"
 
 [[bin]]
 name = "eerie-daemon"
@@ -10,10 +10,9 @@ path = "src/main.rs"
 
 [dependencies]
 eerie-rpc      = { path = "../eerie-rpc" }
-thevenin       = { git = "https://github.com/cramt/thevenin", branch = "ralph/simulation-engine" }
-thevenin-types = { git = "https://github.com/cramt/thevenin", branch = "ralph/simulation-engine" }
-roam           = { workspace = true }
-# roam-websocket not needed — we bridge axum's WebSocket directly
+thevenin       = { git = "https://github.com/cramt/thevenin" }
+thevenin-types = { git = "https://github.com/cramt/thevenin" }
+vox            = { workspace = true }
 tokio          = { version = "1", features = ["full"] }
 axum           = { version = "0.8", features = ["ws"] }
 env_logger     = "0.11"

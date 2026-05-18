@@ -8,21 +8,21 @@ importers:
 
   .:
     dependencies:
-      '@bearcove/roam-core':
-        specifier: ^7.3.0
-        version: 7.3.0
-      '@bearcove/roam-inprocess':
-        specifier: 7.3.0
-        version: 7.3.0
-      '@bearcove/roam-postcard':
-        specifier: ^7.3.0
-        version: 7.3.0
-      '@bearcove/roam-wire':
-        specifier: ^7.3.0
-        version: 7.3.0
-      '@bearcove/roam-ws':
-        specifier: 7.3.0
-        version: 7.3.0
+      '@bearcove/vox-core':
+        specifier: ^0.4.0
+        version: 0.4.0
+      '@bearcove/vox-inprocess':
+        specifier: 0.4.0
+        version: 0.4.0
+      '@bearcove/vox-postcard':
+        specifier: ^0.4.0
+        version: 0.4.0
+      '@bearcove/vox-wire':
+        specifier: ^0.4.0
+        version: 0.4.0
+      '@bearcove/vox-ws':
+        specifier: 0.4.0
+        version: 0.4.0
       '@monaco-editor/react':
         specifier: 4.8.0-rc.3
         version: 4.8.0-rc.3(monaco-editor@0.55.1)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
@@ -246,23 +246,23 @@ packages:
     resolution: {integrity: sha512-LwdZHpScM4Qz8Xw2iKSzS+cfglZzJGvofQICy7W7v4caru4EaAmyUuO6BGrbyQ2mYV11W0U8j5mBhd14dd3B0A==}
     engines: {node: '>=6.9.0'}
 
-  '@bearcove/roam-core@7.3.0':
-    resolution: {integrity: sha512-QoiccRV2Mal8AB+SNxBheNi9yIg9qodSiqlNuwil5I2sjrno4iPBCPzlYSxFpssCHMkIBdzLK5dE1+BGamS3RA==}
+  '@bearcove/vox-core@0.4.0':
+    resolution: {integrity: sha512-t0VC7FsRNeC8xnGqddknh1RLg8VskFEdhxTas+M55NjwwIHIU9P7r66lsVEDPgFwdQmN4Vdiuk3ptAthmoxz/g==}
 
-  '@bearcove/roam-inprocess@7.3.0':
-    resolution: {integrity: sha512-5efPJP8IbT3DbLm14Ju3kcjekMb/zTns8kfvsqZDvL50lT/hOaVX8YwM43BnJSJiOXOic/NFcVg9M9/1JZ4O9Q==}
+  '@bearcove/vox-inprocess@0.4.0':
+    resolution: {integrity: sha512-DdMuLApMZtSTOxwTqjRbFqc6BvT034c4gdRdAcoN0Fja54zpZHoaarfzMrjdDvBXSpeEIJzZNBJp/5fumWNxhQ==}
 
-  '@bearcove/roam-postcard@7.3.0':
-    resolution: {integrity: sha512-f5EwnWrIbFiaR8P7kduuPuiNvrwyTJWy+T0P8Ao1dBGXvP3dwcv6ZF9Ombrm9ho3/Tjy9XUGjGIWS1VUbjkfhQ==}
+  '@bearcove/vox-postcard@0.4.0':
+    resolution: {integrity: sha512-JU8QM0uzFLdFoMTrv/Ad4MA4R2WL1MXVUl2JbPVl4CM/0qF4e8IUD++BWhshiZdbkOxGLUb9AB4NRSWCZCkT2g==}
 
-  '@bearcove/roam-tcp@7.3.0':
-    resolution: {integrity: sha512-orxBtxUFbtSCe2V0S2xSECkLSmhqN+B9w0s+CsbiPQBZ2b3JqLjGWSCqnBCNOWQ56NlFzjgveIHnTJIbn3k+kw==}
+  '@bearcove/vox-tcp@0.4.0':
+    resolution: {integrity: sha512-+kAgUkFexVNJ0SaxuVV+9UaYie4Hd9ShXBtvILe/n8PAqNwBS/p1+tmmYfd/QaqxhqBbrQV3s1IpKsfas0czBA==}
 
-  '@bearcove/roam-wire@7.3.0':
-    resolution: {integrity: sha512-Iwl2ud2dipO/MwTKptwENvn3YAZcigzs1qJN89eYRLuZW2Ldu+lDYhSzQA4oVFrI+Ux/OPvYj1TaJEEAjc4peA==}
+  '@bearcove/vox-wire@0.4.0':
+    resolution: {integrity: sha512-Z17vb8bBc2tWjK5oIW4NdUb3O6juKFbSV65RYFuj3k5vykxZWy6MFV3jcnyftRNk5itY2dmx0skN6MSCind6vA==}
 
-  '@bearcove/roam-ws@7.3.0':
-    resolution: {integrity: sha512-91vn0RMop6hfJ9Dr/RmetBjvslVkhnDhJnCJPKUTgRo9++RA5l7Fg5oVoJsAp278Gdt1tiq+wbUh42A5AmleKg==}
+  '@bearcove/vox-ws@0.4.0':
+    resolution: {integrity: sha512-MLBo4qZOLlaFtJtacRATQBnMus99AQUU0q989M58/zvUpxPoWF37/AYJPxgEBbTr0kXlgIyKvfqkFPQdO8ccdw==}
 
   '@emnapi/core@1.9.0':
     resolution: {integrity: sha512-0DQ98G9ZQZOxfUcQn1waV2yS8aWdZ6kJMbYCJB3oUBecjWYO1fqJ+a1DRfPF3O5JEkwqwP1A9QEN/9mYm2Yd0w==}
@@ -1808,29 +1808,29 @@ snapshots:
       '@babel/helper-string-parser': 7.27.1
       '@babel/helper-validator-identifier': 7.28.5
 
-  '@bearcove/roam-core@7.3.0':
+  '@bearcove/vox-core@0.4.0':
     dependencies:
-      '@bearcove/roam-postcard': 7.3.0
-      '@bearcove/roam-wire': 7.3.0
+      '@bearcove/vox-postcard': 0.4.0
+      '@bearcove/vox-wire': 0.4.0
 
-  '@bearcove/roam-inprocess@7.3.0':
+  '@bearcove/vox-inprocess@0.4.0':
     dependencies:
-      '@bearcove/roam-core': 7.3.0
+      '@bearcove/vox-core': 0.4.0
 
-  '@bearcove/roam-postcard@7.3.0': {}
+  '@bearcove/vox-postcard@0.4.0': {}
 
-  '@bearcove/roam-tcp@7.3.0':
+  '@bearcove/vox-tcp@0.4.0':
     dependencies:
-      '@bearcove/roam-core': 7.3.0
+      '@bearcove/vox-core': 0.4.0
 
-  '@bearcove/roam-wire@7.3.0':
+  '@bearcove/vox-wire@0.4.0':
     dependencies:
-      '@bearcove/roam-postcard': 7.3.0
+      '@bearcove/vox-postcard': 0.4.0
 
-  '@bearcove/roam-ws@7.3.0':
+  '@bearcove/vox-ws@0.4.0':
     dependencies:
-      '@bearcove/roam-core': 7.3.0
-      '@bearcove/roam-tcp': 7.3.0
+      '@bearcove/vox-core': 0.4.0
+      '@bearcove/vox-tcp': 0.4.0
 
   '@emnapi/core@1.9.0':
     dependencies:

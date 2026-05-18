@@ -2,7 +2,7 @@ use std::path::PathBuf;
 
 /// Typed error for daemon service operations.
 ///
-/// Converted to `String` at the RPC trait boundary (roam requires `Result<T, String>`).
+/// Converted to `String` at the RPC trait boundary (vox requires `Result<T, String>`).
 #[derive(Debug, thiserror::Error)]
 pub enum DaemonError {
     #[error("failed to {operation} {}: {source}", path.display())]

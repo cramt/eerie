@@ -8,7 +8,7 @@ export function OpTable({ result }: { result: SimResult }) {
   for (const plot of result.plots) {
     for (const vec of plot.vecs) {
       const displayName = formatVecName(vec.name)
-      const val = vec.real.length > 0 ? vec.real[0] : 0
+      const val = vec.data.tag === 'Real' && vec.data.value.length > 0 ? vec.data.value[0] : 0
       const isVoltage = displayName.startsWith('V(')
       const isCurrent = displayName.startsWith('I(')
       rows.push({

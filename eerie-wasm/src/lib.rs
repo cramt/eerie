@@ -6,8 +6,8 @@ use eerie_rpc::{
     FileContent, FileOpenRequest, FileSaveRequest, FileSaveResult, ListProjectRequest, ProjectDir,
     ProjectListing, RenameRequest, TreeEntry,
 };
-use roam::DriverCaller;
-use roam_inprocess::JsInProcessLink;
+use vox::NoopClient;
+use vox_inprocess::JsInProcessLink;
 use thevenin_types::{Netlist, SimResult};
 use wasm_bindgen::prelude::*;
 use wasm_bindgen_futures::js_sys;
@@ -297,7 +297,7 @@ impl EerieService for WasmService {
     }
 }
 
-/// Start a roam acceptor using the in-process transport.
+/// Start a vox acceptor using the in-process transport.
 ///
 /// Returns a `JsInProcessLink` that JS should wire to an `InProcessTransport`.
 #[wasm_bindgen]
@@ -310,15 +310,17 @@ pub fn start_acceptor(on_message: js_sys::Function) -> JsInProcessLink {
     let dispatcher = EerieServiceDispatcher::new(WasmService);
 
     wasm_bindgen_futures::spawn_local(async move {
-        match roam::acceptor(link)
-            .establish::<DriverCaller>(dispatcher)
+        match vox::acceptor_on(link)
+            .on_connection(dispatcher)
+            .establish::<NoopClient>()
             .await
         {
-            Ok((_guard, _handle)) => {
+            Ok(client) => {
+                let _keep_alive = client;
                 std::future::pending::<()>().await;
             }
             Err(e) => {
-                let _ = e; // session error, logged to JS console via roam internals
+                let _ = e; // session error, logged to JS console via vox internals
             }
         }
     });

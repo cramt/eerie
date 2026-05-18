@@ -29,7 +29,7 @@ export function ConfigBar({
   const setType = (t: AnalysisTypeName) => {
     switch (t) {
       case 'Op': onChange({ tag: 'Op' }); break
-      case 'Tran': onChange({ tag: 'Tran', tstep: numExpr(1e-6), tstop: numExpr(1e-3), tstart: null, tmax: null }); break
+      case 'Tran': onChange({ tag: 'Tran', tstep: numExpr(1e-6), tstop: numExpr(1e-3), tstart: null, tmax: null, uic: false }); break
       case 'Ac': onChange({ tag: 'Ac', variation: { tag: 'Dec' }, n: 10, fstart: numExpr(1), fstop: numExpr(1e6) }); break
       case 'Dc': onChange({ tag: 'Dc', src: 'V1', start: numExpr(0), stop: numExpr(5), step: numExpr(0.01), src2: null }); break
     }

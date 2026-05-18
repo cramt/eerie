@@ -70,13 +70,14 @@ function formatSimResult(result: SimResult): string {
   for (const plot of result.plots) {
     const vLines: string[] = []
     for (const vec of plot.vecs) {
-      if (!vec.real || vec.real.length === 0) continue
-      if (vec.real.length === 1) {
-        vLines.push(`  ${vec.name} = ${vec.real[0].toPrecision(4)}`)
+      const reals = vec.data.tag === 'Real' ? vec.data.value : []
+      if (reals.length === 0) continue
+      if (reals.length === 1) {
+        vLines.push(`  ${vec.name} = ${reals[0].toPrecision(4)}`)
       } else {
-        const first = vec.real[0].toPrecision(3)
-        const last = vec.real[vec.real.length - 1].toPrecision(3)
-        vLines.push(`  ${vec.name}: ${first} → ${last} (${vec.real.length} pts)`)
+        const first = reals[0].toPrecision(3)
+        const last = reals[reals.length - 1].toPrecision(3)
+        vLines.push(`  ${vec.name}: ${first} → ${last} (${reals.length} pts)`)
       }
     }
     if (vLines.length > 0) {

@@ -5,6 +5,6 @@ edition = "2024"
 description = "RPC service trait for eerie daemon"
 
 [dependencies]
-roam           = { workspace = true }
+vox            = { workspace = true }
 facet          = { workspace = true }
-thevenin-types = { git = "https://github.com/cramt/thevenin", branch = "ralph/simulation-engine" }
+thevenin-types = { git = "https://github.com/cramt/thevenin" }

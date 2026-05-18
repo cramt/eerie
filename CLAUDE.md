@@ -5,7 +5,7 @@ Eerie is a circuit design and simulation tool, like LTSpice but open and hackabl
 ## Repo conventions
 
 - **pnpm not npm.** Use `pnpm` for all JS package operations.
-- **Facet not serde.** eerie-core must stay serde-free. roam handles serialization.
+- **Facet not serde.** eerie-core must stay serde-free. vox handles serialization.
 - **Single source of truth.** TypeScript types live only in `generated.ts` (run
   `pnpm codegen`). Never manually edit that file.
 - **Commit codegen output.** If you run `pnpm codegen`, commit `generated.ts`

@@ -12,7 +12,7 @@ use axum::{
     response::IntoResponse,
     routing::get,
 };
-use roam::DriverCaller;
+use vox::NoopClient;
 use tower_http::services::ServeDir;
 
 use crate::service::DaemonService;
@@ -107,28 +107,30 @@ async fn ws_handler(ws: WebSocketUpgrade) -> impl IntoResponse {
 }
 
 async fn handle_ws(ws: axum::extract::ws::WebSocket) {
-    // Bridge axum's WebSocket to roam via the message-level adapter
+    // Bridge axum's WebSocket to vox via the message-level adapter
     let link = AxumWsLink { ws };
     let project_dir = PROJECT_DIR.get().cloned().unwrap_or_default();
     let dispatcher = EerieServiceDispatcher::new(DaemonService { project_dir });
 
-    let result = roam::acceptor(link)
-        .establish::<DriverCaller>(dispatcher)
+    let result = vox::acceptor_on(link)
+        .on_connection(dispatcher)
+        .establish::<NoopClient>()
         .await;
 
     match result {
-        Ok((_guard, _handle)) => {
+        Ok(client) => {
+            let _keep_alive = client;
             std::future::pending::<()>().await;
         }
         Err(e) => {
-            log::error!("roam session error: {e:?}");
+            log::error!("vox session error: {e:?}");
         }
     }
 }
 
-// ── Bridge axum::WebSocket → roam Link ────────────────────────────────────
+// ── Bridge axum::WebSocket → vox Link ─────────────────────────────────────
 
-use roam::{Backing, Link, LinkRx, LinkTx, LinkTxPermit, WriteSlot};
+use vox::{Backing, Link, LinkRx, LinkTx};
 use std::io;
 use tokio::sync::mpsc;
 
@@ -144,13 +146,11 @@ impl Link for AxumWsLink {
         let (tx_send, tx_recv) = mpsc::channel::<Vec<u8>>(1);
         let (rx_send, rx_recv) = mpsc::channel::<Result<Vec<u8>, io::Error>>(1);
 
-        // Single task that owns the WebSocket and multiplexes read/write
         tokio::spawn(async move {
             let mut ws = self.ws;
             let mut tx_recv = tx_recv;
             loop {
                 tokio::select! {
-                    // Outbound
                     msg = tx_recv.recv() => {
                         match msg {
                             Some(data) => {
@@ -161,7 +161,6 @@ impl Link for AxumWsLink {
                             None => break,
                         }
                     }
-                    // Inbound
                     msg = ws.recv() => {
                         match msg {
                             Some(Ok(axum::extract::ws::Message::Binary(data))) => {
@@ -185,52 +184,17 @@ struct AxumWsTx {
     tx: mpsc::Sender<Vec<u8>>,
 }
 
-struct AxumWsTxPermit {
-    permit: mpsc::OwnedPermit<Vec<u8>>,
-}
-
-struct AxumWsWriteSlot {
-    buf: Vec<u8>,
-    permit: mpsc::OwnedPermit<Vec<u8>>,
-}
-
 impl LinkTx for AxumWsTx {
-    type Permit = AxumWsTxPermit;
-
-    async fn reserve(&self) -> io::Result<Self::Permit> {
-        let permit = self
-            .tx
-            .clone()
-            .reserve_owned()
+    async fn send(&self, bytes: Vec<u8>) -> io::Result<()> {
+        self.tx
+            .send(bytes)
             .await
-            .map_err(|_| io::Error::new(io::ErrorKind::ConnectionReset, "ws writer stopped"))?;
-        Ok(AxumWsTxPermit { permit })
+            .map_err(|_| io::Error::new(io::ErrorKind::ConnectionReset, "ws writer stopped"))
     }
 
     async fn close(self) -> io::Result<()> {
         drop(self.tx);
         Ok(())
-    }
-}
-
-impl LinkTxPermit for AxumWsTxPermit {
-    type Slot = AxumWsWriteSlot;
-
-    fn alloc(self, len: usize) -> io::Result<Self::Slot> {
-        Ok(AxumWsWriteSlot {
-            buf: vec![0u8; len],
-            permit: self.permit,
-        })
-    }
-}
-
-impl WriteSlot for AxumWsWriteSlot {
-    fn as_mut_slice(&mut self) -> &mut [u8] {
-        &mut self.buf
-    }
-
-    fn commit(self) {
-        drop(self.permit.send(self.buf));
     }
 }
 

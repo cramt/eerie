@@ -19,9 +19,9 @@ function findXVector(plot: SimPlot, aType: string): SimVector | undefined {
 }
 
 function getVecData(vec: SimVector): number[] {
-  if (vec.real.length > 0) return vec.real
-  if (vec.complex.length > 0)
-    return vec.complex.map((c) => Math.sqrt(c.re ** 2 + c.im ** 2))
+  if (vec.data.tag === 'Real') return vec.data.value
+  if (vec.data.tag === 'Complex')
+    return vec.data.value.map((c) => Math.sqrt(c.re ** 2 + c.im ** 2))
   return []
 }
 
@@ -82,7 +82,7 @@ function PlotView({ plot, analysisType }: { plot: SimPlot; analysisType: string 
       return
     }
 
-    const xData = xVec ? getVecData(xVec) : yVecs[0]?.real.map((_, i) => i) ?? []
+    const xData = xVec ? getVecData(xVec) : getVecData(yVecs[0])?.map((_, i) => i) ?? []
     const selectedVecs = yVecs.filter((_, i) => visibleVecs.has(i))
     const data: uPlot.AlignedData = [
       new Float64Array(xData),
@@ -90,7 +90,7 @@ function PlotView({ plot, analysisType }: { plot: SimPlot; analysisType: string 
     ]
 
     const isAc = analysisType === 'Ac'
-    const isBode = isAc && selectedVecs.some((v) => v.complex.length > 0)
+    const isBode = isAc && selectedVecs.some((v) => v.data.tag === 'Complex' && v.data.value.length > 0)
 
     const series: uPlot.Series[] = [
       { label: getXLabel(analysisType) },
@@ -104,10 +104,11 @@ function PlotView({ plot, analysisType }: { plot: SimPlot; analysisType: string 
     if (isBode) {
       for (let si = 0; si < selectedVecs.length; si++) {
         const vec = selectedVecs[si]
-        if (vec.complex.length > 0) {
-          const magDb = new Float64Array(vec.complex.length)
-          for (let j = 0; j < vec.complex.length; j++) {
-            const mag = Math.sqrt(vec.complex[j].re ** 2 + vec.complex[j].im ** 2)
+        if (vec.data.tag === 'Complex' && vec.data.value.length > 0) {
+          const complex = vec.data.value
+          const magDb = new Float64Array(complex.length)
+          for (let j = 0; j < complex.length; j++) {
+            const mag = Math.sqrt(complex[j].re ** 2 + complex[j].im ** 2)
             magDb[j] = 20 * Math.log10(Math.max(mag, 1e-30))
           }
           data[si + 1] = magDb

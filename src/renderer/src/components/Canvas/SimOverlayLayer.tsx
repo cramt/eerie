@@ -33,7 +33,7 @@ function findNodeVoltage(result: SimResult, nodeName: string): number | null {
     for (const vec of plot.vecs) {
       const vname = vec.name.toLowerCase()
       if (vname === `v(${lower})` || vname === lower) {
-        if (vec.real.length > 0) return vec.real[0]
+        if (vec.data.tag === 'Real' && vec.data.value.length > 0) return vec.data.value[0]
       }
     }
   }

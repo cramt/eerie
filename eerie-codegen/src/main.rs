@@ -9,7 +9,7 @@ fn workspace_root() -> PathBuf {
 
 fn main() {
     let descriptor = eerie_rpc::eerie_service_service_descriptor();
-    let ts_code = roam_codegen::targets::typescript::generate_service(descriptor);
+    let ts_code = vox_codegen::targets::typescript::generate_service(descriptor);
 
     let out = workspace_root().join("src/codegen/generated-rpc.ts");
     fs::create_dir_all(out.parent().unwrap()).expect("create codegen dir");

@@ -9,10 +9,10 @@ crate-type = ["cdylib", "rlib"]
 
 [dependencies]
 eerie-rpc      = { path = "../eerie-rpc" }
-thevenin-types = { git = "https://github.com/cramt/thevenin", branch = "ralph/simulation-engine" }
-thevenin       = { git = "https://github.com/cramt/thevenin", branch = "ralph/simulation-engine" }
-roam           = { workspace = true }
-roam-inprocess = { workspace = true }
+thevenin-types = { git = "https://github.com/cramt/thevenin" }
+thevenin       = { git = "https://github.com/cramt/thevenin" }
+vox            = { workspace = true }
+vox-inprocess  = { workspace = true }
 wasm-bindgen   = "0.2"
 wasm-bindgen-futures = "0.4"
 

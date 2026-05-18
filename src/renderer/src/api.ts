@@ -31,36 +31,35 @@ function getClient(): Promise<EerieServiceCaller> {
     clientPromise = connectEerieService(url);
   } else {
     console.log(
-      "[eerie] WASM mode — simulation runs in browser via roam inprocess",
+      "[eerie] WASM mode — simulation runs in browser via vox inprocess",
     );
     clientPromise = (async () => {
       const [
         wasmMod,
-        { InProcessTransport },
-        { helloExchangeInitiator, defaultHello },
+        { InProcessLink },
+        { session, voxServiceMetadata },
       ] = await Promise.all([
         import("eerie-wasm"),
-        import("@bearcove/roam-inprocess"),
-        import("@bearcove/roam-core"),
+        import("@bearcove/vox-inprocess"),
+        import("@bearcove/vox-core"),
       ]);
 
       // wasm-pack --target web requires explicit initialization
       await wasmMod.default();
 
       let rustLink: { deliver(payload: Uint8Array): void } | null = null;
-      const transport = new InProcessTransport((payload: Uint8Array) => {
+      const link = new InProcessLink((payload: Uint8Array) => {
         if (!rustLink) throw new Error("rustLink not initialized");
         rustLink.deliver(payload);
       });
       rustLink = wasmMod.start_acceptor((payload: Uint8Array) => {
-        transport.pushMessage(payload);
+        link.pushMessage(payload);
       });
 
-      const connection = await helloExchangeInitiator(
-        transport,
-        defaultHello(),
-      );
-      return new EerieServiceClient(connection.asCaller());
+      const established = await session.initiatorOnLink(link, {
+        metadata: voxServiceMetadata("EerieService"),
+      });
+      return new EerieServiceClient(established.rootConnection().caller());
     })();
   }
 
@@ -70,10 +69,7 @@ function getClient(): Promise<EerieServiceCaller> {
 // ── Analysis dispatch ──────────────────────────────────────────────────────
 
 function getAnalysisTag(netlist: Netlist): string {
-  for (const item of netlist.items) {
-    if (item.tag === "Analysis") return item.value.tag;
-  }
-  return "Op";
+  return netlist.analysis.tag;
 }
 
 export async function isReady(): Promise<boolean> {
