@@ -329,7 +329,7 @@
 
           shellHook = ''
             export RUST_BACKTRACE=1
-            export RUST_LOG=info
+            export RUST_LOG=info,cranelift=warn,cranelift_codegen=warn,cranelift_jit=warn,wasmtime=warn,wasmtime_cranelift=warn,regalloc2=warn
             echo "=== Eerie dev environment ==="
             echo "  rustc:    $(rustc --version)"
             echo "  node:     $(node --version)"
