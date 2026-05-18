@@ -34,11 +34,11 @@
     "vite": "^8.0.0"
   },
   "dependencies": {
-    "@bearcove/vox-core": "^0.4.0",
-    "@bearcove/vox-inprocess": "0.4.0",
-    "@bearcove/vox-postcard": "^0.4.0",
-    "@bearcove/vox-wire": "^0.4.0",
-    "@bearcove/vox-ws": "0.4.0",
+    "@bearcove/vox-core": "^0.5.0",
+    "@bearcove/vox-inprocess": "0.5.0",
+    "@bearcove/vox-postcard": "^0.5.0",
+    "@bearcove/vox-wire": "^0.5.0",
+    "@bearcove/vox-ws": "0.5.0",
     "@monaco-editor/react": "4.8.0-rc.3",
     "@tanstack/react-router": "^1.167.5",
     "eerie-wasm": "workspace:*",

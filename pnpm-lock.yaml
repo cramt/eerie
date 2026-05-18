@@ -9,20 +9,20 @@ importers:
   .:
     dependencies:
       '@bearcove/vox-core':
-        specifier: ^0.4.0
-        version: 0.4.0
+        specifier: ^0.5.0
+        version: 0.5.0
       '@bearcove/vox-inprocess':
-        specifier: 0.4.0
-        version: 0.4.0
+        specifier: 0.5.0
+        version: 0.5.0
       '@bearcove/vox-postcard':
-        specifier: ^0.4.0
-        version: 0.4.0
+        specifier: ^0.5.0
+        version: 0.5.0
       '@bearcove/vox-wire':
-        specifier: ^0.4.0
-        version: 0.4.0
+        specifier: ^0.5.0
+        version: 0.5.0
       '@bearcove/vox-ws':
-        specifier: 0.4.0
-        version: 0.4.0
+        specifier: 0.5.0
+        version: 0.5.0
       '@monaco-editor/react':
         specifier: 4.8.0-rc.3
         version: 4.8.0-rc.3(monaco-editor@0.55.1)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
@@ -246,23 +246,23 @@ packages:
     resolution: {integrity: sha512-LwdZHpScM4Qz8Xw2iKSzS+cfglZzJGvofQICy7W7v4caru4EaAmyUuO6BGrbyQ2mYV11W0U8j5mBhd14dd3B0A==}
     engines: {node: '>=6.9.0'}
 
-  '@bearcove/vox-core@0.4.0':
-    resolution: {integrity: sha512-t0VC7FsRNeC8xnGqddknh1RLg8VskFEdhxTas+M55NjwwIHIU9P7r66lsVEDPgFwdQmN4Vdiuk3ptAthmoxz/g==}
+  '@bearcove/vox-core@0.5.0':
+    resolution: {integrity: sha512-5Hk6TnqBkTBBBHcjNYduS1wx3Rgt6lDmGz36wjlQtSu3MV4dVnhsRcqMgmtevNnIE7/jtgVVXbo9zHSjPpRC3g==}
 
-  '@bearcove/vox-inprocess@0.4.0':
-    resolution: {integrity: sha512-DdMuLApMZtSTOxwTqjRbFqc6BvT034c4gdRdAcoN0Fja54zpZHoaarfzMrjdDvBXSpeEIJzZNBJp/5fumWNxhQ==}
+  '@bearcove/vox-inprocess@0.5.0':
+    resolution: {integrity: sha512-EQK7hdiJilA/6SIRu/QA2sYUtmz70BA7eLiD+Dar75jJyA7tfxlldSF6ySG7dl9de+hujyqsTpAnU8cGW7DYLA==}
 
-  '@bearcove/vox-postcard@0.4.0':
-    resolution: {integrity: sha512-JU8QM0uzFLdFoMTrv/Ad4MA4R2WL1MXVUl2JbPVl4CM/0qF4e8IUD++BWhshiZdbkOxGLUb9AB4NRSWCZCkT2g==}
+  '@bearcove/vox-postcard@0.5.0':
+    resolution: {integrity: sha512-B02oI8eI9d0yq2rA8G8zs7iMLsKiQQEVRZ2SOGVzUYsqbpWDZBPWu6K7AcQAXwGTapuIHbAzgdjl3U+/D2ZDkA==}
 
-  '@bearcove/vox-tcp@0.4.0':
-    resolution: {integrity: sha512-+kAgUkFexVNJ0SaxuVV+9UaYie4Hd9ShXBtvILe/n8PAqNwBS/p1+tmmYfd/QaqxhqBbrQV3s1IpKsfas0czBA==}
+  '@bearcove/vox-tcp@0.5.0':
+    resolution: {integrity: sha512-fZKMu/+hAkFuGlLbNQFoSFu0cbYGVpsZf0g1HWX5CpO+CQ90n+0hI54qUhb7ebLPzbsybGbTBd0Zq/gEOqVrSg==}
 
-  '@bearcove/vox-wire@0.4.0':
-    resolution: {integrity: sha512-Z17vb8bBc2tWjK5oIW4NdUb3O6juKFbSV65RYFuj3k5vykxZWy6MFV3jcnyftRNk5itY2dmx0skN6MSCind6vA==}
+  '@bearcove/vox-wire@0.5.0':
+    resolution: {integrity: sha512-XbcOs6+2UdEjX7a0U19QGCgXY1Ku35EGQj9zt89dAKaPTqe3aybLJkNO7fERxHgae6jeFsj0Y+yGyICGvyW5wA==}
 
-  '@bearcove/vox-ws@0.4.0':
-    resolution: {integrity: sha512-MLBo4qZOLlaFtJtacRATQBnMus99AQUU0q989M58/zvUpxPoWF37/AYJPxgEBbTr0kXlgIyKvfqkFPQdO8ccdw==}
+  '@bearcove/vox-ws@0.5.0':
+    resolution: {integrity: sha512-/tMQhZam/yD0zhCf7YwFw12rpQEfUQKsupyWJeIjAikufxnUApGxwYkrchH2U3T4OZH1Ihqxq5lWRuHEUHt3YQ==}
 
   '@emnapi/core@1.9.0':
     resolution: {integrity: sha512-0DQ98G9ZQZOxfUcQn1waV2yS8aWdZ6kJMbYCJB3oUBecjWYO1fqJ+a1DRfPF3O5JEkwqwP1A9QEN/9mYm2Yd0w==}
@@ -1808,29 +1808,29 @@ snapshots:
       '@babel/helper-string-parser': 7.27.1
       '@babel/helper-validator-identifier': 7.28.5
 
-  '@bearcove/vox-core@0.4.0':
+  '@bearcove/vox-core@0.5.0':
     dependencies:
-      '@bearcove/vox-postcard': 0.4.0
-      '@bearcove/vox-wire': 0.4.0
+      '@bearcove/vox-postcard': 0.5.0
+      '@bearcove/vox-wire': 0.5.0
 
-  '@bearcove/vox-inprocess@0.4.0':
+  '@bearcove/vox-inprocess@0.5.0':
     dependencies:
-      '@bearcove/vox-core': 0.4.0
+      '@bearcove/vox-core': 0.5.0
 
-  '@bearcove/vox-postcard@0.4.0': {}
+  '@bearcove/vox-postcard@0.5.0': {}
 
-  '@bearcove/vox-tcp@0.4.0':
+  '@bearcove/vox-tcp@0.5.0':
     dependencies:
-      '@bearcove/vox-core': 0.4.0
+      '@bearcove/vox-core': 0.5.0
 
-  '@bearcove/vox-wire@0.4.0':
+  '@bearcove/vox-wire@0.5.0':
     dependencies:
-      '@bearcove/vox-postcard': 0.4.0
+      '@bearcove/vox-postcard': 0.5.0
 
-  '@bearcove/vox-ws@0.4.0':
+  '@bearcove/vox-ws@0.5.0':
     dependencies:
-      '@bearcove/vox-core': 0.4.0
-      '@bearcove/vox-tcp': 0.4.0
+      '@bearcove/vox-core': 0.5.0
+      '@bearcove/vox-tcp': 0.5.0
 
   '@emnapi/core@1.9.0':
     dependencies:
